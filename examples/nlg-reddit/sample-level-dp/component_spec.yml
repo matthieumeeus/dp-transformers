@@ -144,6 +144,7 @@ command: >-
     --disable_tqdm True \
     --dataloader_num_workers ${{inputs.dataloader_num_workers}} \
     --label_names ${{inputs.label_names}} \
+    --enable_lora \
 environment:
   image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
   conda_file: ../environment.yml
