@@ -9,6 +9,7 @@ import transformers
 import sys
 import logging
 
+from pathlib import Path
 from dataclasses import dataclass, field
 from transformers.training_args import ParallelMode
 from dp_transformers.layers.dp_merged_linear import mark_only_lora_as_trainable
@@ -74,6 +75,7 @@ def main(args: Arguments):
     logger.info(f"Privacy parameters {privacy_args}")
 
     # Load model
+    logger.info(f"Loading model: {args.model.model_name}")
     model = transformers.AutoModelForCausalLM.from_pretrained(args.model.model_name)
     model = model.to(train_args.device)
 

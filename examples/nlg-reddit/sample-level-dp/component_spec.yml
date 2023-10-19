@@ -1,0 +1,149 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-fine-tune-lm
+display_name: DP fine-tuning of LM
+
+description: Train a model on the Reddit dataset using differential privacy
+
+inputs:
+  nproc_per_node:
+    type: integer
+    description: Number of GPUs per node
+  model_name:
+    type: string
+    description: Name of the model to use
+    optional: true
+  model_path:
+    type: uri_folder
+    description: Path to the model to use
+    optional: true
+  sequence_len:
+    type: integer
+    description: Sequence length
+  per_device_train_batch_size:
+    type: integer
+    description: Batch size per device for training
+  gradient_accumulation_steps:
+    type: integer
+    description: Gradient accumulation steps
+  evaluation_strategy:
+    type: string
+    description: Evaluation strategy
+    default: steps
+  eval_steps:
+    type: integer
+    description: Evaluation steps
+    default: 128
+  log_level:
+    type: string
+    description: Log level
+    default: info
+  per_device_eval_batch_size:
+    type: integer
+    description: Batch size per device for evaluation
+    default: 64
+  eval_accumulation_steps:
+    type: integer
+    description: Evaluation accumulation steps
+    default: 1
+  seed:
+    type: integer
+    description: Random seed
+  target_epsilon:
+    type: number
+    description: Target epsilon
+  target_delta:
+    type: number
+    description: Target delta
+  per_sample_max_grad_norm:
+    type: number
+    description: Per sample max grad norm
+  weight_decay:
+    type: number
+    description: Weight decay
+    default: 0.01
+  remove_unused_columns:
+    type: boolean
+    description: Remove unused columns
+    default: false
+  num_train_epochs:
+    type: integer
+    description: Number of training epochs
+  logging_steps:
+    type: integer
+    description: Logging steps
+    default: 5
+  max_grad_norm:
+    type: number
+    description: Max grad norm
+    default: 0
+  lr_scheduler_type:
+    type: string
+    description: LR scheduler type
+    default: constant
+  learning_rate:
+    type: number
+    description: Learning rate
+  dataloader_num_workers:
+    type: integer
+    description: Dataloader num workers
+    default: 2
+  label_names:
+    type: string
+    description: Label names
+    default: labels
+  lora_dim:
+    type: integer
+    description: LoRA dimension
+    default: 4
+  lora_alpha:
+    type: integer
+    description: LoRA alpha
+    default: 32
+  lora_dropout:
+    type: number
+    description: LoRA dropout
+    default: 0.0
+outputs:
+  output_dir:
+    type: uri_folder
+    description: Output directory
+  
+code: ./
+additional_includes:
+  - "../../../../../setup.py"
+  - "../../../../../README.md"
+  - "../../../../../src"
+
+command: >-
+  python -m pip install -e . && python -m torch.distributed.run --nproc_per_node ${{inputs.nproc_per_node}} examples/nlg-reddit/sample-level-dp/fine-tune-dp.py \
+    --output_dir ${{outputs.output_dir}} \
+    $[[ --model_name ${{inputs.model_name}} ]] \
+    $[[ --model_name ${{inputs.model_path}} ]] \
+    --sequence_len ${{inputs.sequence_len}} \
+    --per_device_train_batch_size ${{inputs.per_device_train_batch_size}} \
+    --gradient_accumulation_steps ${{inputs.gradient_accumulation_steps}} \
+    --evaluation_strategy ${{inputs.evaluation_strategy}} \
+    --eval_steps ${{inputs.eval_steps}} \
+    --log_level ${{inputs.log_level}} \
+    --per_device_eval_batch_size ${{inputs.per_device_eval_batch_size}} \
+    --eval_accumulation_steps ${{inputs.eval_accumulation_steps}} \
+    --seed ${{inputs.seed}} \
+    --target_epsilon ${{inputs.target_epsilon}} \
+    --target_delta ${{inputs.target_delta}} \
+    --per_sample_max_grad_norm ${{inputs.per_sample_max_grad_norm}} \
+    --prediction_loss_only \
+    --weight_decay ${{inputs.weight_decay}} \
+    --remove_unused_columns ${{inputs.remove_unused_columns}} \
+    --num_train_epochs ${{inputs.num_train_epochs}} \
+    --logging_steps ${{inputs.logging_steps}} \
+    --max_grad_norm ${{inputs.max_grad_norm}} \
+    --lr_scheduler_type ${{inputs.lr_scheduler_type}} \
+    --learning_rate ${{inputs.learning_rate}} \
+    --disable_tqdm True \
+    --dataloader_num_workers ${{inputs.dataloader_num_workers}} \
+    --label_names ${{inputs.label_names}} \
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
+  conda_file: ../environment.yml
