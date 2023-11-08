@@ -102,23 +102,23 @@ def main(args: Arguments):
 
     # Load model
     logger.info(f"Loading model: {args.model.model_name_or_path}")
-    model = transformers.AutoModelForCausalLM.from_pretrained(args.model.model_name_or_path)
+    model = transformers.AutoModelForCausalLM.from_pretrained(str(args.model.model_name_or_path))
     model = model.to(args.train.device)
 
     # Load data
     dataset = datasets.DatasetDict({
-        "train": datasets.Dataset.from_jsonl(args.train_data_path),
-        "test": datasets.Dataset.from_jsonl(args.val_data_path)
+        "train": datasets.Dataset.from_json(str(args.data.train_data_path)),
+        "test": datasets.Dataset.from_json(str(args.data.val_data_path))
     })
 
     # Load tokenizer
-    tokenizer = transformers.AutoTokenizer.from_pretrained(args.model.model_name_or_path)
-    tokenizer.pad_token = -100 # Set a dummy pad token we don't use it anyway
+    tokenizer = transformers.AutoTokenizer.from_pretrained(str(args.model.model_name_or_path))
+    tokenizer.pad_token = -100
 
     # Tokenize data
     with args.train.main_process_first(desc="tokenizing dataset"):
         dataset = dataset.map(
-            lambda batch: tokenizer(batch['content'], padding="max_length", truncation=True, max_length=args.model.sequence_len),
+            lambda batch: tokenizer(batch[args.data.text_column], padding="max_length", truncation=True, max_length=args.model.sequence_len),
             batched=True, num_proc=8, desc="tokenizing dataset", remove_columns=dataset.column_names['train']
         )
 
@@ -157,6 +157,8 @@ def main(args: Arguments):
         })
 
 if __name__ == "__main__":
-    arg_parser = transformers.HfArgumentParser((dp_transformers.TrainingArguments, dp_transformers.PrivacyArguments, ModelArguments, LoraArguments, DataArguments))
+    arg_parser = transformers.HfArgumentParser(
+        (dp_transformers.TrainingArguments, dp_transformers.PrivacyArguments, ModelArguments, LoraArguments, DataArguments)
+    )
     train_args, privacy_args, model_args, lora_args, data_args = arg_parser.parse_args_into_dataclasses()
     main(Arguments(train=train_args, privacy=privacy_args, model=model_args, lora=lora_args, data=data_args))
