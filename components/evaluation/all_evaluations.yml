@@ -16,6 +16,7 @@ inputs:
   num_concurrent_oai_api_calls:
     type: integer
     description: "Number of concurrent API calls to the Azure OpenAI API to use."
+    default: 1
 
 jobs:
   mt_bench:

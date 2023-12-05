@@ -17,7 +17,7 @@ inputs:
   num_concurrent_api_calls:
     type: integer
     description: "Number of concurrent API calls to use."
-   num_total_gpus:
+  num_total_gpus:
     type: integer
     description: "Total number of GPUs to use."
     optional: true
