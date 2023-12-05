@@ -1,0 +1,27 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-evaluate
+display_name: Evaluate LM
+
+description: "Evaluate a language model on a dataset."
+
+inputs:
+  model:
+    type: uri_folder
+    description: "Path to the model to use in HF format."
+outputs:
+  results:
+    type: uri_folder
+    description: "Path to the results file."
+
+code: ./
+
+command: >-
+  python evaluate.py \
+    --model ${{inputs.model}} \
+    --results ${{outputs.results}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+  conda_file: ./environment.yml

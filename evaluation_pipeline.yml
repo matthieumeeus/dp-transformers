@@ -1,0 +1,13 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: evaluate
+
+settings:
+  default_compute: azureml:ND96asrv4
+
+jobs:
+  evaluation:
+    type: command
+    component: ./components/evaluation/mt_bench/component_spec.yml
+    inputs:
+      model: "azureml:llama-2-7b-chat-hf:2"
