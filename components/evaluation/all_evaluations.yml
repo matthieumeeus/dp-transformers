@@ -11,7 +11,7 @@ inputs:
     description: "Path to the model to use in HF format."
 
 jobs:
-  evaluation:
+  mt_bench:
     type: command
     component: ./mt_bench/component_spec.yml
     inputs:
