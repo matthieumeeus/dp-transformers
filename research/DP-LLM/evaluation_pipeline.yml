@@ -3,7 +3,7 @@ type: pipeline
 display_name: evaluate
 
 settings:
-  default_compute: azureml:ND96asrv4
+  default_compute: azureml:ND40rsv2
 
 jobs:
   evaluation:
