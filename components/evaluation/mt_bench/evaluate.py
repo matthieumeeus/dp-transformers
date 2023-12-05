@@ -1,4 +1,5 @@
 import torch
+import fastchat
 from shutil import copy2
 from pathlib import Path
 from subprocess import check_call
@@ -19,11 +20,25 @@ class Arguments(BaseModel):
     num_total_gpus: int = torch.cuda.device_count()
 
 
-def main(args: Arguments) -> int:
+def get_fschat_version() -> str:
+    return f"v{fastchat.__version__}"
+
+
+def download_llm_judge_data(fschat_version: str, download_path: Path):
     # Download data
-    mt_bench_data_path = Path("data")/"mt_bench"
+    data_path = download_path/"data"
+    data_path.mkdir(parents=True, exist_ok=True)
+    urlretrieve(f"https://raw.githubusercontent.com/lm-sys/FastChat/{fschat_version}/fastchat/llm_judge/data/judge_prompts.jsonl", data_path/"judge_prompts.jsonl")
+
+    mt_bench_data_path = data_path/"mt_bench"
     mt_bench_data_path.mkdir(parents=True, exist_ok=True)
-    urlretrieve("https://raw.githubusercontent.com/lm-sys/FastChat/main/fastchat/llm_judge/data/mt_bench/question.jsonl", mt_bench_data_path/"question.jsonl")
+    urlretrieve(f"https://raw.githubusercontent.com/lm-sys/FastChat/{fschat_version}/fastchat/llm_judge/data/mt_bench/question.jsonl", mt_bench_data_path/"question.jsonl")
+
+
+def main(args: Arguments) -> int:
+    fschat_version = get_fschat_version()
+    print(f"Found FastChat version {fschat_version}")
+    download_llm_judge_data(fschat_version=fschat_version, download_path=Path("."))
 
     model_id = "model"
 
