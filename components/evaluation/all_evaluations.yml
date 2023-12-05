@@ -1,0 +1,19 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+
+type: pipeline
+
+display_name: all_evaluations
+
+
+inputs:
+  model:
+    type: uri_folder
+    description: "Path to the model to use in HF format."
+
+jobs:
+  evaluation:
+    type: command
+    component: ./mt_bench/component_spec.yml
+    inputs:
+      model: ${{parent.inputs.model}}
+  

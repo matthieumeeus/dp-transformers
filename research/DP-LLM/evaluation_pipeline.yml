@@ -7,7 +7,7 @@ settings:
 
 jobs:
   evaluation:
-    type: command
-    component: ./components/evaluation/mt_bench/component_spec.yml
+    type: pipeline
+    component: ../../components/evaluation/all_evaluations.yml
     inputs:
       model: "azureml:llama-2-7b-chat-hf:2"
