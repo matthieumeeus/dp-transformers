@@ -6,7 +6,7 @@ from pydantic_cli import run_and_exit
 from pydantic import BaseModel
 from urllib.request import urlretrieve
 
-from fastchat.llm_judge import gen_model_answer, gen_judgment, show_result
+from fastchat.llm_judge import gen_model_answer, gen_judgment
 
 
 class Arguments(BaseModel):
@@ -28,15 +28,21 @@ def main(args: Arguments) -> int:
     model_id = "model"
 
     gen_answers_script = gen_model_answer.__file__
-    check_call([
+    gen_answers_call = [
         "python", gen_answers_script, "--model-path", str(args.model), "--model-id", model_id,
         "--num-gpus-total", str(args.num_total_gpus), "--num-gpus-per-model", str(args.num_gpus_per_model)
-    ])
-    copy2(Path("data")/"mt_bench"/"model_answer"/model_id+".jsonl", args.answers)
+    ]
+    print(" ".join(gen_answers_call))
+    check_call(gen_answers_call)
+    copy2(Path("data")/"mt_bench"/"model_answer"/(model_id+".jsonl"), args.answers)
 
     gen_judgment_script = gen_judgment.__file__
-    check_call(["python", gen_judgment_script, "--model-id", model_id, "--parallel", args.num_concurrent_api_calls])
-    copy2(Path("data")/"mt_bench"/"model_judgement"/model_id+".jsonl", args.judgements)
+    gen_judgment_call = [
+        "python", gen_judgment_script, "--model-id", str(model_id), "--parallel", str(args.num_concurrent_api_calls)
+    ]
+    print(" ".join(gen_judgment_call))
+    check_call(gen_judgment_call)
+    copy2(Path("data")/"mt_bench"/"model_judgement"/(model_id+".jsonl"), args.judgements)
 
     return 0
 

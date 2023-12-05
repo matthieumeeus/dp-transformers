@@ -8,6 +8,6 @@ settings:
 jobs:
   evaluation:
     type: pipeline
-    component: ../../components/evaluation/all_evaluations.yml
+    component: ../../components/evaluation/evaluate_llm.yml
     inputs:
       model: "azureml:llama-2-7b-chat-hf:2"

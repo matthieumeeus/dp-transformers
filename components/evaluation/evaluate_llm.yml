@@ -2,7 +2,9 @@ $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 
 type: pipeline
 
-display_name: all_evaluations
+name: dp_transformers_evaluate_llm
+display_name: evaluate_llm
+description: "Evaluate a large language model on a suite of benchmarks (MT-Bench)."
 
 
 inputs:

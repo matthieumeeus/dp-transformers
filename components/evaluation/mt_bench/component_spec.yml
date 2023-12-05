@@ -19,7 +19,7 @@ inputs:
     description: "Number of concurrent API calls to use."
   num_total_gpus:
     type: integer
-    description: "Total number of GPUs to use."
+    description: "Total number of GPUs to use. Default is to use all available GPUs."
     optional: true
 outputs:
   results:
