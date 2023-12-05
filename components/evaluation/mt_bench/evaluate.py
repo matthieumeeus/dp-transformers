@@ -38,7 +38,7 @@ def main(args: Arguments) -> int:
 
     gen_judgment_script = gen_judgment.__file__
     gen_judgment_call = [
-        "python", gen_judgment_script, "--model-id", str(model_id), "--parallel", str(args.num_concurrent_api_calls)
+        "python", gen_judgment_script, "--model-list", str(model_id), "--parallel", str(args.num_concurrent_api_calls)
     ]
     print(" ".join(gen_judgment_call))
     check_call(gen_judgment_call)
