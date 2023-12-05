@@ -36,7 +36,7 @@ def download_llm_judge_data(fschat_version: str, download_path: Path):
 
     reference_answers_path = mt_bench_data_path/"reference_answer"
     reference_answers_path.mkdir(parents=True, exist_ok=True)
-    urlretrieve(f"https://raw.githubusercontent.com/lm-sys/FastChat/{fschat_version}/fastchat/llm_judge/data/mt_bench/reference_answers/gpt-4.jsonl", reference_answers_path/"gpt-4.jsonl") 
+    urlretrieve(f"https://raw.githubusercontent.com/lm-sys/FastChat/{fschat_version}/fastchat/llm_judge/data/mt_bench/reference_answer/gpt-4.jsonl", reference_answers_path/"gpt-4.jsonl") 
 
 
 def main(args: Arguments) -> int:
