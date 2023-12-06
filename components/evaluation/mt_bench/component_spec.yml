@@ -37,10 +37,6 @@ inputs:
     type: string
     description: "Version of the OpenAI API to use."
     optional: true
-  vault_uri:
-    type: string
-    description: "URI of the Azure key vault."
-    optional: true
 outputs:
   results:
     type: uri_file
@@ -66,7 +62,6 @@ command: >-
     $[[ --openai_api_key_secret_name ${{inputs.openai_api_key_secret_name}} ]] \
     $[[ --openai_api_type ${{inputs.openai_api_type}} ]] \
     $[[ --openai_api_version ${{inputs.openai_api_version}} ]] \
-    $[[ --vault_uri ${{inputs.vault_uri}} ]] \
     --num_concurrent_api_calls ${{inputs.num_concurrent_api_calls}}
 
 

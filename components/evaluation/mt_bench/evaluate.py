@@ -8,8 +8,7 @@ from subprocess import check_call, Popen, PIPE, CalledProcessError
 from pydantic_cli import run_and_exit
 from pydantic import BaseModel
 from urllib.request import urlretrieve
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
+from azureml.core import Run
 
 from fastchat.llm_judge import gen_model_answer, gen_judgment
 
@@ -51,16 +50,21 @@ def download_llm_judge_data(fschat_version: str, download_path: Path):
 def main(args: Arguments) -> int:
     cwd = Path.cwd()
 
+    run: Run = Run.get_context()
+
     aoai_env = dict()
     if args.openai_api_base is not None:
+        print(f"Overriding OPENAI_API_BASE to {args.openai_api_base}")
         aoai_env["OPENAI_API_BASE"] = args.openai_api_base
-    if args.openai_api_key_vault_name is not None and args.vault_uri is not None:
-        credential = DefaultAzureCredential()
-        secret_client = SecretClient(credential=credential, vault_url=args.vault_uri)
-        aoai_env["OPENAI_API_KEY"] = secret_client.get_secret(args.openai_api_key_secret_name)
+    if args.vault_uri is not None and args.openai_api_key_secret_name is not None:
+        kv = run.experiment.workspace.get_default_keyvault()
+        print(f"Overriding OPENAI_API_KEY to key from Azure Key Vault {args.openai_api_key_secret_name}")
+        aoai_env["OPENAI_API_KEY"] = kv.get_secret(args.openai_api_key_secret_name)
     if args.openai_api_type is not None:
+        print(f"Overriding OPENAI_API_TYPE to {args.openai_api_type}")
         aoai_env["OPENAI_API_TYPE"] = args.openai_api_type
     if args.openai_api_version is not None:
+        print(f"Overriding OPENAI_API_VERSION to {args.openai_api_version}")
         aoai_env["OPENAI_API_VERSION"] = args.openai_api_version
 
     fschat_version = get_fschat_version()
@@ -85,6 +89,10 @@ def main(args: Arguments) -> int:
     print(" ".join(gen_judgment_call))
     env = os.environ.copy()
     env.update(aoai_env)
+    print(f"OpenAI environment:")
+    print(f"OPENAI_API_BASE={env.get('OPENAI_API_BASE', '<not set>')}")
+    print(f"OPENAI_API_TYPE={env.get('OPENAI_API_TYPE', '<not set>')}")
+    print(f"OPENAI_API_VERSION={env.get('OPENAI_API_VERSION', '<not set>')}")
     proc = Popen(gen_judgment_call, stdin=PIPE, env=env)
     # Script asks for 'enter' to continue, simulate this input here
     proc.communicate(input=b"\n")

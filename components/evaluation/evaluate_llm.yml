@@ -18,7 +18,23 @@ inputs:
   num_concurrent_oai_api_calls:
     type: integer
     description: "Number of concurrent API calls to the Azure OpenAI API to use."
-    default: 1
+    default: 60
+  openai_api_base:
+    type: string
+    description: "Base URL for the OpenAI API."
+    default: "https://ppml.openai.azure.com/"
+  openai_api_key_secret_name:
+    type: string
+    description: "Name of the secret containing the OpenAI API key in the Azure key vault."
+    default: "openai-ppml-key1"
+  openai_api_type:
+    type: string
+    description: "Type of the OpenAI API to use."
+    default: "azure"
+  openai_api_version:
+    type: string
+    description: "Version of the OpenAI API to use."
+    default: "2023-07-01-preview"
 
 jobs:
   mt_bench:
@@ -28,8 +44,7 @@ jobs:
       model: ${{parent.inputs.model}}
       num_gpus_per_model: ${{parent.inputs.num_gpus_per_model}}
       num_concurrent_api_calls: ${{parent.inputs.num_concurrent_oai_api_calls}}
-      openai_api_base: "https://ppml.openai.azure.com/"
-      openai_api_type: "azure"
-      openai_api_key_secret_name: "openai-ppml-key1"
-      openai_api_version: "2023-07-01-preview"
-      vault_uri: "https://m365researchpp9785700500.vault.azure.net/"
+      openai_api_base: ${{parent.inputs.openai_api_base}}
+      openai_api_type: ${{parent.inputs.openai_api_type}}
+      openai_api_key_secret_name: ${{parent.inputs.openai_api_key_secret_name}}
+      openai_api_version: ${{parent.inputs.openai_api_version}}
