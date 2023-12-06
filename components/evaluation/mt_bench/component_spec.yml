@@ -21,6 +21,26 @@ inputs:
     type: integer
     description: "Total number of GPUs to use. Default is to use all available GPUs."
     optional: true
+  openai_api_base:
+    type: string
+    description: "Base URL for the OpenAI API."
+    optional: true
+  openai_api_key_secret_name:
+    type: string
+    description: "Name of the secret containing the OpenAI API key in the Azure key vault."
+    optional: true
+  openai_api_type:
+    type: string
+    description: "Type of the OpenAI API to use."
+    optional: true
+  openai_api_version:
+    type: string
+    description: "Version of the OpenAI API to use."
+    optional: true
+  vault_uri:
+    type: string
+    description: "URI of the Azure key vault."
+    optional: true
 outputs:
   results:
     type: uri_file
@@ -42,6 +62,11 @@ command: >-
     --answers ${{outputs.answers}} \
     --num_gpus_per_model ${{inputs.num_gpus_per_model}} \
     $[[ --num_total_gpus ${{inputs.num_total_gpus}} ]] \
+    $[[ --openai_api_base ${{inputs.openai_api_base}} ]] \
+    $[[ --openai_api_key_secret_name ${{inputs.openai_api_key_secret_name}} ]] \
+    $[[ --openai_api_type ${{inputs.openai_api_type}} ]] \
+    $[[ --openai_api_version ${{inputs.openai_api_version}} ]] \
+    $[[ --vault_uri ${{inputs.vault_uri}} ]] \
     --num_concurrent_api_calls ${{inputs.num_concurrent_api_calls}}
 
 

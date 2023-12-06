@@ -28,3 +28,8 @@ jobs:
       model: ${{parent.inputs.model}}
       num_gpus_per_model: ${{parent.inputs.num_gpus_per_model}}
       num_concurrent_api_calls: ${{parent.inputs.num_concurrent_oai_api_calls}}
+      openai_api_base: "https://ppml.openai.azure.com/"
+      openai_api_type: "azure"
+      openai_api_key_secret_name: "openai-ppml-key1"
+      openai_api_version: "2023-07-01-preview"
+      vault_uri: "https://m365researchpp9785700500.vault.azure.net/"
