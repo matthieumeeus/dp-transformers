@@ -55,12 +55,14 @@ def main(args: Arguments) -> int:
     check_call(gen_answers_call)
     copy2(Path("data")/"mt_bench"/"model_answer"/(model_id+".jsonl"), args.answers)
 
+    # Script asks for enter to continue, simulate this input here
+    stdin_to_judgment_script = b"\n"
     gen_judgment_script = gen_judgment.__file__
     gen_judgment_call = [
         "python", gen_judgment_script, "--model-list", str(model_id), "--parallel", str(args.num_concurrent_api_calls)
     ]
     print(" ".join(gen_judgment_call))
-    check_call(gen_judgment_call)
+    check_call(gen_judgment_call, input=stdin_to_judgment_script)
     copy2(Path("data")/"mt_bench"/"model_judgement"/(model_id+".jsonl"), args.judgements)
 
     return 0
