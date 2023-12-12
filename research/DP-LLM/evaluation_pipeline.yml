@@ -3,12 +3,12 @@ type: pipeline
 display_name: evaluate
 
 settings:
-  default_compute: azureml:ND40rsv2
+  default_compute: azureml:ND96asrv4
 
 inputs:
   base_model:
     type: uri_folder
-    path: azureml:llama-2-7b-chat-hf:2
+    path: azureml:zephyr-7b-beta:1
 
 jobs:
   evaluation:
