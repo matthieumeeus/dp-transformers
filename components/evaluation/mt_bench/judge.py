@@ -1,5 +1,6 @@
 import os
 import gen_judgment
+import pandas as pd
 
 from shutil import copy2
 from pathlib import Path
@@ -43,6 +44,25 @@ def download_llm_judge_data(fschat_version: str, download_path: Path):
     urlretrieve(f"https://raw.githubusercontent.com/lm-sys/FastChat/{fschat_version}/fastchat/llm_judge/data/mt_bench/reference_answer/gpt-4.jsonl", reference_answers_path/"gpt-4.jsonl") 
 
 
+def display_result_single(input_file: Path):
+    print(f"Input file: {input_file}")
+    df_all = pd.read_json(input_file, lines=True)
+    df = df_all[["model", "score", "turn"]]
+    df = df[df["score"] != -1]
+
+    print("\n########## First turn ##########")
+    df_1 = df[df["turn"] == 1].groupby(["model", "turn"]).mean()
+    print(df_1.sort_values(by="score", ascending=False))
+
+    print("\n########## Second turn ##########")
+    df_2 = df[df["turn"] == 2].groupby(["model", "turn"]).mean()
+    print(df_2.sort_values(by="score", ascending=False))
+
+    print("\n########## Average ##########")
+    df_3 = df[["model", "score"]].groupby(["model"]).mean()
+    print(df_3.sort_values(by="score", ascending=False))
+
+
 def main(args: Arguments) -> int:
     cwd = Path.cwd()
 
@@ -83,12 +103,17 @@ def main(args: Arguments) -> int:
     print(f"OPENAI_API_BASE={env.get('OPENAI_API_BASE', '<not set>')}")
     print(f"OPENAI_API_TYPE={env.get('OPENAI_API_TYPE', '<not set>')}")
     print(f"OPENAI_API_VERSION={env.get('OPENAI_API_VERSION', '<not set>')}")
+
+    print("", flush=True)
     proc = Popen(gen_judgment_call, stdin=PIPE, env=env)
     # Script asks for 'enter' to continue, simulate this input here
     proc.communicate(input=b"\n")
     if proc.returncode != 0:
         raise CalledProcessError(proc.returncode, gen_judgment_script)
-    copy2(cwd/"data"/"mt_bench"/"model_judgement"/(MODEL_ID+".jsonl"), args.judgements)
+
+    copy2(cwd/"data"/"mt_bench"/"model_judgment"/"gpt-4_single.jsonl", args.judgements)
+
+    display_result_single(args.judgements)
 
     return 0
 

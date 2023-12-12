@@ -445,8 +445,10 @@ def chat_compeletion_openai_azure(model, conv, temperature, max_tokens, api_dict
         openai.api_base = api_dict["api_base"]
         openai.api_key = api_dict["api_key"]
     else:
-        openai.api_base = os.environ["AZURE_OPENAI_ENDPOINT"]
-        openai.api_key = os.environ["AZURE_OPENAI_KEY"]
+        if "AZURE_OPENAI_ENDPOINT" in os.environ:
+            openai.api_base = os.environ["AZURE_OPENAI_ENDPOINT"]
+        if "AZURE_OPENAI_KEY" in os.environ:
+            openai.api_key = os.environ["AZURE_OPENAI_KEY"]
 
     if "azure-" in model:
         model = model[6:]

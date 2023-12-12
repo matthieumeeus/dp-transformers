@@ -18,7 +18,7 @@ inputs:
   num_concurrent_oai_api_calls:
     type: integer
     description: "Number of concurrent API calls to the Azure OpenAI API to use."
-    default: 60
+    default: 10
   openai_api_base:
     type: string
     description: "Base URL for the OpenAI API."
