@@ -18,7 +18,6 @@ class Arguments(BaseModel):
     judgments: Path
     results: Path
     answers: Path
-    judge_model: str = "azure-gpt4"
     openai_api_base: str = None
     openai_api_key_secret_name: str = None
     openai_api_type: str = None
@@ -45,22 +44,26 @@ def download_llm_judge_data(fschat_version: str, download_path: Path):
 
 
 def analyze_results_single(judgments: pd.DataFrame, questions: pd.DataFrame) -> pd.DataFrame:
-    assert set(judgments["score"]).issubset(range(0, 10)), "Some scores are not in range 0-10"
-
     questions = questions[["question_id", "category"]]
 
     assert len(set(judgments["model"])) == 1, "Multiple models in judgments"
     judgments = judgments[["question_id", "score", "judge"]]
 
-    results = judgments.join(questions, on="question_id", how="inner")
-    assert len(results) == len(judgments) == len(questions), "Some questions are missing"
+    results = judgments.merge(questions, on="question_id", how="inner")
 
+    assert len(results[(0 <= results["score"]) & (results["score"] <= 10)]) == len(results), "Some scores are not in range 0-10"
+    assert len(results) == len(results[["question_id", "judge"]].drop_duplicates()), "Some questions are judged multiple times by the same judge"
 
-    results_all = results.groupby(["judge"]).agg({"score": ["mean", "std", "count", "min", "max"]})
+    results["judge"] = results["judge"].map(tuple)
+
+    results_all = results.groupby(["judge"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
     results_all["category"] = "all"
 
-    results = results.groupby(["category", "judge"]).agg({"score": ["mean", "std", "count", "min", "max"]})
+    results = results.groupby(["category", "judge"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
     results = pd.concat([results, results_all], axis=0)
+
+    # flatten indices
+    results.columns = ['_'.join(col).strip() if isinstance(col, tuple) else col for col in results.columns.values]
 
     return results
 
@@ -108,16 +111,21 @@ def main(args: Arguments) -> int:
     print(f"OPENAI_API_VERSION={env.get('OPENAI_API_VERSION', '<not set>')}")
 
     print("", flush=True)
-    proc = Popen(gen_judgment_call, stdin=PIPE, env=env)
-    # Script asks for 'enter' to continue, simulate this input here
-    proc.communicate(input=b"\n")
-    if proc.returncode != 0:
-        raise CalledProcessError(proc.returncode, gen_judgment_script)
 
-    copy2(cwd/"data"/"mt_bench"/"model_judgment"/"gpt-4_single.jsonl", args.judgements)
+    if args.judgments.exists():
+        print(f"Judgments already exist at {args.judgments}, skipping generation")
+    else:
+        print("Generating judgments...")
+        proc = Popen(gen_judgment_call, stdin=PIPE, env=env)
+        # Script asks for 'enter' to continue, simulate this input here
+        proc.communicate(input=b"\n")
+        if proc.returncode != 0:
+            raise CalledProcessError(proc.returncode, gen_judgment_script)
+
+        copy2(cwd/"data"/"mt_bench"/"model_judgment"/"gpt-4_single.jsonl", args.judgments)
 
     results = analyze_results_single(
-        judgments=pd.read_json(args.judgements, lines=True),
+        judgments=pd.read_json(args.judgments, lines=True),
         questions=pd.read_json(cwd/"data"/"mt_bench"/"question.jsonl", lines=True)
     )
 
