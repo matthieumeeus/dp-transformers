@@ -49,17 +49,28 @@ def analyze_results_single(judgments: pd.DataFrame, questions: pd.DataFrame) -> 
     assert len(set(judgments["model"])) == 1, "Multiple models in judgments"
     judgments = judgments[["question_id", "score", "judge"]]
 
+    print(f"Found {len(judgments)} judgments")
+    print(f"Found {len(questions)} questions")
+
     results = judgments.merge(questions, on="question_id", how="inner")
+    results["judge_model"], results["judge_prompt"] = zip(*results["judge"])
+    results.drop(columns=["judge"], inplace=True)
 
-    assert len(results[(0 <= results["score"]) & (results["score"] <= 10)]) == len(results), "Some scores are not in range 0-10"
-    assert len(results) == len(results[["question_id", "judge"]].drop_duplicates()), "Some questions are judged multiple times by the same judge"
+    if len(results[(0 > results["score"]) | (results["score"] > 10)]) > 0:
+        print("Some judgment scores outside of [0, 10] range:")
+        print(results[(0 > results['score']) | (results['score'] > 10)])
+        print("Ignoring these scores...")
 
-    results["judge"] = results["judge"].map(tuple)
+        results = results[(0 <= results["score"]) & (results["score"] <= 10)]
 
-    results_all = results.groupby(["judge"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
+    if len(results) != len(results[["question_id", "judge_model", "judge_prompt"]].drop_duplicates()):
+        raise ValueError(f"Duplicate judgments: {results[results.duplicated(subset=['question_id', 'judge_model', 'judge_prompt'], keep=False)]}")
+
+
+    results_all = results.groupby(["judge_model", "judge_prompt"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
     results_all["category"] = "all"
 
-    results = results.groupby(["category", "judge"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
+    results = results.groupby(["category", "judge_model", "judge_prompt"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
     results = pd.concat([results, results_all], axis=0)
 
     # flatten indices
