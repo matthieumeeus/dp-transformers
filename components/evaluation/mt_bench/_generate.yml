@@ -1,0 +1,38 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-evaluation-mt-bench-generate
+display_name: MT-Bench-Generate
+
+description: "Generate answers for MT-Bench."
+
+inputs:
+  model:
+    type: uri_folder
+    description: "Path to the model to use in HF format."
+  num_gpus_per_model:
+    type: integer
+    description: "Number of GPUs to use per model."
+    default: 1
+  num_total_gpus:
+    type: integer
+    description: "Total number of GPUs to use. Default is to use all available GPUs."
+    optional: true
+outputs:
+  answers:
+    type: uri_file
+    description: "Path to the answers file in jsonl format."
+
+code: ./
+
+command: >-
+  python generate.py \
+    --model ${{inputs.model}} \
+    --answers ${{outputs.answers}} \
+    $[[ --num_total_gpus ${{inputs.num_total_gpus}} ]] \
+    --num_gpus_per_model ${{inputs.num_gpus_per_model}}
+
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+  conda_file: ./environment.yml

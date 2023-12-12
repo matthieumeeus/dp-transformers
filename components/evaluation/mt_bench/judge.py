@@ -1,35 +1,31 @@
-import torch
-import fastchat
 import os
+import gen_judgment
 
 from shutil import copy2
 from pathlib import Path
-from subprocess import check_call, Popen, PIPE, CalledProcessError
+from subprocess import Popen, PIPE, CalledProcessError
 from pydantic_cli import run_and_exit
 from pydantic import BaseModel
 from urllib.request import urlretrieve
 from azureml.core import Run
 
-from fastchat.llm_judge import gen_model_answer, gen_judgment
+from common import get_fschat_version, MODEL_ID
 
 
 class Arguments(BaseModel):
-    model: Path
-    num_gpus_per_model: int
     num_concurrent_api_calls: int
     results: Path
     judgements: Path
     answers: Path
+    judge_model: str = "azure-gpt4"
     openai_api_base: str = None
     openai_api_key_secret_name: str = None
     openai_api_type: str = None
     openai_api_version: str = None
-    vault_uri: str = None
-    num_total_gpus: int = torch.cuda.device_count()
-
-
-def get_fschat_version() -> str:
-    return f"v{fastchat.__version__}"
+    benchmark: str = "mt_bench"
+    judge_model: str = "gpt-4"
+    baseline_model: str = "gpt-3.5-turbo"
+    mode: str = "single"
 
 
 def download_llm_judge_data(fschat_version: str, download_path: Path):
@@ -56,7 +52,7 @@ def main(args: Arguments) -> int:
     if args.openai_api_base is not None:
         print(f"Overriding OPENAI_API_BASE to {args.openai_api_base}")
         aoai_env["OPENAI_API_BASE"] = args.openai_api_base
-    if args.vault_uri is not None and args.openai_api_key_secret_name is not None:
+    if args.openai_api_key_secret_name is not None:
         kv = run.experiment.workspace.get_default_keyvault()
         print(f"Overriding OPENAI_API_KEY to key from Azure Key Vault {args.openai_api_key_secret_name}")
         aoai_env["OPENAI_API_KEY"] = kv.get_secret(args.openai_api_key_secret_name)
@@ -71,20 +67,14 @@ def main(args: Arguments) -> int:
     print(f"Found FastChat version {fschat_version}")
     download_llm_judge_data(fschat_version=fschat_version, download_path=cwd)
 
-    model_id = "model"
+    answer_dir = cwd/"data"/"mt_bench"/"model_answer"
+    answer_dir.mkdir(parents=True, exist_ok=True)
+    copy2(args.answers, answer_dir/(MODEL_ID+".jsonl"))
 
-    gen_answers_script = gen_model_answer.__file__
-    gen_answers_call = [
-        "python", gen_answers_script, "--model-path", str(args.model), "--model-id", model_id,
-        "--num-gpus-total", str(args.num_total_gpus), "--num-gpus-per-model", str(args.num_gpus_per_model)
-    ]
-    print(" ".join(gen_answers_call))
-    check_call(gen_answers_call)
-    copy2(cwd/"data"/"mt_bench"/"model_answer"/(model_id+".jsonl"), args.answers)
 
     gen_judgment_script = gen_judgment.__file__
     gen_judgment_call = [
-        "python", gen_judgment_script, "--model-list", str(model_id), "--parallel", str(args.num_concurrent_api_calls)
+        "python", gen_judgment_script, "--model-list", MODEL_ID, "--parallel", str(args.num_concurrent_api_calls), "--judge-model", args.judge_model
     ]
     print(" ".join(gen_judgment_call))
     env = os.environ.copy()
@@ -98,7 +88,7 @@ def main(args: Arguments) -> int:
     proc.communicate(input=b"\n")
     if proc.returncode != 0:
         raise CalledProcessError(proc.returncode, gen_judgment_script)
-    copy2(cwd/"data"/"mt_bench"/"model_judgement"/(model_id+".jsonl"), args.judgements)
+    copy2(cwd/"data"/"mt_bench"/"model_judgement"/(MODEL_ID+".jsonl"), args.judgements)
 
     return 0
 
@@ -109,3 +99,4 @@ def exception_handler(ex):
 
 if __name__ == "__main__":
     run_and_exit(Arguments, main, exception_handler=exception_handler)
+

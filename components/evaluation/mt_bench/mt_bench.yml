@@ -1,13 +1,12 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
-name: dp_transformers_evaluate_llm
-display_name: evaluate_llm
-description: |
-  Evaluate a large language model on a suite of benchmarks.
-  
-  Currently implemented benchmarks:
-    - MT-Bench (https://github.com/lm-sys/FastChat/blob/main/fastchat/llm_judge/README.md)
 
 type: pipeline
+
+name: dp_transformers_evaluation_mt_bench
+display_name: MT-Bench
+description: "Evaluate a large language model on a suite of benchmarks (MT-Bench)."
+
+
 inputs:
   model:
     type: uri_folder
@@ -36,16 +35,30 @@ inputs:
     type: string
     description: "Version of the OpenAI API to use."
     default: "2023-07-01-preview"
+outputs:
+  results:
+    type: uri_file
+    description: "Path to the results file."
 
 jobs:
-  mt_bench:
-    type: pipeline
-    component: ./mt_bench/mt_bench.yml
+  generate:
+    type: command
+    component: ./_generate.yml
     inputs:
       model: ${{parent.inputs.model}}
       num_gpus_per_model: ${{parent.inputs.num_gpus_per_model}}
+    outputs:
+      answers:
+        mode: "rw_mount"
+  judge:
+    type: command
+    component: ./_judge.yml
+    inputs:
+      answers: ${{parent.jobs.generate.outputs.answers}}
       num_concurrent_api_calls: ${{parent.inputs.num_concurrent_oai_api_calls}}
       openai_api_base: ${{parent.inputs.openai_api_base}}
       openai_api_type: ${{parent.inputs.openai_api_type}}
       openai_api_key_secret_name: ${{parent.inputs.openai_api_key_secret_name}}
       openai_api_version: ${{parent.inputs.openai_api_version}}
+    outputs:
+      results: ${{parent.outputs.results}}

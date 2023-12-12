@@ -1,26 +1,15 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 type: command
 
-name: dp-transformers-evaluate
-display_name: MT-Bench
+name: dp-transformers-evaluation-mt-bench-judge
+display_name: MT-Bench-Judge
 
-description: "Evaluate a language model on a dataset."
+description: "Call GPT-4 to judge answers for MT-Bench answers."
 
 inputs:
-  model:
-    type: uri_folder
-    description: "Path to the model to use in HF format."
-  num_gpus_per_model:
-    type: integer
-    description: "Number of GPUs to use per model."
-    default: 1
   num_concurrent_api_calls:
     type: integer
     description: "Number of concurrent API calls to use."
-  num_total_gpus:
-    type: integer
-    description: "Total number of GPUs to use. Default is to use all available GPUs."
-    optional: true
   openai_api_base:
     type: string
     description: "Base URL for the OpenAI API."
@@ -37,6 +26,9 @@ inputs:
     type: string
     description: "Version of the OpenAI API to use."
     optional: true
+  answers:
+    type: uri_file
+    description: "Path to the answers file."
 outputs:
   results:
     type: uri_file
@@ -44,20 +36,14 @@ outputs:
   judgements:
     type: uri_file
     description: "Path to the judgements file."
-  answers:
-    type: uri_file
-    description: "Path to the answers file."
 
 code: ./
 
 command: >-
-  python evaluate.py \
-    --model ${{inputs.model}} \
+  python judge.py \
     --results ${{outputs.results}} \
     --judgements ${{outputs.judgements}} \
-    --answers ${{outputs.answers}} \
-    --num_gpus_per_model ${{inputs.num_gpus_per_model}} \
-    $[[ --num_total_gpus ${{inputs.num_total_gpus}} ]] \
+    --answers ${{inputs.answers}} \
     $[[ --openai_api_base ${{inputs.openai_api_base}} ]] \
     $[[ --openai_api_key_secret_name ${{inputs.openai_api_key_secret_name}} ]] \
     $[[ --openai_api_type ${{inputs.openai_api_type}} ]] \
