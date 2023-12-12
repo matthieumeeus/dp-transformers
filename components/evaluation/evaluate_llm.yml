@@ -36,6 +36,10 @@ inputs:
     type: string
     description: "Version of the OpenAI API to use."
     default: "2023-07-01-preview"
+outputs:
+  results:
+    type: uri_file
+    description: "Path to the results file."
 
 jobs:
   mt_bench:
@@ -49,3 +53,5 @@ jobs:
       openai_api_type: ${{parent.inputs.openai_api_type}}
       openai_api_key_secret_name: ${{parent.inputs.openai_api_key_secret_name}}
       openai_api_version: ${{parent.inputs.openai_api_version}}
+    outputs:
+      results: ${{parent.outputs.results}}

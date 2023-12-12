@@ -15,8 +15,8 @@ from common import get_fschat_version, MODEL_ID
 
 class Arguments(BaseModel):
     num_concurrent_api_calls: int
+    judgments: Path
     results: Path
-    judgements: Path
     answers: Path
     judge_model: str = "azure-gpt4"
     openai_api_base: str = None
@@ -44,23 +44,26 @@ def download_llm_judge_data(fschat_version: str, download_path: Path):
     urlretrieve(f"https://raw.githubusercontent.com/lm-sys/FastChat/{fschat_version}/fastchat/llm_judge/data/mt_bench/reference_answer/gpt-4.jsonl", reference_answers_path/"gpt-4.jsonl") 
 
 
-def display_result_single(input_file: Path):
-    print(f"Input file: {input_file}")
-    df_all = pd.read_json(input_file, lines=True)
-    df = df_all[["model", "score", "turn"]]
-    df = df[df["score"] != -1]
+def analyze_results_single(judgments: pd.DataFrame, questions: pd.DataFrame) -> pd.DataFrame:
+    assert set(judgments["score"]).issubset(range(0, 10)), "Some scores are not in range 0-10"
 
-    print("\n########## First turn ##########")
-    df_1 = df[df["turn"] == 1].groupby(["model", "turn"]).mean()
-    print(df_1.sort_values(by="score", ascending=False))
+    questions = questions[["question_id", "category"]]
 
-    print("\n########## Second turn ##########")
-    df_2 = df[df["turn"] == 2].groupby(["model", "turn"]).mean()
-    print(df_2.sort_values(by="score", ascending=False))
+    assert len(set(judgments["model"])) == 1, "Multiple models in judgments"
+    judgments = judgments[["question_id", "score", "judge"]]
 
-    print("\n########## Average ##########")
-    df_3 = df[["model", "score"]].groupby(["model"]).mean()
-    print(df_3.sort_values(by="score", ascending=False))
+    results = judgments.join(questions, on="question_id", how="inner")
+    assert len(results) == len(judgments) == len(questions), "Some questions are missing"
+
+
+    results_all = results.groupby(["judge"]).agg({"score": ["mean", "std", "count", "min", "max"]})
+    results_all["category"] = "all"
+
+    results = results.groupby(["category", "judge"]).agg({"score": ["mean", "std", "count", "min", "max"]})
+    results = pd.concat([results, results_all], axis=0)
+
+    return results
+
 
 
 def main(args: Arguments) -> int:
@@ -113,7 +116,14 @@ def main(args: Arguments) -> int:
 
     copy2(cwd/"data"/"mt_bench"/"model_judgment"/"gpt-4_single.jsonl", args.judgements)
 
-    display_result_single(args.judgements)
+    results = analyze_results_single(
+        judgments=pd.read_json(args.judgements, lines=True),
+        questions=pd.read_json(cwd/"data"/"mt_bench"/"question.jsonl", lines=True)
+    )
+
+    run.log_table("results", results.to_dict(orient="list"))
+
+    results.to_json(args.results, orient="records", lines=True)
 
     return 0
 

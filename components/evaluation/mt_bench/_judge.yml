@@ -30,19 +30,20 @@ inputs:
     type: uri_file
     description: "Path to the answers file."
 outputs:
+  judgments:
+    type: uri_file
+    description: "Path to the judgments file."
   results:
     type: uri_file
     description: "Path to the results file."
-  judgements:
-    type: uri_file
-    description: "Path to the judgements file."
 
 code: ./
 
 command: >-
   python judge.py \
     --results ${{outputs.results}} \
-    --judgements ${{outputs.judgements}} \
+    --judgments ${{outputs.judgments}} \
+    --results ${{outputs.results}} \
     --answers ${{inputs.answers}} \
     $[[ --openai_api_base ${{inputs.openai_api_base}} ]] \
     $[[ --openai_api_key_secret_name ${{inputs.openai_api_key_secret_name}} ]] \

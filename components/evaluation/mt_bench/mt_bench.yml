@@ -39,6 +39,9 @@ outputs:
   results:
     type: uri_file
     description: "Path to the results file."
+  judgments:
+    type: uri_file
+    description: "Path to the judgments file."
 
 jobs:
   generate:
@@ -62,3 +65,4 @@ jobs:
       openai_api_version: ${{parent.inputs.openai_api_version}}
     outputs:
       results: ${{parent.outputs.results}}
+      judgments: ${{parent.outputs.judgments}}
