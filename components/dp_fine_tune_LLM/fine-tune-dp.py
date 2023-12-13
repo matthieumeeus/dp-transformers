@@ -1,0 +1,210 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+'''Train LLMs with DP (w/ optional parameter-efficient approach LoRA)'''
+
+import datasets
+import dp_transformers
+import transformers
+import sys
+import logging
+import torch
+import ast
+import linear
+from data_utils import MyDataset, MyChatDataset
+
+from pynvml import *
+
+from dataclasses import dataclass, field, asdict
+from typing import Optional, Union, List
+from pathlib import Path
+
+from peft import get_peft_model, LoraConfig, prepare_model_for_kbit_training
+
+def print_gpu_utilization():
+    nvmlInit()
+    handle = nvmlDeviceGetHandleByIndex(0)
+    info = nvmlDeviceGetMemoryInfo(handle)
+    print(f"GPU memory occupied: {info.used//1024**2} MB.")
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ModelArguments:
+    model_name_or_path: Union[str, Path] = field(default="gpt2", metadata={
+        "help": "Model name in HuggingFace, e.g. 'gpt2'"
+    })
+    sequence_len: int = field(default=128, metadata={
+        "help": "Maximum sequence length"
+    })
+    chat_model: bool = field(default=False, metadata={
+        "help": "Whether the model is chat model or not"
+    })
+
+
+@dataclass
+class DataArguments:
+    train_data_path: Optional[Path] = field(default=None, metadata={
+        "help": "Path to training data in jsonl format"
+    })
+
+
+@dataclass
+class LoraArguments:
+    enable_lora: bool = field(default=False, metadata={
+        "help": "Whether to enable LoRA"
+    })
+    lora_dim: int = field(default=8, metadata={
+        "help": "LoRA dimension"
+    })
+    lora_alpha: int = field(default=8, metadata={
+        "help": "LoRA alpha"
+    })
+    lora_dropout: float = field(default=0.0, metadata={
+        "help": "LoRA dropout"
+    })
+
+    target_modules: List[str] = field(
+        default_factory=list,
+        metadata={
+            "help": "List of module names or regex expression of the module names to replace with Lora."
+            "For example, ['q', 'v'] or '.*decoder.*(SelfAttention|EncDecAttention).*(q|v)$' "
+        },
+    )
+
+    def as_peft_config(self) -> LoraConfig:
+        if not self.enable_lora:
+            raise ValueError("LoRA is not enabled, cannot convert to LoRA config")
+        params = asdict(self)
+        params.pop("enable_lora")
+        params["r"] = params.pop("lora_dim")
+        params["target_modules"] = ast.literal_eval(params["target_modules"][0])
+        return LoraConfig(**params)
+
+
+@dataclass
+class Arguments:
+    train: dp_transformers.TrainingArguments
+    privacy: dp_transformers.PrivacyArguments
+    model: ModelArguments
+    lora: LoraArguments
+    data: DataArguments
+
+
+def main(args: Arguments):
+    transformers.set_seed(args.train.seed)
+
+    # Setup logging
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        datefmt="%m/%d/%Y %H:%M:%S",
+        handlers=[logging.StreamHandler(sys.stdout)],
+    )
+
+    log_level = args.train.get_process_log_level()
+    logger.setLevel(log_level)
+    datasets.utils.logging.set_verbosity(log_level)
+    transformers.utils.logging.set_verbosity(log_level)
+    transformers.utils.logging.enable_default_handler()
+    transformers.utils.logging.enable_explicit_format()
+
+    # Log on each process the small summary:
+    logger.warning(
+        f"Process rank: {args.train.local_rank}, device: {args.train.device}, n_gpu: {args.train.n_gpu}, "
+        f"distributed training: {bool(args.train.local_rank != -1)}, 16-bits training: {args.train.fp16}"
+    )
+    logger.info(f"Training/evaluation parameters {args.train}")
+    logger.info(f"Privacy parameters {args.privacy}")
+    logger.info(f"Model parameters {args.model}")
+
+    # Load tokenizer
+    tokenizer = transformers.AutoTokenizer.from_pretrained(args.model.model_name_or_path)
+    if tokenizer.pad_token_id is None:
+        tokenizer.pad_token_id = tokenizer.eos_token_id
+
+    # Load dataset
+    if args.model.chat_model:
+        logger.info(f"Loading a dataset for a chat LLM")
+        dataset = MyChatDataset(args.data.train_data_path, tokenizer, args.model.sequence_len)
+    else:
+        logger.info(f"Loading a dataset for a base LLM")
+        dataset = MyDataset(args.data.train_data_path, tokenizer, args.model.sequence_len)
+
+    # Tokenize data
+    with train_args.main_process_first(desc="tokenizing dataset"):
+        dataset.dataset = dataset.dataset.map(
+            dataset.preprocess_function, batched=True, num_proc=8, desc="tokenizing dataset", 
+            remove_columns=dataset.dataset.column_names['train']
+        )
+
+    bnb_config = transformers.BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16
+    )
+
+    # Load model
+    logger.info(f"Loading model: {args.model.model_name_or_path}")
+    model = transformers.AutoModelForCausalLM.from_pretrained(str(args.model.model_name_or_path), quantization_config=bnb_config)
+    model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=train_args.gradient_checkpointing)
+
+    if args.lora.enable_lora:
+        logger.info("Using LoRA")
+        model = get_peft_model(model=model, peft_config=args.lora.as_peft_config())
+    else:
+        logger.info("Not using LoRA")
+
+    if args.train.local_rank == 0:
+        logger.info(f"Total number of parameters of the model: {model.num_parameters(only_trainable=False)}")
+        logger.info(f"Fine-tuned number of parameters of the model: {model.num_parameters(only_trainable=True)}")
+
+    trainer = dp_transformers.dp_utils.OpacusDPTrainer(
+        args=args.train,
+        model=model,
+        train_dataset=dataset.dataset['train'],
+        tokenizer=tokenizer,
+        privacy_args=privacy_args,
+    )
+
+    try:
+        # A workaround to avoid the following error:
+        # AttributeError: 'GradSampleModule' object has no attribute 'gradient_checkpointing_enable'
+        # inside Trainer _inner_training_loop. Already done by prepare_model_for_kbit_training
+        trainer.args.gradient_checkpointing = False
+        result = trainer.train()
+    finally:
+        eps_prv = trainer.get_prv_epsilon()
+        eps_rdp = trainer.get_rdp_epsilon()
+        trainer.log({
+            "final_epsilon_prv": eps_prv,
+            "final_epsilon_rdp": eps_rdp
+        })
+
+    def print_summary(result):
+        print(f"Time: {result.metrics['train_runtime']:.2f}")
+        print(f"Samples/second: {result.metrics['train_samples_per_second']:.2f}")
+        print_gpu_utilization()
+
+    print_summary(result)
+
+    # Unwrap and save the model    
+    if hasattr(trainer.model._module, "config"):
+        # The following is for GradSampleModule wrapping
+        trainer.model = trainer.model._module
+    elif hasattr(trainer.model._module.module, "config"):
+        # The following is for GradSampleModule and DPDDP wrapping
+        trainer.model = trainer.model._module.module
+    else:
+        pass
+
+    trainer.save_model()
+
+
+if __name__ == "__main__":
+    arg_parser = transformers.HfArgumentParser(
+        (dp_transformers.TrainingArguments, dp_transformers.PrivacyArguments, ModelArguments, LoraArguments, DataArguments)
+    )
+    train_args, privacy_args, model_args, lora_args, data_args = arg_parser.parse_args_into_dataclasses()
+    main(Arguments(train=train_args, privacy=privacy_args, model=model_args, lora=lora_args, data=data_args))

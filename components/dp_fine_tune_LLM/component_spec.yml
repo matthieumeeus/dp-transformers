@@ -1,0 +1,155 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp_fine_tune_llm_w_qlora
+display_name: DP fine-tune LLM with QLoRA
+version: 2
+
+description: "Fine-tune an LLM (e.g. Mistral 7B) with QLoRA and DP."
+
+inputs:
+  nproc_per_node:
+    type: integer
+    description: "Number of processes per node. Usually this should be the number of GPUs per node"
+  model_name:
+    type: string
+    description: "Name of the HF model to use. Mutually exclusive with the option 'model_path'"
+    optional: true
+  model_path:
+    type: uri_folder
+    description: "Path to the model to use in HF format. Mutually exclusive with the option 'model_name'"
+    optional: true
+  train_data_path:
+    type: uri_file
+    description: "Path to the training data in jsonl format"
+  sequence_len:
+    type: integer
+    description: "Maximum token sequence length."
+  chat_model:
+    type: boolean
+    description: "Whether the model is chat model or not."
+  per_device_train_batch_size:
+    type: integer
+    description: "Batch size per device for training."
+  gradient_accumulation_steps:
+    type: integer
+    description: "Number of gradient accumulation steps."
+  evaluation_strategy:
+    type: string
+    description: "Evaluation strategy."
+    default: "no"
+  save_strategy:
+    type: string
+    description: "Evaluation strategy."
+    default: "no"
+  log_level:
+    type: string
+    description: "Log level."
+    default: info
+  seed:
+    type: integer
+    description: "Random seed."
+  target_epsilon:
+    type: number
+    description: "Target epsilon which is achieved at the end of the training run."
+  target_delta:
+    type: number
+    description: "Target delta which is achieved at the end of the training run."
+  per_sample_max_grad_norm:
+    type: number
+    description: "Max norm of per-sample gradients."
+  weight_decay:
+    type: number
+    description: "Weight decay."
+    default: 0.01
+  remove_unused_columns:
+    type: boolean
+    description: "Remove unused columns before passing them to the model."
+    default: false
+  num_train_epochs:
+    type: integer
+    description: "Number of training epochs."
+  logging_steps:
+    type: integer
+    description: "Log every x steps."
+    default: 5
+  max_grad_norm:
+    type: number
+    description: "Max batch gradient norm."
+    default: 0
+  lr_scheduler_type:
+    type: string
+    description: "Learning rate scheduler type."
+    default: constant
+  learning_rate:
+    type: number
+    description: "Learning rate."
+  dataloader_num_workers:
+    type: integer
+    description: "Number of workers for data loader."
+    default: 2
+  lora_dim:
+    type: integer
+    description: "LoRA dimension. (For more details see `r` in https://huggingface.co/docs/peft/main/en/package_reference/tuners#peft.LoraConfig)"
+    default: 4
+  lora_alpha:
+    type: integer
+    description: "LoRA alpha. (For more details see `lora_alpha` in https://huggingface.co/docs/peft/main/en/package_reference/tuners#peft.LoraConfig)"
+    default: 32
+  lora_dropout:
+    type: number
+    description: "LoRA dropout. (For more details see `lora_dropout` in https://huggingface.co/docs/peft/main/en/package_reference/tuners#peft.LoraConfig)"
+    default: 0.0
+  target_modules:
+    type: string
+    description: "Target modules to apply LoRA to."
+    default: "['q_proj', 'v_proj']"
+outputs:
+  output_dir:
+    type: uri_folder
+    description: Output directory
+  
+code: ./
+additional_includes:
+  - "../../setup.py"
+  - "../../src"
+  - "../../README.md"
+
+
+command: >-
+  python -m pip install -e . && python -m torch.distributed.run --nproc_per_node ${{inputs.nproc_per_node}} fine-tune-dp.py \
+    --output_dir ${{outputs.output_dir}} \
+    $[[ --model_name ${{inputs.model_name}} ]] \
+    $[[ --model_name ${{inputs.model_path}} ]] \
+    --train_data_path ${{inputs.train_data_path}} \
+    --sequence_len ${{inputs.sequence_len}} \
+    --chat_model ${{inputs.chat_model}} \
+    --per_device_train_batch_size ${{inputs.per_device_train_batch_size}} \
+    --gradient_accumulation_steps ${{inputs.gradient_accumulation_steps}} \
+    --evaluation_strategy ${{inputs.evaluation_strategy}} \
+    --save_strategy ${{inputs.save_strategy}} \
+    --log_level ${{inputs.log_level}} \
+    --seed ${{inputs.seed}} \
+    --target_epsilon ${{inputs.target_epsilon}} \
+    --target_delta ${{inputs.target_delta}} \
+    --per_sample_max_grad_norm ${{inputs.per_sample_max_grad_norm}} \
+    --weight_decay ${{inputs.weight_decay}} \
+    --remove_unused_columns ${{inputs.remove_unused_columns}} \
+    --num_train_epochs ${{inputs.num_train_epochs}} \
+    --logging_steps ${{inputs.logging_steps}} \
+    --max_grad_norm ${{inputs.max_grad_norm}} \
+    --lr_scheduler_type ${{inputs.lr_scheduler_type}} \
+    --learning_rate ${{inputs.learning_rate}} \
+    --disable_tqdm True \
+    --dataloader_num_workers ${{inputs.dataloader_num_workers}} \
+    --enable_lora \
+    --lora_dim ${{inputs.lora_dim}} \
+    --lora_alpha ${{inputs.lora_alpha}} \
+    --lora_dropout ${{inputs.lora_dropout}} \
+    --target_modules ${{inputs.target_modules}} \
+    --bf16 \
+    --gradient_checkpointing
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
+  conda_file: ./environment.yml
