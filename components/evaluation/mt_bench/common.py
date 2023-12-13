@@ -1,9 +1,6 @@
 import fastchat
 
 
-MODEL_ID = "model"
-
-
 def get_fschat_version() -> str:
     return f"v{fastchat.__version__}"
 

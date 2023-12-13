@@ -11,6 +11,9 @@ inputs:
   model:
     type: uri_folder
     description: "Path to the model to use in HF format."
+  model_id:
+    type: string
+    description: "ID of the model to use. This will be used by FastChat to load the appropriate conversation template. For details see: https://github.com/lm-sys/FastChat/blob/main/docs/model_support.md#how-to-support-a-new-model"
   num_gpus_per_model:
     type: integer
     description: "Number of GPUs to use per model."
@@ -48,6 +51,7 @@ jobs:
     type: command
     component: ./_generate.yml
     inputs:
+      model_id: ${{parent.inputs.model_id}}
       model: ${{parent.inputs.model}}
       num_gpus_per_model: ${{parent.inputs.num_gpus_per_model}}
     outputs:
@@ -57,6 +61,7 @@ jobs:
     type: command
     component: ./_judge.yml
     inputs:
+      model_id: ${{parent.inputs.model_id}}
       answers: ${{parent.jobs.generate.outputs.answers}}
       num_concurrent_api_calls: ${{parent.inputs.num_concurrent_oai_api_calls}}
       openai_api_base: ${{parent.inputs.openai_api_base}}

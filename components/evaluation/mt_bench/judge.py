@@ -10,11 +10,12 @@ from pydantic import BaseModel
 from urllib.request import urlretrieve
 from azureml.core import Run
 
-from common import get_fschat_version, MODEL_ID
+from common import get_fschat_version
 
 
 class Arguments(BaseModel):
     num_concurrent_api_calls: int
+    model_id: str
     judgments: Path
     results: Path
     answers: Path
@@ -116,12 +117,12 @@ def main(args: Arguments) -> int:
 
     answer_dir = cwd/"data"/"mt_bench"/"model_answer"
     answer_dir.mkdir(parents=True, exist_ok=True)
-    copy2(args.answers, answer_dir/(MODEL_ID+".jsonl"))
+    copy2(args.answers, answer_dir/(args.model_id+".jsonl"))
 
 
     gen_judgment_script = gen_judgment.__file__
     gen_judgment_call = [
-        "python", gen_judgment_script, "--model-list", MODEL_ID, "--parallel", str(args.num_concurrent_api_calls), "--judge-model", args.judge_model
+        "python", gen_judgment_script, "--model-list", args.model_id, "--parallel", str(args.num_concurrent_api_calls), "--judge-model", args.judge_model
     ]
     print(" ".join(gen_judgment_call))
     env = os.environ.copy()

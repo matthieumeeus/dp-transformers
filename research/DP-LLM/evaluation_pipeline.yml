@@ -6,13 +6,15 @@ settings:
   default_compute: azureml:ND96asrv4
 
 inputs:
-  base_model:
+  model:
     type: uri_folder
     path: azureml:zephyr-7b-beta:1
+  model_id: "zephyr"
 
 jobs:
   evaluation:
     type: pipeline
     component: ../../components/evaluation/evaluate_llm.yml
     inputs:
-      model: ${{parent.inputs.base_model}}
+      model: ${{parent.inputs.model}}
+      model_id: ${{parent.inputs.model_id}}

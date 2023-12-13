@@ -10,6 +10,9 @@ inputs:
   num_concurrent_api_calls:
     type: integer
     description: "Number of concurrent API calls to use."
+  model_id:
+    type: string
+    description: "ID of the model to use. This will be used by FastChat to load the appropriate conversation template. For details see: https://github.com/lm-sys/FastChat/blob/main/docs/model_support.md#how-to-support-a-new-model"
   openai_api_base:
     type: string
     description: "Base URL for the OpenAI API."

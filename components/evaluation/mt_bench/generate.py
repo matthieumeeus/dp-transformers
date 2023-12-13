@@ -8,11 +8,12 @@ from pydantic import BaseModel
 from urllib.request import urlretrieve
 from fastchat.llm_judge import gen_model_answer
 
-from common import get_fschat_version, MODEL_ID
+from common import get_fschat_version 
 
 
 class Arguments(BaseModel):
     model: Path
+    model_id: str
     num_gpus_per_model: int
     answers: Path
     num_total_gpus: int = torch.cuda.device_count()
@@ -33,12 +34,12 @@ def main(args: Arguments) -> int:
 
     gen_answers_script = gen_model_answer.__file__
     gen_answers_call = [
-        "python", gen_answers_script, "--model-path", str(args.model), "--model-id", MODEL_ID,
+        "python", gen_answers_script, "--model-path", str(args.model), "--model-id", args.model_id,
         "--num-gpus-total", str(args.num_total_gpus), "--num-gpus-per-model", str(args.num_gpus_per_model)
     ]
     print(" ".join(gen_answers_call))
     check_call(gen_answers_call)
-    copy2(cwd/"data"/"mt_bench"/"model_answer"/(MODEL_ID+".jsonl"), args.answers)
+    copy2(cwd/"data"/"mt_bench"/"model_answer"/(args.model_id + ".jsonl"), args.answers)
 
     return 0
 
