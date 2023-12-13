@@ -48,6 +48,7 @@ command: >-
     --judgments ${{outputs.judgments}} \
     --results ${{outputs.results}} \
     --answers ${{inputs.answers}} \
+    --model_id ${{inputs.model_id}} \
     $[[ --openai_api_base ${{inputs.openai_api_base}} ]] \
     $[[ --openai_api_key_secret_name ${{inputs.openai_api_key_secret_name}} ]] \
     $[[ --openai_api_type ${{inputs.openai_api_type}} ]] \

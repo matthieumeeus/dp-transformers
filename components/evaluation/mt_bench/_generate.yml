@@ -31,6 +31,7 @@ code: ./
 command: >-
   python generate.py \
     --model ${{inputs.model}} \
+    --model_id ${{inputs.model_id}} \
     --answers ${{outputs.answers}} \
     $[[ --num_total_gpus ${{inputs.num_total_gpus}} ]] \
     --num_gpus_per_model ${{inputs.num_gpus_per_model}}
