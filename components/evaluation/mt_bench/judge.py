@@ -44,17 +44,18 @@ def download_llm_judge_data(fschat_version: str, download_path: Path):
 
 
 def analyze_results_single(judgments: pd.DataFrame, questions: pd.DataFrame) -> pd.DataFrame:
+    print(judgments.head())
+    print(questions.head())
+
     questions = questions[["question_id", "category"]]
 
     assert len(set(judgments["model"])) == 1, "Multiple models in judgments"
-    judgments = judgments[["question_id", "score", "judge"]]
+    judgments = judgments[["question_id", "score", "turn"]]
 
     print(f"Found {len(judgments)} judgments")
     print(f"Found {len(questions)} questions")
 
     results = judgments.merge(questions, on="question_id", how="inner")
-    results["judge_model"], results["judge_prompt"] = zip(*results["judge"])
-    results.drop(columns=["judge"], inplace=True)
 
     if len(results[(0 > results["score"]) | (results["score"] > 10)]) > 0:
         print("Some judgment scores outside of [0, 10] range:")
@@ -63,21 +64,30 @@ def analyze_results_single(judgments: pd.DataFrame, questions: pd.DataFrame) -> 
 
         results = results[(0 <= results["score"]) & (results["score"] <= 10)]
 
-    if len(results) != len(results[["question_id", "judge_model", "judge_prompt"]].drop_duplicates()):
-        raise ValueError(f"Duplicate judgments: {results[results.duplicated(subset=['question_id', 'judge_model', 'judge_prompt'], keep=False)]}")
+    if len(results) != len(results[["question_id", "turn"]].drop_duplicates()):
+        raise ValueError(f"Duplicate judgments: {results[results.duplicated(subset=['question_id', 'turn'], keep=False)]}")
 
 
-    results_all = results.groupby(["judge_model", "judge_prompt"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
-    results_all["category"] = "all"
+    results_all_cats = results.groupby(["turn"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
+    results_all_cats["category"] = "all"
 
-    results = results.groupby(["category", "judge_model", "judge_prompt"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
-    results = pd.concat([results, results_all], axis=0)
+    results_all_cats_all_turns = results.agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
+    results_all_cats_all_turns = pd.DataFrame(
+        data=[results_all_cats_all_turns["score"].values], columns=pd.MultiIndex.from_tuples(("score", a) for a in results_all_cats_all_turns["index"])
+    )
+    results_all_cats_all_turns["turn"] = "all"
+    results_all_cats_all_turns["category"] = "all"
 
-    # flatten indices
-    results.columns = ['_'.join(col).strip() if isinstance(col, tuple) else col for col in results.columns.values]
+    results_all_turns = results.groupby(["category"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
+    results_all_turns["turn"] = "all"
+
+    results = results.groupby(["category", "turn"]).agg({"score": ["mean", "std", "count", "min", "max"]}).reset_index()
+
+    results = pd.concat([results, results_all_cats, results_all_cats_all_turns, results_all_turns], ignore_index=True, axis=0)
+    results.columns = ['_'.join(filter(None, col)).strip() for col in results.columns.values]
+    results["score_count"] = results["score_count"].astype(int)
 
     return results
-
 
 
 def main(args: Arguments) -> int:
