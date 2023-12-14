@@ -68,15 +68,16 @@ def main_preprocess_function_chat(examples, tokenizer, sequence_len):
     model_inputs["labels"] = copy.deepcopy(examples["chat"])
 
     # Pad the samples with sequence_len and trim if longer than sequence_len
+    # Also add EOS token at the end
     # NOTE THAT IF CONTEXT IS LONGER THAN SEQUENCE_LEN, THERE WILL BE NOTHING TO PREDICT, LABEL IS ALL -100
     for i in range(batch_size):
         sample_input_ids = model_inputs["input_ids"][i]
         label_input_ids = model_inputs["labels"][i]
-        model_inputs["input_ids"][i] = [tokenizer.pad_token_id] * (sequence_len - len(sample_input_ids)) \
-                                        + sample_input_ids
-        model_inputs["attention_mask"][i] = [0] * (sequence_len - len(sample_input_ids)) \
-                                            + model_inputs["attention_mask"][i]
-        model_inputs["labels"][i] = [-100] * (sequence_len - len(sample_input_ids)) + label_input_ids
+        model_inputs["input_ids"][i] = [tokenizer.pad_token_id] * (sequence_len - len(sample_input_ids) - 1) \
+                                        + sample_input_ids + [tokenizer.eos_token_id]
+        model_inputs["attention_mask"][i] = [0] * (sequence_len - len(sample_input_ids) - 1) \
+                                            + model_inputs["attention_mask"][i] + [1]
+        model_inputs["labels"][i] = [-100] * (sequence_len - len(sample_input_ids) - 1) + label_input_ids + [tokenizer.eos_token_id]
         model_inputs["input_ids"][i] = torch.tensor(model_inputs["input_ids"][i][:sequence_len])
         model_inputs["attention_mask"][i] = torch.tensor(model_inputs["attention_mask"][i][:sequence_len])
         model_inputs["labels"][i] = torch.tensor(model_inputs["labels"][i][:sequence_len])

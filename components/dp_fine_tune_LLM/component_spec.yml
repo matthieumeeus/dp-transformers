@@ -3,7 +3,7 @@ type: command
 
 name: dp_fine_tune_llm_w_qlora
 display_name: DP fine-tune LLM with QLoRA
-version: 2
+version: 3
 
 description: "Fine-tune an LLM (e.g. Mistral 7B) with QLoRA and DP."
 
