@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-'''Train LLMs without DP (w/ optional parameter-efficient approach LoRA)'''
+'''Train LLMs without DP using QLoRA'''
 
 import datasets
 import dp_transformers
@@ -37,15 +37,15 @@ class ModelArguments:
     sequence_len: int = field(default=128, metadata={
         "help": "Maximum sequence length"
     })
-    chat_model: bool = field(default=False, metadata={
-        "help": "Whether the model is chat model or not"
-    })
 
 
 @dataclass
 class DataArguments:
     train_data_path: Optional[Path] = field(default=None, metadata={
         "help": "Path to training data in jsonl format"
+    })
+    chat_format: bool = field(default=False, metadata={
+        "help": "Whether the dataset should be processed chat format or not"
     })
 
 
@@ -121,11 +121,11 @@ def main(args: Arguments):
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
     # Load dataset
-    if args.model.chat_model:
-        logger.info(f"Loading a dataset for a chat LLM")
+    if args.data.chat_format:
+        logger.info(f"Loading a dataset in a chat format (e.g. system-user-assistant)")
         dataset = MyChatDataset(args.data.train_data_path, tokenizer, args.model.sequence_len)
     else:
-        logger.info(f"Loading a dataset for a base LLM")
+        logger.info(f"Loading a dataset in a plain format (i.e. prompt-completion)")
         dataset = MyDataset(args.data.train_data_path, tokenizer, args.model.sequence_len)
 
     # Tokenize data

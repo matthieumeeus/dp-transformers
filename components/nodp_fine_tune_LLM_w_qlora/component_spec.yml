@@ -1,11 +1,11 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 type: command
 
-name: dp_fine_tune_llm_w_qlora
-display_name: DP fine-tune LLM with QLoRA
-version: 4
+name: nodp_fine_tune_llm_w_qlora
+display_name: Fine-tune LLM with QLoRA
+version: 6
 
-description: "Fine-tune an LLM (e.g. Mistral 7B) with QLoRA and DP."
+description: "Fine-tune an LLM (e.g. Mistral 7B) with QLoRA (no DP)."
 
 inputs:
   nproc_per_node:
@@ -25,9 +25,9 @@ inputs:
   sequence_len:
     type: integer
     description: "Maximum token sequence length."
-  chat_model:
+  chat_format:
     type: boolean
-    description: "Whether the model is chat model or not."
+    description: "Whether the dataset should be processed chat format or not."
   per_device_train_batch_size:
     type: integer
     description: "Batch size per device for training."
@@ -49,15 +49,6 @@ inputs:
   seed:
     type: integer
     description: "Random seed."
-  target_epsilon:
-    type: number
-    description: "Target epsilon which is achieved at the end of the training run."
-  target_delta:
-    type: number
-    description: "Target delta which is achieved at the end of the training run."
-  per_sample_max_grad_norm:
-    type: number
-    description: "Max norm of per-sample gradients."
   weight_decay:
     type: number
     description: "Weight decay."
@@ -108,7 +99,7 @@ outputs:
   output_dir:
     type: uri_folder
     description: Output directory
-  
+
 code: ./
 additional_includes:
   - "../../setup.py"
@@ -117,22 +108,19 @@ additional_includes:
 
 
 command: >-
-  python -m pip install -e . && python -m torch.distributed.run --nproc_per_node ${{inputs.nproc_per_node}} fine-tune-dp.py \
+  python -m pip install -e . && python -m torch.distributed.run --nproc_per_node ${{inputs.nproc_per_node}} fine-tune-nodp.py \
     --output_dir ${{outputs.output_dir}} \
     $[[ --model_name ${{inputs.model_name}} ]] \
     $[[ --model_name ${{inputs.model_path}} ]] \
     --train_data_path ${{inputs.train_data_path}} \
     --sequence_len ${{inputs.sequence_len}} \
-    --chat_model ${{inputs.chat_model}} \
+    --chat_format ${{inputs.chat_format}} \
     --per_device_train_batch_size ${{inputs.per_device_train_batch_size}} \
     --gradient_accumulation_steps ${{inputs.gradient_accumulation_steps}} \
     --evaluation_strategy ${{inputs.evaluation_strategy}} \
     --save_strategy ${{inputs.save_strategy}} \
     --log_level ${{inputs.log_level}} \
     --seed ${{inputs.seed}} \
-    --target_epsilon ${{inputs.target_epsilon}} \
-    --target_delta ${{inputs.target_delta}} \
-    --per_sample_max_grad_norm ${{inputs.per_sample_max_grad_norm}} \
     --weight_decay ${{inputs.weight_decay}} \
     --remove_unused_columns ${{inputs.remove_unused_columns}} \
     --num_train_epochs ${{inputs.num_train_epochs}} \
@@ -147,6 +135,7 @@ command: >-
     --lora_alpha ${{inputs.lora_alpha}} \
     --lora_dropout ${{inputs.lora_dropout}} \
     --target_modules ${{inputs.target_modules}} \
+    --ddp_find_unused_parameters False \
     --bf16 \
     --gradient_checkpointing
 
