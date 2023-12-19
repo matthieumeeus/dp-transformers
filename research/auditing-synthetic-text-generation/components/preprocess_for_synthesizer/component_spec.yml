@@ -1,0 +1,27 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-preprocess-for-synthesizer
+display_name: preprocess for synthesizer
+
+description: "Preprocesses data for the synthesizer."
+
+inputs:
+  dataset:
+    type: uri_folder
+    description: "Path to the dataset in Huggingface dataset format."
+outputs:
+  train_data:
+    type: uri_folder
+    description: "Path to the preprocessed training data in jsonl format."
+
+code: ./
+
+command: >-
+  python preprocess.py \
+    --dataset ${{inputs.dataset}} \
+    --train_data ${{outputs.train_data}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml
