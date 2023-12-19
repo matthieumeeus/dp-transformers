@@ -10,6 +10,20 @@ inputs:
   dataset:
     type: uri_folder
     description: "Path to the dataset in Huggingface dataset format."
+  templated_prompt:
+    type: string
+    description: |
+      A templated prompt for the synthesizer. The template should contain a
+      single placeholder for the label, e.g. "A sentence with a {label}
+      sentiment: ". 
+      The label should be formatted as '{label_column}'.
+  label_column:
+    type: string
+    description: "The name of the label column in the dataset."
+  text_column:
+    type: string
+    description: "The name of the text column in the dataset."
+
 outputs:
   train_data:
     type: uri_file
@@ -20,7 +34,11 @@ code: ./
 command: >-
   python preprocess.py \
     --dataset ${{inputs.dataset}} \
-    --train_data ${{outputs.train_data}}
+    --train_data ${{outputs.train_data}} \
+    --templated_prompt "${{inputs.templated_prompt}}" \
+    --label_name ${{inputs.label_column}} \
+    --text_name ${{inputs.text_column}}
+
 
 environment:
   image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04

@@ -17,6 +17,9 @@ jobs:
     component: ./components/preprocess_for_synthesizer/component_spec.yml
     inputs:
       dataset: "azureml:SST2-train:3"
+      templated_prompt: "A sentence with a {label} sentiment: "
+      label_column: "label"
+      text_column: "sentence"
     outputs:
       train_data:
         mode: "rw_mount"
