@@ -1,0 +1,38 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: merge_peft_weights_and_save
+display_name: Merge peft weights and save
+version: 4
+
+description: "Load and merge peft weights to a base model and save the merged model."
+
+inputs:
+  model_name:
+    type: string
+    description: "Name of the HF model to use. Mutually exclusive with the option 'model_path'"
+    optional: true
+  model_path:
+    type: uri_folder
+    description: "Path to the model to use in HF format. Mutually exclusive with the option 'model_name'"
+    optional: true
+  peft_weights_path:
+    type: uri_folder
+    description: "Path to the lora weights to use in HF format."
+outputs:
+  output_dir:
+    type: uri_folder
+    description: Output directory
+
+code: ./
+
+command: >-
+  python merge_peft_weights_and_save.py \
+    --output_dir ${{outputs.output_dir}} \
+    $[[ --model_name ${{inputs.model_name}} ]] \
+    $[[ --model_name ${{inputs.model_path}} ]] \
+    --peft_weights_path ${{inputs.peft_weights_path}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
+  conda_file: ./environment.yml
