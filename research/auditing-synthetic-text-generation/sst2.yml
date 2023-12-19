@@ -25,7 +25,7 @@ jobs:
         mode: "rw_mount"
   fine_tune:
     type: command
-    component: azureml:dp_fine_tune_llm_w_qlora:5
+    component: ../../components/dp_fine_tune_LLM_w_qlora/component_spec.yml
     inputs:
       train_data_path: ${{parent.jobs.preprocess.outputs.train_data}}
       model_path: ${{parent.inputs.model_path}}
@@ -45,7 +45,7 @@ jobs:
         mode: "rw_mount"
   generate:
     type: command
-    component: azureml:llm_synthetic_data_generation:2
+    component: ../../components/llm-synthetic-data-generation/component_spec.yml
     inputs:
       lora_path: ${{parent.jobs.fine_tune.outputs.output_dir}}
       model_path: ${{parent.inputs.model_path}}
