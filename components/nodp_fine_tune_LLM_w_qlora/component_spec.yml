@@ -3,7 +3,7 @@ type: command
 
 name: nodp_fine_tune_llm_w_qlora
 display_name: Fine-tune LLM with QLoRA
-version: 6
+version: 7
 
 description: "Fine-tune an LLM (e.g. Mistral 7B) with QLoRA (no DP)."
 
@@ -134,7 +134,7 @@ command: >-
     --lora_dim ${{inputs.lora_dim}} \
     --lora_alpha ${{inputs.lora_alpha}} \
     --lora_dropout ${{inputs.lora_dropout}} \
-    --target_modules ${{inputs.target_modules}} \
+    --target_modules "${{inputs.target_modules}}" \
     --ddp_find_unused_parameters False \
     --bf16 \
     --gradient_checkpointing
