@@ -10,4 +10,5 @@ dependencies:
     - mldesigner
     - numpy
     - pandas
+    - pydantic_cli
     - tqdm-loggable
