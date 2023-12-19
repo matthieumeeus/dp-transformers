@@ -1,0 +1,20 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: evaluate
+
+settings:
+  default_compute: azureml:ND96asrv4
+
+inputs:
+  model:
+    type: uri_folder
+    path: azureml:zephyr-7b-beta:1
+  model_id: "zephyr"
+
+jobs:
+  evaluation:
+    type: pipeline
+    component: ../../components/evaluation/evaluate_llm.yml
+    inputs:
+      model: ${{parent.inputs.model}}
+      model_id: ${{parent.inputs.model_id}}
