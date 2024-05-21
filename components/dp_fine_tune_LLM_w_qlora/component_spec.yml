@@ -104,6 +104,14 @@ inputs:
     type: string
     description: "Target modules to apply LoRA to."
     default: "['q_proj', 'v_proj']"
+  fp16:
+    type: boolean
+    description: "whetehr to apply fp16 floating point precision"  
+    default: false
+  bf16:
+    type: boolean
+    description: "whetehr to apply bf16 floating point precision"  
+    default: true
 outputs:
   output_dir:
     type: uri_folder
@@ -147,7 +155,8 @@ command: >-
     --lora_alpha ${{inputs.lora_alpha}} \
     --lora_dropout ${{inputs.lora_dropout}} \
     --target_modules "${{inputs.target_modules}}" \
-    --bf16 \
+    --fp16 ${{inputs.fp16}} \
+    --bf16 ${{inputs.bf16}} \
     --gradient_checkpointing
 
 environment:
