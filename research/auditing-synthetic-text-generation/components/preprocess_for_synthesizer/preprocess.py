@@ -46,7 +46,6 @@ def convert_classification_record_to_synthesizer_record(
 
 def main(args: Arguments) -> int:
     dataset = load_from_disk(args.dataset, keep_in_memory=True)
-
     dataset = dataset.map(
         partial(
             convert_classification_record_to_synthesizer_record,

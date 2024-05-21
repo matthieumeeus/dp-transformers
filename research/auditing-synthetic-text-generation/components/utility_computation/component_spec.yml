@@ -1,10 +1,10 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 type: command
 
-name: compute-utility-real
-display_name: compute utility for real data
+name: compute-utility
+display_name: compute utility
 
-description: "Compute utility for real data."
+description: "Compute utility"
 
 inputs:
   nproc_per_node:
@@ -15,6 +15,9 @@ inputs:
     description: "Name of the HF model to use for sequence classification. Mutually exclusive with the option 'model_path'"
     default: "roberta-base"
     optional: true
+  is_synthetic:
+    type: boolean
+    description: "Whether the training data is synthetic or not."
   train_data_path:  
     type: uri_folder
     description: "Path to the eval dataset in Huggingface dataset format."
@@ -109,6 +112,7 @@ command: >-
     --train_data_path ${{inputs.train_data_path}} \
     --train_label_name ${{inputs.train_label_name}} \
     --train_text_name ${{inputs.train_text_name}} \
+    --is_synthetic ${{inputs.is_synthetic}} \
     --eval_data_path ${{inputs.eval_data_path}} \
     --eval_label_name ${{inputs.eval_label_name}} \
     --eval_text_name ${{inputs.eval_text_name}} \

@@ -6,6 +6,7 @@ import transformers
 import datasets
 import dp_transformers
 import sys
+import os
 import logging
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
 import numpy as np
@@ -26,6 +27,12 @@ class RobertaModelArguments:
 
 @dataclass
 class DataArguments:
+    is_synthetic:  bool = field(metadata={
+        "help": "Whether the training data is synthetic or not"
+    })
+    templated_prompt: str = field(default="This is a {{label}} sentence", metadata={
+        "help": "Prompt with a placeholder for the label"
+    })
     train_data_path:  Optional[Path] = field(default=None, metadata={
         "help": "Path to training data in csv format"
     })
@@ -51,7 +58,33 @@ class Arguments:
     model: RobertaModelArguments
     data: DataArguments
 
-def prep_data(args, dataset, text_name, label_name, tokenizer, label_to_id = None):
+def load_synthetic_data(data_path: str,
+                        og_label_name: str, new_label_name: str,
+                        og_text_name: str, new_text_name: str,
+                        label_str2int: dict, templated_prompt: str):
+    path_to_csvs = [file for file in os.listdir(data_path) if file.endswith('.csv')]
+    all_datasets = []
+    for path in path_to_csvs:
+        dataset = datasets.load_dataset('csv', data_files={'train':os.path.join(data_path, path)})
+        all_datasets.append(dataset['train'])
+    full_dataset = datasets.concatenate_datasets(all_datasets)
+
+    # now make the labels compatible with the eval dataset
+    prompt_to_label = {}
+    for prompt in set(full_dataset[og_label_name]):
+        for label_str in label_str2int.keys():
+            if label_str in prompt:
+                prompt_to_label[prompt] = label_str2int[label_str]
+                break
+    if len(prompt_to_label) != len(set(full_dataset[og_label_name])):
+        raise ValueError('Not all labels found in the label mapping')
+    
+    full_dataset = full_dataset.map(lambda x: {new_text_name: x[og_text_name], new_label_name: prompt_to_label[x[og_label_name]]}, 
+                                    remove_columns=[og_text_name, og_label_name])
+
+    return full_dataset
+
+def prep_data(args, dataset, text_name, label_name, tokenizer, return_mapping = False):
     
     original_col_names = dataset.column_names
     
@@ -63,19 +96,19 @@ def prep_data(args, dataset, text_name, label_name, tokenizer, label_to_id = Non
             tokenize_function, batched=True, num_proc=8, desc="tokenizing dataset",
         )
 
-    # Add labels to the tokenized dataset
-    if label_to_id is None:
-        class_label = datasets.ClassLabel(names=list(set(dataset[label_name])))
-        label_to_id = {label: id for id, label in enumerate(class_label.names)}
+    # Get the mapping if needed
+    if return_mapping:
+        # in this case, get the label mapping from the dataset (eval dataset)
+        class_labels = dataset.features[label_name]
+        label_str2int = {label: id for id, label in enumerate(class_labels.names)}
+        print(label_str2int)
+    else:
+        label_str2int = None
 
-    def add_labels(example):
-        example['label'] = label_to_id[example[label_name]]
-        return example
-    
-    tokenized_data = tokenized_data.map(add_labels, batched=False,
-                                        remove_columns=[col for col in original_col_names if col != 'label'])
+    tokenized_data = tokenized_data.remove_columns([col for col in original_col_names if col != 'label'])
     tokenized_data.set_format('torch')
-    return tokenized_data, label_to_id
+
+    return tokenized_data, label_str2int
 
 def compute_metrics(p):
     preds = p.predictions.argmax(-1)
@@ -129,18 +162,33 @@ def main(args: Arguments):
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
-    # Load dataset for now assuming it's only one csv file of generated data
-    train_data = datasets.load_from_disk(str(args.data.train_data_path), keep_in_memory=True)
+    # Load datasets
+    # start with the evaluation dataset - allowing us to get the right label mapping
     eval_data = datasets.load_from_disk(str(args.data.eval_data_path), keep_in_memory=True)
-
-    tokenized_train_data, label_to_id = prep_data(args, train_data, args.data.train_text_name, 
-                                                  args.data.train_label_name, tokenizer)
-    tokenized_eval_data, _ = prep_data(args, eval_data, args.data.eval_text_name, 
-                                       args.data.eval_label_name, tokenizer, label_to_id)
+    tokenized_eval_data, label_str2int = prep_data(args, eval_data, args.data.eval_text_name, 
+                                       args.data.eval_label_name, tokenizer, return_mapping=True)
+    
+    if args.data.is_synthetic:
+        train_data = load_synthetic_data(data_path=str(args.data.train_data_path),
+                                         og_label_name=args.data.train_label_name, new_label_name=args.data.eval_label_name,
+                                         og_text_name=args.data.train_text_name, new_text_name=args.data.eval_text_name,
+                                         label_str2int=label_str2int, templated_prompt=args.data.templated_prompt)
+        for i in range(10):
+            print(i, train_data[i])
+            print('---')
+        tokenized_train_data, _ = prep_data(args, train_data, args.data.eval_text_name, 
+                                            args.data.eval_label_name, tokenizer)
+    else:
+        train_data = datasets.load_from_disk(str(args.data.train_data_path), keep_in_memory=True)
+        for i in range(10):
+            print(i, train_data[i])
+            print('---')
+        tokenized_train_data, _ = prep_data(args, train_data, args.data.train_text_name, 
+                                            args.data.train_label_name, tokenizer)
 
     # Load the model
     model = transformers.RobertaForSequenceClassification.from_pretrained(args.model.model_name_or_path, 
-                                                                           num_labels=len(label_to_id))
+                                                                           num_labels=len(label_str2int))
     
     # Define training arguments
     trainer = transformers.Trainer(

@@ -17,11 +17,12 @@ inputs:
 jobs:
   compute_utility_real:
     type: command
-    component: ./components/utility_real/component_spec.yml
+    component: ./components/utility_computation/component_spec.yml
     inputs:
       train_data_path: ${{parent.inputs.train_data_path}}
       eval_data_path: ${{parent.inputs.eval_data_path}}
       model_name: "roberta-base"
+      is_synthetic: false
       train_label_name: "label"
       train_text_name: "sentence"
       eval_label_name: "label"
