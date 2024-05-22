@@ -45,6 +45,9 @@ class DataArguments:
     train_data_path: Optional[Path] = field(default=None, metadata={
         "help": "Path to training data in jsonl format"
     })
+    eval_data_path: Optional[Path] = field(default=None, metadata={
+        "help": "Path to evaluation data in jsonl format"
+    })
     chat_format: bool = field(default=False, metadata={
         "help": "Whether the dataset should be processed chat format or not"
     })
@@ -138,6 +141,18 @@ def main(args: Arguments):
             remove_columns=dataset.dataset.column_names['train']
         )
 
+    # do the same for the eval dataset if provided
+    if args.data.eval_data_path is not None:
+        if args.data.chat_format:
+            eval_dataset = MyChatDataset(args.data.eval_data_path, tokenizer, args.model.sequence_len)
+        else:
+            eval_dataset = MyDataset(args.data.eval_data_path, tokenizer, args.model.sequence_len)
+        with train_args.main_process_first(desc="tokenizing dataset"):
+            eval_dataset.dataset = eval_dataset.dataset.map(
+                eval_dataset.preprocess_function, batched=True, num_proc=8, desc="tokenizing dataset", 
+                remove_columns=eval_dataset.dataset.column_names['train']
+            )
+
     bnb_config = transformers.BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_use_double_quant=True,
@@ -164,6 +179,7 @@ def main(args: Arguments):
         args=args.train,
         model=model,
         train_dataset=dataset.dataset['train'],
+        eval_dataset=eval_dataset.dataset['train'] if args.data.eval_data_path is not None else None,
         tokenizer=tokenizer,
         privacy_args=privacy_args,
     )

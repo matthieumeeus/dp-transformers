@@ -196,7 +196,7 @@ def main(args: Arguments):
         model=model,
         train_dataset=tokenized_train_data,
         eval_dataset=tokenized_eval_data,
-        compute_metrics=compute_metrics,
+        #compute_metrics=compute_metrics,
     )
 
     # Train the model

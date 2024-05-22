@@ -22,6 +22,9 @@ inputs:
   train_data_path:
     type: uri_file
     description: "Path to the training data in jsonl format"
+  eval_data_path:
+    type: uri_file
+    description: "Path to the training data in jsonl format"
   sequence_len:
     type: integer
     description: "Maximum token sequence length."
@@ -38,6 +41,14 @@ inputs:
     type: string
     description: "Evaluation strategy."
     default: "no"
+  eval_steps:
+    type: integer
+    description: "Evaluation steps."
+    default: 500
+  label_names:
+    type: string
+    description: "Label names."
+    default: labels
   save_strategy:
     type: string
     description: "Evaluation strategy."
@@ -130,11 +141,14 @@ command: >-
     $[[ --model_name ${{inputs.model_name}} ]] \
     $[[ --model_name ${{inputs.model_path}} ]] \
     --train_data_path ${{inputs.train_data_path}} \
+    --eval_data_path ${{inputs.eval_data_path}} \
     --sequence_len ${{inputs.sequence_len}} \
     --chat_format ${{inputs.chat_format}} \
     --per_device_train_batch_size ${{inputs.per_device_train_batch_size}} \
     --gradient_accumulation_steps ${{inputs.gradient_accumulation_steps}} \
     --evaluation_strategy ${{inputs.evaluation_strategy}} \
+    --eval_steps ${{inputs.eval_steps}} \
+    --label_names ${{inputs.label_names}} \
     --save_strategy ${{inputs.save_strategy}} \
     --log_level ${{inputs.log_level}} \
     --seed ${{inputs.seed}} \
