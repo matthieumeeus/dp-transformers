@@ -183,6 +183,7 @@ def main(args: Arguments):
         tokenizer=tokenizer,
         privacy_args=privacy_args,
     )
+    final_evaluation_results = trainer.evaluate()
 
     try:
         # A workaround to avoid the following error:
@@ -201,6 +202,7 @@ def main(args: Arguments):
     def print_summary(result):
         print(f"Time: {result.metrics['train_runtime']:.2f}")
         print(f"Samples/second: {result.metrics['train_samples_per_second']:.2f}")
+        print("Final evaluation results:", final_evaluation_results)
         print_gpu_utilization()
 
     print_summary(result)
