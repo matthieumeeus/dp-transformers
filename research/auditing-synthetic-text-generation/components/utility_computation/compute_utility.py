@@ -173,16 +173,10 @@ def main(args: Arguments):
                                          og_label_name=args.data.train_label_name, new_label_name=args.data.eval_label_name,
                                          og_text_name=args.data.train_text_name, new_text_name=args.data.eval_text_name,
                                          label_str2int=label_str2int, templated_prompt=args.data.templated_prompt)
-        for i in range(10):
-            print(i, train_data[i])
-            print('---')
         tokenized_train_data, _ = prep_data(args, train_data, args.data.eval_text_name, 
                                             args.data.eval_label_name, tokenizer)
     else:
         train_data = datasets.load_from_disk(str(args.data.train_data_path), keep_in_memory=True)
-        for i in range(10):
-            print(i, train_data[i])
-            print('---')
         tokenized_train_data, _ = prep_data(args, train_data, args.data.train_text_name, 
                                             args.data.train_label_name, tokenizer)
 
@@ -196,7 +190,7 @@ def main(args: Arguments):
         model=model,
         train_dataset=tokenized_train_data,
         eval_dataset=tokenized_eval_data,
-        #compute_metrics=compute_metrics,
+        compute_metrics=compute_metrics,
     )
 
     # Train the model

@@ -38,12 +38,12 @@ jobs:
       train_data_path: ${{parent.jobs.preprocess.outputs.train_data}}
       eval_data_path: ${{parent.jobs.preprocess.outputs.eval_data}}
       evaluation_strategy: "steps"
-      eval_steps: 20
+      eval_steps: 50
       label_names: "labels"
       model_path: ${{parent.inputs.model_path}}
       nproc_per_node: 8
       sequence_len: 128
-      per_device_train_batch_size: 16
+      per_device_train_batch_size: 128
       seed: 239023
       chat_format: False
       target_epsilon: 8
@@ -58,15 +58,15 @@ jobs:
     search_space:
       gradient_accumulation_steps:
         type: "choice"
-        values: [8, 16, 32]
+        values: [1, 2, 4]
       learning_rate:
         type: "loguniform"
-        min_value: -6
-        max_value: -3
+        min_value: -13.82
+        max_value: -4.61
       per_sample_max_grad_norm:
         type: "loguniform"
-        min_value: -1
-        max_value: 0.3
+        min_value: -2.30
+        max_value: 0.69
     objective:
       primary_metric: "eval_loss"
       goal: "minimize"
