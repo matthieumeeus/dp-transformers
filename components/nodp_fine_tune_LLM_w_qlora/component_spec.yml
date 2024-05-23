@@ -24,7 +24,7 @@ inputs:
     description: "Path to the training data in jsonl format"
   eval_data_path:
     type: uri_file
-    description: "Path to the training data in jsonl format"
+    description: "Path to the eval data in jsonl format"
   sequence_len:
     type: integer
     description: "Maximum token sequence length."
@@ -159,8 +159,8 @@ command: >-
     --target_modules "${{inputs.target_modules}}" \
     --ddp_find_unused_parameters False \
     --fp16 ${{inputs.fp16}} \
-    --bf16 ${{inputs.bf16}} 
-
+    --bf16 ${{inputs.bf16}} \
+    --gradient_checkpointing
 environment:
   image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
   conda_file: ./environment.yml

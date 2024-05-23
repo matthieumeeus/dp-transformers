@@ -92,7 +92,6 @@ class Arguments:
     lora: LoraArguments
     data: DataArguments
 
-
 def main(args: Arguments):
     transformers.set_seed(args.train.seed)
 
@@ -177,7 +176,7 @@ def main(args: Arguments):
         model=model,
         train_dataset=dataset.dataset['train'],
         eval_dataset=eval_dataset.dataset['train'] if args.data.eval_data_path is not None else None,
-        tokenizer=tokenizer,
+        tokenizer=tokenizer
     )
 
     result = trainer.train()
