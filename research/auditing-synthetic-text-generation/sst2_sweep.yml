@@ -9,7 +9,7 @@ settings:
 inputs:
   model_path:
     type: uri_folder
-    path: "azureml:google-gemma-2b:1"
+    path: "azureml:Mistral-7B-v0point1:1"
   train_data_path:
     type: uri_folder
     path: "azureml:SST2-train:3"
@@ -38,7 +38,7 @@ jobs:
       train_data_path: ${{parent.jobs.preprocess.outputs.train_data}}
       eval_data_path: ${{parent.jobs.preprocess.outputs.eval_data}}
       evaluation_strategy: "steps"
-      eval_steps: 50
+      eval_steps: 10
       label_names: "labels"
       model_path: ${{parent.inputs.model_path}}
       nproc_per_node: 8
