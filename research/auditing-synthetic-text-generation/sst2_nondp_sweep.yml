@@ -26,7 +26,7 @@ jobs:
       eval_data_path: ${{parent.inputs.eval_data_path}}
       templated_prompt: "A sentence with a {label} sentiment: "
       label_column: "label"
-      text_column: "sentence"
+      text_column: "sentence"team
     outputs:
       train_data:
         mode: "rw_mount"
@@ -59,14 +59,13 @@ jobs:
         type: "choice"
         values: [8, 16, 32]
       learning_rate:
-        type: "loguniform"
-        min_value: -13.82
-        max_value: -6.91
+        type: "choice"
+        values: [1e-6, 4e-6, 2e-5, 6e-5, 3e-4, 1e-3]
     objective:
       primary_metric: "eval_loss"
       goal: "minimize"
     limits:
-      max_total_trials: 15
+      max_total_trials: 18
   generate:
     type: command
     component: ../../components/llm-synthetic-data-generation/component_spec.yml

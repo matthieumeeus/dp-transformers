@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-display_name: SST2
+display_name: SST2-dp-sweep
 experiment_name: auditing-synthetic-text-generation
 
 settings:
@@ -60,18 +60,16 @@ jobs:
         type: "choice"
         values: [1, 2, 4]
       learning_rate:
-        type: "loguniform"
-        min_value: -13.82
-        max_value: -4.61
+        type: "choice"
+        values: [1e-6, 6e-6, 4e-5, 3e-4, 2e-3, 1e-2]
       per_sample_max_grad_norm:
-        type: "loguniform"
-        min_value: -2.30
-        max_value: 0.69
+        type: "choice"
+        values: [1e-1, 1, 2]
     objective:
       primary_metric: "eval_loss"
       goal: "minimize"
     limits:
-      max_total_trials: 15
+      max_total_trials: 54
   generate:
     type: command
     component: ../../components/llm-synthetic-data-generation/component_spec.yml
