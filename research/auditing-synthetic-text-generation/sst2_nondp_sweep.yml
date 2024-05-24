@@ -26,7 +26,7 @@ jobs:
       eval_data_path: ${{parent.inputs.eval_data_path}}
       templated_prompt: "A sentence with a {label} sentiment: "
       label_column: "label"
-      text_column: "sentence"team
+      text_column: "sentence"
     outputs:
       train_data:
         mode: "rw_mount"

@@ -54,6 +54,7 @@ jobs:
     outputs:
       output_dir:
         mode: "rw_mount"
+    sampling_algorithm: grid
     trial: ../../components/dp_fine_tune_LLM_w_qlora/component_spec.yml
     search_space:
       gradient_accumulation_steps:
