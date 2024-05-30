@@ -81,7 +81,7 @@ def compute_str_distance_mia_score(samples, synthetic,
     return sample_scores
 
 def compute_emb_distance_mia_score(samples, synthetic, synthetic_embeddings, ks = [1, 5, 10, 25], 
-                                   emb_model_name = 'paraphrase-MiniLM-L6-v2'):
+                                   emb_model_name = 'all-mpnet-base-v2'): #'paraphrase-MiniLM-L6-v2'):
     # Load a pre-trained sentence transformer model
     model = SentenceTransformer(emb_model_name)
 
