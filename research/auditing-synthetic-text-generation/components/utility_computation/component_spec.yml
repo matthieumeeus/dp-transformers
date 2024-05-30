@@ -18,7 +18,7 @@ inputs:
   is_synthetic:
     type: boolean
     description: "Whether the training data is synthetic or not."
-  train_data_path:  
+  utility_train_data_path:  
     type: uri_folder
     description: "Path to the eval dataset in Huggingface dataset format."
   train_label_name: 
@@ -29,7 +29,7 @@ inputs:
     type: string
     description: "Name of the text column in the training dataset"
     default: "Generation"
-  eval_data_path:
+  utility_eval_data_path:
     type: uri_folder
     description: "Path to the eval dataset in Huggingface dataset format."
   eval_label_name:
@@ -95,6 +95,9 @@ inputs:
     description: "Number of workers for data loader."
     default: 2
 outputs:
+  synthetic_data_prep:
+    type: uri_file
+    description: "Path to the synthetic data preparation output."
   output_dir:
     type: uri_folder
     description: Output directory
@@ -108,12 +111,13 @@ additional_includes:
 command: >-
   python -m pip install -e . && python -m torch.distributed.run --nproc_per_node ${{inputs.nproc_per_node}} compute_utility.py \
     --output_dir ${{outputs.output_dir}} \
+    --synthetic_data_prep ${{outputs.synthetic_data_prep}} \
     $[[ --model_name ${{inputs.model_name}} ]] \
-    --train_data_path ${{inputs.train_data_path}} \
+    --utility_train_data_path ${{inputs.utility_train_data_path}} \
     --train_label_name ${{inputs.train_label_name}} \
     --train_text_name ${{inputs.train_text_name}} \
     --is_synthetic ${{inputs.is_synthetic}} \
-    --eval_data_path ${{inputs.eval_data_path}} \
+    --utility_eval_data_path ${{inputs.utility_eval_data_path}} \
     --eval_label_name ${{inputs.eval_label_name}} \
     --eval_text_name ${{inputs.eval_text_name}} \
     --sequence_len ${{inputs.sequence_len}} \

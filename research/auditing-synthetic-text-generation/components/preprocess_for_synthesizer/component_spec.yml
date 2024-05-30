@@ -28,10 +28,10 @@ inputs:
     description: "The name of the text column in the dataset."
 
 outputs:
-  train_data:
+  fine_tune_train_data:
     type: uri_file
     description: "Path to the preprocessed training data in jsonl format."
-  eval_data:
+  fine_tune_eval_data:
     type: uri_file
     description: "Path to the preprocessed eval data in jsonl format."
 
@@ -41,8 +41,8 @@ command: >-
   python preprocess.py \
     --train_data_path ${{inputs.train_data_path}} \
     --eval_data_path ${{inputs.eval_data_path}} \
-    --train_data ${{outputs.train_data}} \
-    --eval_data ${{outputs.eval_data}} \
+    --fine_tune_train_data ${{outputs.fine_tune_train_data}} \
+    --fine_tune_eval_data ${{outputs.fine_tune_eval_data}} \
     --templated_prompt "${{inputs.templated_prompt}}" \
     --label_name ${{inputs.label_column}} \
     --text_name ${{inputs.text_column}}

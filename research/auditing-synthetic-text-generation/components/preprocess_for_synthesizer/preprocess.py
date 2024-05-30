@@ -1,16 +1,16 @@
 from pydantic import BaseModel
 from pydantic_cli import run_and_exit
 from pathlib import Path
-from datasets import load_from_disk
+import datasets
 from typing import Dict, Any, Callable
 from functools import partial
 
 
 class Arguments(BaseModel):
     train_data_path: Path
-    train_data: Path
+    fine_tune_train_data: Path
     eval_data_path: Path
-    eval_data: Path
+    fine_tune_eval_data: Path
     templated_prompt: str
     label_name: str
     text_name: str
@@ -48,33 +48,36 @@ def convert_classification_record_to_synthesizer_record(
 
 def main(args: Arguments) -> int:
 
-    # first do the train dataset
-    train_dataset = load_from_disk(args.train_data_path, keep_in_memory=True)
-    train_dataset = train_dataset.map(
-        partial(
-            convert_classification_record_to_synthesizer_record,
-            label_int2str=train_dataset.features["label"].int2str,
-            text_name=args.text_name,
-            templated_prompt=args.templated_prompt,
-            label_name=args.label_name
-        ),
-        remove_columns=train_dataset.column_names
-    )
-    train_dataset.to_json(args.train_data)
-
-    # then the eval dataset
-    eval_dataset = load_from_disk(args.eval_data_path, keep_in_memory=True)
+    # first do the eval dataset
+    eval_dataset = datasets.load_from_disk(args.eval_data_path, keep_in_memory=True)
+    int2str_mapping = eval_dataset.features["label"].int2str
     eval_dataset = eval_dataset.map(
         partial(
             convert_classification_record_to_synthesizer_record,
-            label_int2str=eval_dataset.features["label"].int2str,
+            label_int2str=int2str_mapping,
             text_name=args.text_name,
             templated_prompt=args.templated_prompt,
             label_name=args.label_name
         ),
         remove_columns=eval_dataset.column_names
     )
-    eval_dataset.to_json(args.eval_data)
+    eval_dataset.to_json(args.fine_tune_eval_data)
+
+    # then do the train dataset
+    train_dataset = datasets.Dataset.from_json(str(args.train_data_path), keep_in_memory=True)
+    train_dataset = train_dataset.map(
+        partial(
+            convert_classification_record_to_synthesizer_record,
+            label_int2str=int2str_mapping,
+            text_name=args.text_name,
+            templated_prompt=args.templated_prompt,
+            label_name=args.label_name
+        ),
+        remove_columns=train_dataset.column_names
+    )
+    train_dataset.to_json(args.fine_tune_train_data)
+
+    # then the eval dataset
     
     return 0
 

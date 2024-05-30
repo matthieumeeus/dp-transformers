@@ -33,7 +33,7 @@ class DataArguments:
     templated_prompt: str = field(default="This is a {{label}} sentence", metadata={
         "help": "Prompt with a placeholder for the label"
     })
-    train_data_path:  Optional[Path] = field(default=None, metadata={
+    utility_train_data_path:  Optional[Path] = field(default=None, metadata={
         "help": "Path to training data in csv format"
     })
     train_label_name: str = field(default="Prompt", metadata={
@@ -42,14 +42,17 @@ class DataArguments:
     train_text_name: str = field(default="Generation", metadata={
         "help": "Name of the text column in the dataset"
     })
-    eval_data_path:  Optional[Path] = field(default=None, metadata={
-        "help": "Path to training data in csv format"
+    utility_eval_data_path:  Optional[Path] = field(default=None, metadata={
+        "help": "Path to evaluation data in hf format"
     })
     eval_label_name: str = field(default="text", metadata={
         "help": "Name of the label column in the dataset"
     })
     eval_text_name: str = field(default="label", metadata={
         "help": "Name of the text column in the dataset"
+    })
+    synthetic_data_prep:  Optional[Path] = field(default=None, metadata={
+        "help": "Path to save the preprocessed synthetic data"
     })
 
 @dataclass
@@ -164,19 +167,19 @@ def main(args: Arguments):
 
     # Load datasets
     # start with the evaluation dataset - allowing us to get the right label mapping
-    eval_data = datasets.load_from_disk(str(args.data.eval_data_path), keep_in_memory=True)
+    eval_data = datasets.load_from_disk(str(args.data.utility_eval_data_path), keep_in_memory=True)
     tokenized_eval_data, label_str2int = prep_data(args, eval_data, args.data.eval_text_name, 
                                        args.data.eval_label_name, tokenizer, return_mapping=True)
     
     if args.data.is_synthetic:
-        train_data = load_synthetic_data(data_path=str(args.data.train_data_path),
+        train_data = load_synthetic_data(data_path=str(args.data.utility_train_data_path),
                                          og_label_name=args.data.train_label_name, new_label_name=args.data.eval_label_name,
                                          og_text_name=args.data.train_text_name, new_text_name=args.data.eval_text_name,
                                          label_str2int=label_str2int, templated_prompt=args.data.templated_prompt)
         tokenized_train_data, _ = prep_data(args, train_data, args.data.eval_text_name, 
                                             args.data.eval_label_name, tokenizer)
     else:
-        train_data = datasets.load_from_disk(str(args.data.train_data_path), keep_in_memory=True)
+        train_data = datasets.load_from_disk(str(args.data.utility_train_data_path), keep_in_memory=True)
         tokenized_train_data, _ = prep_data(args, train_data, args.data.train_text_name, 
                                             args.data.train_label_name, tokenizer)
 
@@ -198,6 +201,8 @@ def main(args: Arguments):
     
     trainer.save_model()
 
+    # also save the preprocessed synthetic dataset
+    train_data.to_json(args.data.synthetic_data_prep)
 
 if __name__ == "__main__":
     arg_parser = transformers.HfArgumentParser(
