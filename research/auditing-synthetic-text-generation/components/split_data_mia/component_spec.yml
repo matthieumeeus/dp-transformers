@@ -1,0 +1,49 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-data-split-for-mia
+display_name: data split for mia
+
+description: "Preprocesses data for the synthesizer."
+
+inputs:
+  all_train_data_path:
+    type: uri_folder
+    description: "Path to the dataset in Huggingface dataset format."
+  min_words:
+    type: integer
+    description: "Minimum number of words in a sentence."
+  n_hold_out:
+    type: integer
+    description: "Number of examples to hold out as non members."
+  text_column:
+    type: string
+    description: "The name of the text column in the dataset."
+  seed:
+    type: integer
+    description: "Seed for reproducibility."
+
+outputs:
+  member_data:
+    type: uri_file
+    description: "Path to the member data (data that will be used to generate synthetic data) in jsonl format."
+  non_member_data:
+    type: uri_file
+    description: "Path to the non-member data in jsonl format."
+
+code: ./
+
+command: >-
+  python split_data_mia.py \
+    --all_train_data_path ${{inputs.all_train_data_path}} \
+    --min_words ${{inputs.min_words}} \
+    --n_hold_out ${{inputs.n_hold_out}} \
+    --text_column ${{inputs.text_column}} \
+    --member_data ${{outputs.member_data}} \
+    --non_member_data ${{outputs.non_member_data}} \
+    --seed ${{inputs.seed}}
+
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml
