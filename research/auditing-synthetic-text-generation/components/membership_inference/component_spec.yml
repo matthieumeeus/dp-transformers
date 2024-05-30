@@ -1,0 +1,64 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: membership-inference
+display_name: membership inference
+
+description: "Membership inference"
+
+inputs:
+  member_path:  
+    type: uri_folder
+    description: "Path to original, real data that has been used to generate synthetic data."
+  non_member_path:
+    type: uri_folder
+    description: "Path to original, real data that has not been used to generate synthetic data."
+  synthetic_path:
+    type: uri_folder
+    description: "Path to synthetic data."
+  text_name:
+    type: string
+    description: "Name of the text column in the dataset"
+    default: "sentence"
+  label_name:
+    type: string
+    description: "Name of the label column in the dataset"
+    default: "label"
+  seed:
+    type: integer
+    description: "Random seed."
+  number_of_samples:
+    type: integer
+    description: "Number of samples used for MIA, same number of members and non-members."
+    default: 500
+  n_runs:
+    type: integer
+    description: "Number of MIA runs for different samples of members and non members."
+    default: 1
+outputs:
+  mia_results_path:
+    type: uri_file
+    description: Output file with MIA results.
+
+code: ./
+additional_includes:
+  - "../../../../setup.py"
+  - "../../../../src"
+  - "../../../../README.md"
+
+command: >-
+  python -m pip install -e . && python membership_inference.py \
+    --member_path ${{inputs.member_path}} \
+    --non_member_path ${{inputs.non_member_path}} \
+    --synthetic_path ${{inputs.synthetic_path}} \
+    --text_name ${{inputs.text_name}} \
+    --label_name ${{inputs.label_name}} \
+    --seed ${{inputs.seed}} \
+    --number_of_samples ${{inputs.number_of_samples}} \
+    --n_runs ${{inputs.n_runs}} \
+    --mia_results_path ${{outputs.mia_results_path}} 
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
+  conda_file: ./environment.yml
+
