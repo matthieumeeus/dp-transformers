@@ -1,0 +1,38 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: convert_hf_dataset_to_jsonl
+display_name: Convert HF dataset to JSONL
+version: 11
+
+description: "Converts a Hugging Face dataset to a JSONL file"
+
+inputs:
+  input:
+    type: uri_folder
+    description: "Path to the model to use in HF format"
+  prompt_column:
+    type: string
+    description: "Name of the column containing the prompts. If this parameter is not set the prompt is assumed to be empty"
+    optional: true
+  completion_column:
+    type: string
+    description: "Name of the column containing the completions"
+    default: "completion"
+outputs:
+  output:
+    type: uri_file
+    description: "Path to the output file"
+
+code: ./
+
+command: >-
+  python convert.py \
+    --hf_dataset_path ${{inputs.input}} \
+    $[[ --prompt_column ${{inputs.prompt_column}} ]] \
+    --completion_column ${{inputs.completion_column}} \
+    --output_path ${{outputs.output}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file: ./environment.yml

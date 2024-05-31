@@ -1,0 +1,120 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+
+name: synthesize-sgd
+
+display_name: "Synthesize using SGD"
+
+type: pipeline
+
+inputs:
+  model_path:
+    type: uri_folder
+  train_data_path:
+    type: uri_folder
+  eval_data_path:
+    type: uri_folder
+  templated_prompt:
+    type: string
+    description: "Template prompt for the synthetic data generation."
+  label_column:
+    type: string
+    description: "Column name for the label."
+  text_column:
+    type: string
+    description: "Column name for the text."
+  seed:
+    type: integer
+    description: "Seed for reproducibility."
+  sequence_len:
+    type: integer
+    description: "Maximum token sequence length."
+outputs:
+  output:
+    type: uri_folder
+    description: "Path to the results"
+
+jobs:
+  preprocess:
+    type: command
+    component: ../components/preprocess_for_synthesizer/component_spec.yml
+    inputs:
+      train_data_path: ${{parent.inputs.train_data_path}}
+      eval_data_path: ${{parent.inputs.eval_data_path}}
+      templated_prompt: ${{parent.inputs.templated_prompt}}
+      label_column: ${{parent.inputs.label_column}}
+      text_column: ${{parent.inputs.text_column}}
+    outputs:
+      fine_tune_train_data:
+        mode: "rw_mount"
+      fine_tune_eval_data:
+        mode: "rw_mount"
+  tokenize_train:
+    type: command
+    component: ../../../components/tokenize/component_spec.yml
+    inputs:
+      tokenizer_path: ${{parent.inputs.model_path}}
+      data: ${{parent.jobs.preprocess.outputs.fine_tune_train_data}}
+      packed_dataset: False
+      chat_format: False
+      sequence_len: ${{parent.inputs.sequence_len}}
+    outputs:
+      tokenized_data:
+        mode: "rw_mount"
+  tokenize_eval:
+    type: command
+    component: ../../../components/tokenize/component_spec.yml
+    inputs:
+      tokenizer_path: ${{parent.inputs.model_path}}
+      data: ${{parent.jobs.preprocess.outputs.fine_tune_eval_data}}
+      packed_dataset: False
+      chat_format: False
+      sequence_len: ${{parent.inputs.sequence_len}}
+    outputs:
+      tokenized_data:
+        mode: "rw_mount"
+  fine_tune:
+    type: command
+    component: ../../../components/train/component_spec.yml
+    inputs:
+      tokenized_train_data: ${{parent.jobs.tokenize_train.outputs.tokenized_data}}
+      tokenized_validation_data: ${{parent.jobs.tokenize_eval.outputs.tokenized_data}}
+      evaluation_strategy: "steps"
+      eval_steps: 500
+      label_names: "labels"
+      model_path: ${{parent.inputs.model_path}}
+      nproc_per_node: 8
+      per_device_train_batch_size: 16
+      gradient_accumulation_steps: 1
+      seed: ${{parent.inputs.seed}}
+      chat_format: False
+      num_train_epochs: 3.0
+      learning_rate: 3e-4
+      bf16: false
+      fp16: false
+      enable_lora: true
+      lora_dim: 4
+      target_modules: "['q_proj', 'v_proj']"
+      use_flash_attention: false
+      gradient_checkpointing: true
+    outputs:
+      output_dir:
+        mode: "rw_mount"
+    resources:
+      instance_count: 1
+    distribution:
+      type: pytorch
+      process_count_per_instance: 8
+  generate:
+    type: command
+    component: ../../../components/llm-synthetic-data-generation/component_spec.yml
+    inputs:
+      lora_path: ${{parent.jobs.fine_tune.outputs.output_dir}}
+      model_path: ${{parent.inputs.model_path}}
+      train_data_path: ${{parent.jobs.preprocess.outputs.fine_tune_train_data}}
+      nproc_per_node: 8
+      batch_size: 32
+      seed: ${{parent.inputs.seed}}9320
+      max_new_tokens: ${{parent.inputs.sequence_len}}
+      mixed_precision: "no"
+    outputs:
+      output_dir: ${{parent.outputs.output}}

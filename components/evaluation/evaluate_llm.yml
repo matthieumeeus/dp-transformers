@@ -6,15 +6,22 @@ description: |
   
   Currently implemented benchmarks:
     - MT-Bench (https://github.com/lm-sys/FastChat/blob/main/fastchat/llm_judge/README.md)
+    - Open LLM (https://github.com/EleutherAI/lm-evaluation-harness)
 
 type: pipeline
 inputs:
   model:
     type: uri_folder
     description: "Path to the model to use in HF format."
+    mode: "download"
   model_id:
     type: string
     description: "ID of the model to use. This will be used by FastChat to load the appropriate conversation template. For details see: https://github.com/lm-sys/FastChat/blob/main/docs/model_support.md#how-to-support-a-new-model"
+    optional: true
+  peft:
+    type: uri_folder
+    description: "Path to the PEFT weights"
+    optional: true
   num_gpus_per_model:
     type: integer
     description: "Number of GPUs to use per model."
@@ -39,6 +46,14 @@ inputs:
     type: string
     description: "Version of the OpenAI API to use."
     default: "2023-07-01-preview"
+  lm_eval_batch_size:
+    type: string
+    description: "Batch size to use for evaluation"
+    default: "auto:8"
+  trust_remote_code:
+    type: boolean
+    optional: true
+    description: Trust remote code (e.g. from HuggingFace) when loading the model.
 outputs:
   results:
     type: uri_file
@@ -51,11 +66,33 @@ jobs:
     inputs:
       model: ${{parent.inputs.model}}
       model_id: ${{parent.inputs.model_id}}
+      peft: ${{parent.inputs.peft}}
       num_gpus_per_model: ${{parent.inputs.num_gpus_per_model}}
       num_concurrent_api_calls: ${{parent.inputs.num_concurrent_oai_api_calls}}
       openai_api_base: ${{parent.inputs.openai_api_base}}
       openai_api_type: ${{parent.inputs.openai_api_type}}
       openai_api_key_secret_name: ${{parent.inputs.openai_api_key_secret_name}}
       openai_api_version: ${{parent.inputs.openai_api_version}}
+      trust_remote_code: ${{parent.inputs.trust_remote_code}}
+    outputs:
+      results:
+        mode: "rw_mount"
+  open_llm_benchmark:
+    type: pipeline
+    component: ./open_llm_benchmark/open_llm_benchmark.yml
+    inputs:
+      model: ${{parent.inputs.model}}
+      peft: ${{parent.inputs.peft}}
+      batch_size: ${{parent.inputs.lm_eval_batch_size}}
+      trust_remote_code: ${{parent.inputs.trust_remote_code}}
+    outputs:
+      results:
+        mode: "rw_mount"
+  collect_results:
+    type: command
+    component: ./collect_results/component_spec.yml
+    inputs:
+      mt_bench: ${{parent.jobs.mt_bench.outputs.results}}
+      lm_eval: ${{parent.jobs.open_llm_benchmark.outputs.results}}
     outputs:
       results: ${{parent.outputs.results}}

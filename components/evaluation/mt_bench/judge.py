@@ -15,7 +15,7 @@ from common import get_fschat_version
 
 class Arguments(BaseModel):
     num_concurrent_api_calls: int
-    model_id: str
+    model_id: Path
     judgments: Path
     results: Path
     answers: Path
@@ -96,6 +96,9 @@ def main(args: Arguments) -> int:
 
     run: Run = Run.get_context()
 
+    with args.model_id.open("r") as f:
+        model_id = f.read().strip()
+
     aoai_env = dict()
     if args.openai_api_base is not None:
         print(f"Overriding OPENAI_API_BASE to {args.openai_api_base}")
@@ -115,14 +118,14 @@ def main(args: Arguments) -> int:
     print(f"Found FastChat version {fschat_version}")
     download_llm_judge_data(fschat_version=fschat_version, download_path=cwd)
 
-    answer_dir = cwd/"data"/"mt_bench"/"model_answer"
-    answer_dir.mkdir(parents=True, exist_ok=True)
-    copy2(args.answers, answer_dir/(args.model_id+".jsonl"))
+    answer_path = cwd/"data"/"mt_bench"/"model_answer"/(model_id + ".jsonl")
+    answer_path.parent.mkdir(parents=True, exist_ok=True)
+    copy2(args.answers, answer_path)
 
 
     gen_judgment_script = gen_judgment.__file__
     gen_judgment_call = [
-        "python", gen_judgment_script, "--model-list", args.model_id, "--parallel", str(args.num_concurrent_api_calls), "--judge-model", args.judge_model
+        "python", gen_judgment_script, "--model-list", model_id, "--parallel", str(args.num_concurrent_api_calls), "--judge-model", args.judge_model
     ]
     print(" ".join(gen_judgment_call))
     env = os.environ.copy()

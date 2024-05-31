@@ -38,6 +38,12 @@ class ModelArguments:
     sequence_len: int = field(default=128, metadata={
         "help": "Maximum sequence length"
     })
+    quantization_4bit: bool = field(default=True, metadata={
+        "help": "Whether to apply 4bit quantization for the base model."
+    })
+    trust_remote_code: bool = field(default=False, metadata={
+        "help": "Whether to trust remote code when loading model from HuggingFace."
+    })
 
 
 @dataclass
@@ -106,6 +112,7 @@ def main(args: Arguments):
     )
 
     log_level = args.train.get_process_log_level()
+    logging.getLogger().setLevel(level=log_level)
     logger.setLevel(log_level)
     datasets.utils.logging.set_verbosity(log_level)
     transformers.utils.logging.set_verbosity(log_level)
@@ -122,7 +129,8 @@ def main(args: Arguments):
     logger.info(f"Model parameters {args.model}")
 
     # Load tokenizer
-    tokenizer = transformers.AutoTokenizer.from_pretrained(args.model.model_name_or_path)
+    tokenizer = transformers.AutoTokenizer.from_pretrained(args.model.model_name_or_path, 
+                                                           trust_remote_code=args.model.trust_remote_code)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
@@ -135,7 +143,7 @@ def main(args: Arguments):
         dataset = MyDataset(args.data.train_data_path, tokenizer, args.model.sequence_len)
 
     # Tokenize data
-    with train_args.main_process_first(desc="tokenizing dataset"):
+    with args.train.main_process_first(desc="tokenizing dataset"):
         dataset.dataset = dataset.dataset.map(
             dataset.preprocess_function, batched=True, num_proc=8, desc="tokenizing dataset", 
             remove_columns=dataset.dataset.column_names['train']
@@ -162,8 +170,22 @@ def main(args: Arguments):
 
     # Load model
     logger.info(f"Loading model: {args.model.model_name_or_path}")
-    model = transformers.AutoModelForCausalLM.from_pretrained(str(args.model.model_name_or_path), quantization_config=bnb_config)
-    model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=train_args.gradient_checkpointing)
+    if args.model.quantization_4bit:
+        # For bnb_4bit_compute_dtype check if GPU supports bf16 and if not use fp16
+        bnb_config = transformers.BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+        )
+        model = transformers.AutoModelForCausalLM.from_pretrained(str(args.model.model_name_or_path), 
+                                                                  quantization_config=bnb_config, 
+                                                                  trust_remote_code=args.model.trust_remote_code)
+        model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=args.train.gradient_checkpointing)
+    else:
+        model = transformers.AutoModelForCausalLM.from_pretrained(str(args.model.model_name_or_path), 
+                                                                  trust_remote_code=args.model.trust_remote_code)
+        model = model.cuda()
 
     if args.lora.enable_lora:
         logger.info("Using LoRA")

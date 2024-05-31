@@ -1,0 +1,51 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+
+type: pipeline
+
+display_name: pipeline_with_hyperparameter_sweep
+description: Tune hyperparameters
+settings:
+    default_compute: azureml:ND40rsv2-2
+jobs:
+  sweep_step:
+    type: sweep
+    inputs:
+      model_path: "azureml:gpt2:1"
+      tokenized_train_data: "azureml:tokenized_train_data_hyper_param_search:1"
+      tokenized_validation_data: "azureml:tokenized_val_data_hyper_param:1"
+      per_device_train_batch_size: 8
+      gradient_accumulation_steps: 1
+      evaluation_strategy: epoch
+      save_strategy: "no"
+      log_level: info
+      seed: 923032
+      weight_decay: 0.1
+      num_train_epochs: 1.0
+      logging_steps: 1
+      max_grad_norm: 0.0
+      dataloader_num_workers: 2
+      enable_lora: False
+      use_flash_attention: False
+      num_samples: 0
+    search_space:
+      gradient_accumulation_steps:
+        type: choice
+        values: [1, 2, 4]
+      learning_rate:
+        type: loguniform
+        min_value: -13.815510558  # exp(-13.8...) = 1e-6
+        max_value: -6.90775527898  # exp(-6.9...) = 1e-3
+      lr_scheduler_type:
+        type: choice
+        values: ["constant", "cosine"]
+    outputs:
+      output_dir:
+    sampling_algorithm: random
+    trial: ../../../components/train/component_spec.yml
+    objective:
+      goal: minimize
+      primary_metric: loss
+    limits:
+      max_total_trials: 256
+      max_concurrent_trials: 16
+      timeout: 86400

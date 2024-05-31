@@ -3,6 +3,7 @@
 
 '''Generate synthetic data samples from an LLM fine-tuned with QLoRA.'''
 
+import os
 import csv
 import datasets
 import transformers
@@ -43,9 +44,6 @@ class ModelArguments:
     lora_path: Union[str, Path] = field(default=".", metadata={
         "help": "Path to loaded lora weight if any"
     })
-    mixed_precision: str = field(default="no", metadata={
-        "help": "Kind of mixed precision used during training (fp16, bf16, no)"
-    })
     load_dtype: str = field(default="fp32", metadata={
         "help": "Non-quantized model parameters load dtype (fp32, fp16, bf16)"
     })
@@ -71,8 +69,6 @@ class Arguments:
 
 
 def main(args: Arguments):
-    transformers.set_seed(args.model.seed)
-
     # Setup logging
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -89,7 +85,10 @@ def main(args: Arguments):
 
     logger.info(f"Model parameters {args.model}")
 
-    accelerator = Accelerator(mixed_precision=args.model.mixed_precision)
+    accelerator = Accelerator()
+
+    # Seed random number generators different for each GPU so that generations are different
+    transformers.set_seed(args.model.seed + accelerator.device.index)
 
     # Load tokenizer
     tokenizer = transformers.AutoTokenizer.from_pretrained(args.model.model_name_or_path)
@@ -98,9 +97,15 @@ def main(args: Arguments):
     tokenizer.padding_side = "left"
 
     # Load dataset
+    train_data_path = str(args.data.train_data_path)
+    if os.path.isdir(train_data_path):
+        files = [os.path.join(train_data_path, f) for f in os.listdir(train_data_path)]
+    else:
+        files = [train_data_path]
+
     dataset = datasets.DatasetDict({
-            "train": datasets.Dataset.from_json(str(args.data.train_data_path)),
-        })
+        "train": datasets.Dataset.from_json(files),
+    })
 
     # Tokenize data
     def preprocess_function(examples):
@@ -114,11 +119,12 @@ def main(args: Arguments):
             remove_columns=dataset.column_names['train']
         )
 
+    # For bnb_4bit_compute_dtype check if GPU supports bf16 and if not use fp16
     bnb_config = transformers.BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_use_double_quant=True,
         bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.bfloat16
+        bnb_4bit_compute_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
     )
 
     # Load model

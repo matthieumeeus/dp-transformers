@@ -1,0 +1,47 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-evaluation-open-llm-leaderboard-benchmark-collect-results
+display_name: "Collect results of Open LLM Leaderboard Benchmark"
+
+description: "Collect results of Open LLM Leaderboard Benchmark"
+
+code: ./
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml
+
+inputs:
+  arc_challenge:
+    type: uri_folder
+    description: Path to the results of the ARC Challenge task.
+  hellaswag:
+    type: uri_folder
+    description: Path to the results of the Hellaswag task.
+  truthfulqa_mc2:
+    type: uri_folder
+    description: Path to the results of the TruthfulQA task.
+  mmlu:
+    type: uri_folder
+    description: Path to the results of the MMLU task.
+  winogrande:
+    type: uri_folder
+    description: Path to the results of the Winogrande task.
+  gsm8k:
+    type: uri_folder
+    description: Path to the results of the GSM8k task.
+outputs:
+  results:
+    type: uri_folder
+    description: Path to the results file.
+
+command: |-
+  python ./collect_results.py \
+    --arc_challenge ${{inputs.arc_challenge}} \
+    --hellaswag ${{inputs.hellaswag}} \
+    --truthfulqa_mc2 ${{inputs.truthfulqa_mc2}} \
+    --mmlu ${{inputs.mmlu}} \
+    --winogrande ${{inputs.winogrande}} \
+    --gsm8k ${{inputs.gsm8k}} \
+    --results ${{outputs.results}}

@@ -1,0 +1,12 @@
+name: dp-transformers-collect-results
+channels:
+  - defaults
+dependencies:
+  - pip=23.3.1
+  - python=3.8.18
+  - pip:
+    - azureml-mlflow
+    - mlflow
+    - pandas
+    - pydantic
+    - pydantic_cli

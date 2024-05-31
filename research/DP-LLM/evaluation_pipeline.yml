@@ -1,6 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 display_name: evaluate
+experiment_name: dp-transformer-research-dp-llm
 
 settings:
   default_compute: azureml:ND96asrv4
@@ -8,8 +9,7 @@ settings:
 inputs:
   model:
     type: uri_folder
-    path: azureml:zephyr-7b-beta:1
-  model_id: "zephyr"
+    path: azureml:deepseek-ai-deepseek-coder-1_3b-base:1
 
 jobs:
   evaluation:
@@ -17,4 +17,6 @@ jobs:
     component: ../../components/evaluation/evaluate_llm.yml
     inputs:
       model: ${{parent.inputs.model}}
-      model_id: ${{parent.inputs.model_id}}
+      model_id: deepseek-coder-1_3b-instruct
+      lm_eval_batch_size: "8"
+      trust_remote_code: True

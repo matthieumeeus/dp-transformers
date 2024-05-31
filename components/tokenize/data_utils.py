@@ -1,6 +1,11 @@
+import os
 import datasets
 import torch
 import copy
+
+from pathlib import Path
+from typing import Union
+
 
 # Modified from https://huggingface.co/docs/peft/task_guides/clm-prompt-tuning
 def main_preprocess_function(examples, tokenizer, sequence_len):
@@ -44,10 +49,16 @@ class MyDataset:
         - completion: the completion to be included in the loss function
     """
 
-    def __init__(self, train_data_path, tokenizer, sequence_len):
+    def __init__(self, train_data_path, tokenizer, sequence_len, cache_data_path):
         # Load data
+        train_data_path = str(train_data_path)
+        if os.path.isdir(train_data_path):
+            files = [os.path.join(train_data_path, f) for f in os.listdir(train_data_path)]
+        else:
+            files = [train_data_path]
+
         self.dataset = datasets.DatasetDict({
-            "train": datasets.Dataset.from_json(str(train_data_path)),
+            "train": datasets.Dataset.from_json(files, cache_dir=cache_data_path),
         })
         self.tokenizer = tokenizer
         self.sequence_len = sequence_len
@@ -95,8 +106,14 @@ class MyChatDataset:
 
     def __init__(self, train_data_path, tokenizer, sequence_len):
         # Load data
+        train_data_path = str(train_data_path)
+        if os.path.isdir(train_data_path):
+            files = [os.path.join(train_data_path, f) for f in os.listdir(train_data_path)]
+        else:
+            files = [train_data_path]
+
         self.dataset = datasets.DatasetDict({
-            "train": datasets.Dataset.from_json(str(train_data_path)),
+            "train": datasets.Dataset.from_json(files),
         })
         self.tokenizer = tokenizer
         self.sequence_len = sequence_len

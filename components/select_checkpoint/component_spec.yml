@@ -1,0 +1,32 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: select_checkpoint
+display_name: Select Checkpoint
+version: 0
+
+description: "Select a checkpoint and copy it to an output directory."
+
+inputs:
+  input_dir:
+    type: uri_folder
+    description: "Path to input directory"
+  checkpoint_number:
+    type: integer
+    description: "Which checkpoint to use (e.g. saved after which epoch)"
+outputs:
+  output_dir:
+    type: uri_folder
+    description: Output directory
+
+code: ./
+
+command: >-
+  python select_checkpoint.py \
+    --input_dir ${{inputs.input_dir}} \
+    --checkpoint_number ${{inputs.checkpoint_number}} \
+    --output_dir ${{outputs.output_dir}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
+  conda_file: ./environment.yml

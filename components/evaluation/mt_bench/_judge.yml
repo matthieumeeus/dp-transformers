@@ -11,7 +11,7 @@ inputs:
     type: integer
     description: "Number of concurrent API calls to use."
   model_id:
-    type: string
+    type: uri_file
     description: "ID of the model to use. This will be used by FastChat to load the appropriate conversation template. For details see: https://github.com/lm-sys/FastChat/blob/main/docs/model_support.md#how-to-support-a-new-model"
   openai_api_base:
     type: string
@@ -46,7 +46,6 @@ command: >-
   python judge.py \
     --results ${{outputs.results}} \
     --judgments ${{outputs.judgments}} \
-    --results ${{outputs.results}} \
     --answers ${{inputs.answers}} \
     --model_id ${{inputs.model_id}} \
     $[[ --openai_api_base ${{inputs.openai_api_base}} ]] \

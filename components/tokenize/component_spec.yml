@@ -1,0 +1,56 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: tokenize
+display_name: Tokenize dataset
+version: 1
+
+description: "Tokenize a dataset using HuggingFace's tokenizer."
+
+inputs:
+  nproc:
+    type: integer
+    description: "Number of processes per node. Usually this should be the number of GPUs per node"
+    optional: true
+  tokenizer_name:
+    type: string
+    description: "Name of the HF tokenizer to use. Mutually exclusive with the option 'model_path'"
+    optional: true
+  tokenizer_path:
+    type: uri_folder
+    description: "Path to the tokenizer to use in HF format. Mutually exclusive with the option 'model_name'"
+    optional: true
+  data:
+    type: uri_file
+    description: "Path to the data in jsonl format"
+  packed_dataset:
+    type: boolean
+    description: "Whether the dataset will be packed or not."
+  sequence_len:
+    type: integer
+    description: "Maximum token sequence length."
+  chat_format:
+    type: boolean
+    description: "Whether the dataset should be processed chat format or not."
+outputs:
+  tokenized_data:
+    type: uri_folder
+    description: Output directory
+
+
+code: ./
+
+command: >-
+  python tokenize_dataset.py \
+    $[[ --tokenizer_name_or_path ${{inputs.tokenizer_name}} ]] \
+    $[[ --tokenizer_name_or_path ${{inputs.tokenizer_path}} ]] \
+    $[[ --nproc ${{inputs.nproc}} ]] \
+    --data_path ${{inputs.data}} \
+    --packed_dataset ${{inputs.packed_dataset}} \
+    --sequence_len ${{inputs.sequence_len}} \
+    --chat_format ${{inputs.chat_format}} \
+    --tokenized_data_path ${{outputs.tokenized_data}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file: ./environment.yml

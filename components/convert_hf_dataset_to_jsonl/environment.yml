@@ -1,0 +1,9 @@
+name: dp-transformers
+channels:
+  - defaults
+dependencies:
+  - pip=23.3.1
+  - python=3.10.13
+  - pip:
+      - datasets
+      - pydantic_cli

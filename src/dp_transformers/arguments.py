@@ -70,6 +70,7 @@ class TrainingArguments(HfTrainingArguments):
         default=False,
         metadata={"help": "Option for reducing training steps (2) and logging intervals (1) for quick sanity checking of arguments."}
     )
+    fsdp_activation_checkpointing: bool = field(default=False, metadata={"help": "Whether to use activation checkpointing for FSDP."})
 
     def __post_init__(self):
         super().__post_init__()
@@ -84,6 +85,13 @@ class TrainingArguments(HfTrainingArguments):
 
         if self.disable_tqdm:
             disable_progress_bar()
+
+        if self.fsdp_activation_checkpointing:
+            if len(self.fsdp) == 0:
+                logger.warning("FSDP activation checkpointing is enabled but FSDP is not used. Ignoring fsdp_activation_checkpointing.")
+            if self.fsdp_config.get("activation_checkpointing", self.fsdp_activation_checkpointing) != self.fsdp_activation_checkpointing:
+                logger.warning(f"Overriding fsdp_activation_checkpointing in FSDP config. Activating fsdp_activation_checkpointing.")
+            self.fsdp_config["activation_checkpointing"] = self.fsdp_activation_checkpointing
 
 
 def find_noise_multiplier(sampling_probability: float, num_steps: int, target_epsilon: float, target_delta: float,

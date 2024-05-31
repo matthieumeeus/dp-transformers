@@ -1,0 +1,89 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: evaluate no-dp finetuned deepseek coder 1.3b base on OpenWebMath
+experiment_name: dp-transformers-research-dp-llm
+
+inputs:
+  base_model:
+    type: uri_folder
+    path: "azureml:deepseek-ai-deepseek-coder-1_3b-base:1"
+  trust_remote_code: true
+
+settings:
+  default_compute: azureml:ND96asrv4
+
+jobs:
+  tokenize:
+    type: command
+    component: ../../components/tokenize/component_spec.yml
+    inputs:
+      tokenizer_path: ${{parent.inputs.base_model}}
+      trust_remote_code: ${{parent.inputs.trust_remote_code}}
+      data: "azureml:OpenWebMath:1"
+      packed_dataset: True
+      sequence_len: 4096
+      chat_format: False
+    compute: azureml:D64sv3
+    outputs:
+      tokenized_data:
+        mode: "rw_mount"
+  train:
+    type: command
+    component: ../../components/train/component_spec.yml
+    inputs:
+      model_path: ${{parent.inputs.base_model}}
+      tokenized_train_data: ${{parent.jobs.tokenize.outputs.tokenized_data}}
+      quantization_4bit: False
+      torch_dtype: "bf16"
+      trust_remote_code: ${{parent.inputs.trust_remote_code}}
+      num_samples: 0
+      per_device_train_batch_size: 2
+      gradient_accumulation_steps: 16
+      evaluation_strategy: "no"
+      save_strategy: "epoch"
+      log_level: "info"
+      seed: 42
+      weight_decay: 0.1
+      remove_unused_columns: False
+      num_train_epochs: 3
+      logging_steps: 100
+      max_grad_norm: 0.0
+      lr_scheduler_type: "cosine"
+      warmup_steps: 2000
+      adam_beta2: 0.95
+      learning_rate: 5e-4
+      dataloader_num_workers: 2
+      enable_lora: True
+      lora_dim: 16
+      lora_alpha: 32
+      lora_dropout: 0.05
+      target_modules: "['embed_tokens', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'lm_head']"
+      bf16: True
+      fp16: False
+      gradient_checkpointing: False
+      ddp_find_unused_parameters: False
+    resources:
+      instance_count: 4
+    distribution:
+      type: pytorch
+      process_count_per_instance: 8
+    outputs:
+      output_dir:
+        mode: "rw_mount"
+  select_checkpoint:
+    type: command
+    component: ../../components/select_checkpoint/component_spec.yml
+    inputs:
+      input_dir: ${{parent.jobs.train.outputs.output_dir}}
+      checkpoint_number: 3
+    outputs:
+      output_dir:
+        mode: "rw_mount"
+  evaluation:
+    type: pipeline
+    component: ../../components/evaluation/evaluate_llm.yml
+    inputs:
+      model: ${{parent.inputs.base_model}}
+      peft: ${{parent.jobs.select_checkpoint.outputs.output_dir}}
+      lm_eval_batch_size: "4"
+      trust_remote_code: True

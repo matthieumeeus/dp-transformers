@@ -7,16 +7,17 @@ settings:
   default_compute: azureml:ND40rsv2
 
 inputs:
+  seed: 9230
+  sequence_len: 128
   model_path:
     type: uri_folder
-    path: "azureml:Mistral-7B-v0point1:1"
+    path: "azureml:mistralai-Mistral-7B-v0_1:4"
   train_data_path:
     type: uri_folder
     path: "azureml:SST2-train:3"
   eval_data_path:
     type: uri_folder
     path: "azureml:SST2-test:3"
-
 jobs:
   split_data_mia:
     type: command
@@ -26,63 +27,26 @@ jobs:
       min_words: 5
       n_hold_out: 500
       text_column: "sentence"
-      seed: 239023
+      seed: ${{parent.inputs.seed}}
     outputs:
       member_data:
         mode: "rw_mount"
       non_member_data:
         mode: "rw_mount"
-  preprocess:
-    type: command
-    component: ./components/preprocess_for_synthesizer/component_spec.yml
+  synthesize_sgd:
+    type: pipeline
+    component: ./subpipelines/sgd-synthesizer.yml
     inputs:
       train_data_path: ${{parent.jobs.split_data_mia.outputs.member_data}}
       eval_data_path: ${{parent.inputs.eval_data_path}}
+      model_path: ${{parent.inputs.model_path}}
       templated_prompt: "A sentence with a {label} sentiment: "
       label_column: "label"
       text_column: "sentence"
+      seed: ${{parent.inputs.seed}}
+      sequence_len: ${{parent.inputs.sequence_len}}
     outputs:
-      fine_tune_train_data:
-        mode: "rw_mount"
-      fine_tune_eval_data:
-        mode: "rw_mount"
-  fine_tune:
-    type: command
-    component: ../../components/nodp_fine_tune_LLM_w_qlora/component_spec.yml
-    inputs:
-      train_data_path: ${{parent.jobs.preprocess.outputs.fine_tune_train_data}}
-      eval_data_path: ${{parent.jobs.preprocess.outputs.fine_tune_eval_data}}
-      evaluation_strategy: "steps"
-      eval_steps: 50
-      label_names: "labels"
-      model_path: ${{parent.inputs.model_path}}
-      nproc_per_node: 8
-      sequence_len: 128
-      per_device_train_batch_size: 16
-      gradient_accumulation_steps: 1
-      seed: 239023
-      chat_format: False
-      num_train_epochs: 3.0
-      learning_rate: 2e-5
-      bf16: false
-      fp16: false
-    outputs:
-      output_dir:
-        mode: "rw_mount"
-  generate:
-    type: command
-    component: ../../components/llm-synthetic-data-generation/component_spec.yml
-    inputs:
-      lora_path: ${{parent.jobs.fine_tune.outputs.output_dir}}
-      model_path: ${{parent.inputs.model_path}}
-      train_data_path: ${{parent.jobs.preprocess.outputs.fine_tune_train_data}}
-      nproc_per_node: 8
-      batch_size: 32
-      seed: 2933
-      max_new_tokens: 128
-      mixed_precision: "no"
-    outputs:
-      output_dir:
+      output:
         mode: "rw_mount"
   compute_utility:
     type: command
@@ -91,13 +55,13 @@ jobs:
       nproc_per_node: 8
       model_name: "roberta-base"
       is_synthetic: true
-      utility_train_data_path: ${{parent.jobs.generate.outputs.output_dir}}
+      utility_train_data_path: ${{parent.jobs.synthesize_sgd.outputs.output}}
       train_label_name: "Prompt"
       train_text_name: "Generation"
       utility_eval_data_path: ${{parent.inputs.eval_data_path}}
       eval_label_name: "label"
       eval_text_name: "sentence"
-      sequence_len: 128
+      sequence_len: ${{parent.inputs.sequence_len}}
       per_device_train_batch_size: 8
       gradient_accumulation_steps: 1
       num_train_epochs: 1
@@ -105,7 +69,7 @@ jobs:
       eval_steps: 100
       save_strategy: "no"
       log_level: info
-      seed: 239023
+      seed: ${{parent.inputs.seed}}
       weight_decay: 0.01
       logging_steps: 10
       learning_rate: 3e-5
@@ -123,7 +87,7 @@ jobs:
       synthetic_path: ${{parent.jobs.compute_utility.outputs.synthetic_data_prep}}
       text_name: "sentence"
       label_name: "label"
-      seed: 239023
+      seed: ${{parent.inputs.seed}}
       number_of_samples: 200
       n_runs: 5
     outputs:

@@ -1,3 +1,4 @@
+import os
 import datasets
 import torch
 import copy
@@ -46,8 +47,14 @@ class MyDataset:
 
     def __init__(self, train_data_path, tokenizer, sequence_len):
         # Load data
+        train_data_path = str(train_data_path)
+        if os.path.isdir(train_data_path):
+            files = [os.path.join(train_data_path, f) for f in os.listdir(train_data_path)]
+        else:
+            files = [train_data_path]
+
         self.dataset = datasets.DatasetDict({
-            "train": datasets.Dataset.from_json(str(train_data_path)),
+            "train": datasets.Dataset.from_json(files),
         })
         self.tokenizer = tokenizer
         self.sequence_len = sequence_len
@@ -95,8 +102,14 @@ class MyChatDataset:
 
     def __init__(self, train_data_path, tokenizer, sequence_len):
         # Load data
+        train_data_path = str(train_data_path)
+        if os.path.isdir(train_data_path):
+            files = [os.path.join(train_data_path, f) for f in os.listdir(train_data_path)]
+        else:
+            files = [train_data_path]
+
         self.dataset = datasets.DatasetDict({
-            "train": datasets.Dataset.from_json(str(train_data_path)),
+            "train": datasets.Dataset.from_json(files),
         })
         self.tokenizer = tokenizer
         self.sequence_len = sequence_len

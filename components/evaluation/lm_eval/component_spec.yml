@@ -1,0 +1,50 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-evaluation-lm-evaluation-harness
+display_name: "EleutherAI LM Evaluation Harness"
+
+description: "Evaluate a large language model on a suite of benchmarks (Open LLM). The leaderboard's backend runs the great Eleuther AI Language Model Evaluation Harness."
+
+code: ./
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+  conda_file: ./environment.yml
+
+inputs:
+  model:
+    type: uri_folder
+    description: Path to the model to use in HF format. Mutually exclusive with the option 'model_name'
+    mode: "download"
+  peft:
+    type: uri_folder
+    optional: true
+    description: Path to the peft weights if available.
+  tasks:
+    type: string
+    description: Comma-separated list of tasks to evaluate on
+  num_fewshot:
+    type: integer
+    description: Number of few-shot examples to use for the task
+  batch_size:
+    type: string
+    default: "auto:8"
+    description: Batch size to use for the evaluation
+  trust_remote_code:
+    type: boolean
+    optional: true
+    description: Trust remote code (e.g. from HuggingFace) when loading the model.
+outputs:
+  results:
+    type: uri_folder
+    description: Path to the results file.
+
+command: |-
+  accelerate launch -m lm_eval --model hf \
+    --model_args pretrained=${{inputs.model}}$[[,peft=${{inputs.peft}}]]$[[,trust_remote_code=${{inputs.trust_remote_code}}]] \
+    --tasks ${{inputs.tasks}} \
+    --num_fewshot ${{inputs.num_fewshot}} \
+    --device cuda \
+    --batch_size ${{inputs.batch_size}} \
+    --output_path ${{outputs.results}}

@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-evaluation-collect-results
+display_name: "Collect results"
+
+description: ""  
+
+code: ./
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml
+
+inputs:
+  mt_bench:
+    type: uri_file
+    optional: True
+    description: Path to the mt_bench results file. 
+  lm_eval:
+    type: uri_folder
+    optional: True
+    description: Path to the lm_eval results folder.
+outputs:
+  results:
+    type: uri_file
+    description: Path to the results file.
+
+command: |-
+  python collect_results.py \
+    $[[ --mt_bench ${{inputs.mt_bench}} ]] \
+    $[[ --lm_eval ${{inputs.lm_eval}} ]] \
+    --results ${{outputs.results}}
