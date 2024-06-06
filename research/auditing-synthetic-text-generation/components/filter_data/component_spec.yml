@@ -1,0 +1,36 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: filter_data
+display_name: filter_data
+
+description: "Preprocesses data for the synthesizer."
+
+inputs:
+  all_data:
+    type: uri_folder
+    description: "Path to the dataset in Huggingface dataset format."
+  min_words:
+    type: integer
+    description: "Minimum number of words in a sentence."
+  text_column:
+    type: string
+    description: "The name of the text column in the dataset."
+
+outputs:
+  filtered_data:
+    type: uri_folder
+    description: "Path to the filtered dataset in Huggingface dataset format."
+
+code: ./
+
+command: >-
+  python filter_data.py \
+    --all_data ${{inputs.all_data}} \
+    --min_words ${{inputs.min_words}} \
+    --text_column ${{inputs.text_column}} \
+    --filtered_data ${{outputs.filtered_data}} 
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml

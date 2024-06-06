@@ -117,7 +117,7 @@ class Arguments:
     data: DataArguments
 
 
-def load_model(model_args: ModelArguments, lora_args: LoraArguments, gradient_checkpointing: bool, hf_base_model_name: str
+def load_model(model_args: ModelArguments, lora_args: LoraArguments, gradient_checkpointing: bool,
                ) -> transformers.PreTrainedModel:
     logger.info(f"Loading model: {model_args.model_name_or_path}")
     model_kwargs = dict()
@@ -147,15 +147,14 @@ def load_model(model_args: ModelArguments, lora_args: LoraArguments, gradient_ch
         # model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=args.train.gradient_checkpointing)
         # But it casts all non INT8 parameters to fp32 and that leads to huge memory consumption so we remove that part
         model = internal_prepare_model_for_kbit_training(model, use_gradient_checkpointing=gradient_checkpointing)
-
-    model = model.cuda()
+    else:
+        model = model.cuda()
 
     if lora_args.enable_lora:
         logger.info("Using LoRA")
         if not model_args.quantization_4bit and gradient_checkpointing:
             model.enable_input_require_grads()
         model = get_peft_model(model=model, peft_config=lora_args.as_peft_config())
-        model.peft_config['default'].base_model_name_or_path = hf_base_model_name
     else:
         logger.info("Not using LoRA")
 
@@ -216,8 +215,7 @@ def main(args: Arguments):
 
     # Load model
     logger.info(f"Loading model: {args.model.model_name_or_path}")
-    model = load_model(model_args=args.model, lora_args=args.lora, gradient_checkpointing=args.train.gradient_checkpointing,
-                       hf_base_model_name=training_metadata.hf_base_model)
+    model = load_model(model_args=args.model, lora_args=args.lora, gradient_checkpointing=args.train.gradient_checkpointing)
 
     if distributed_state.is_main_process:
         logger.info(f"Total number of parameters of the model: {model.num_parameters(only_trainable=False)}")

@@ -23,6 +23,11 @@ from privacy_estimates.experiments.attacks.signals import Signal, SIGNALS
 logger = logging.getLogger(__name__)
 mp.set_start_method('spawn', force=True)  # force=True can be used to reset the method if needed elsewhere
 
+TORCH_DTYPES = {
+    "fp16": torch.float16,
+    "fp32": torch.float32,
+    "bf16": torch.bfloat16,
+}
 
 @dataclass
 class Arguments:
@@ -34,6 +39,9 @@ class Arguments:
     })
     per_device_batch_size: int = field(default=8, metadata={
         "help": "Batch size per device"
+    })
+    torch_dtype: str = field(default="bf16", metadata={
+        "help": "Data type for model"
     })
     trust_remote_code: bool = field(default=False, metadata={
         "help": "Whether to trust remote code when loading model from HuggingFace."
@@ -69,7 +77,10 @@ class Arguments:
             self.mi_signal_extra_args = {
                 a.split("=")[0]: literal_eval(a.split("=")[1]) for a in self.mi_signal_extra_args.split()
             }
-
+        if self.torch_dtype is not None and isinstance(self.torch_dtype, str):
+            if self.torch_dtype not in TORCH_DTYPES:
+                 raise ValueError(f"Invalid torch dtype: {self.torch_dtype}. Must be one of {list(TORCH_DTYPES.keys())}")
+            self.torch_dtype = TORCH_DTYPES[self.torch_dtype]
 
 def aggregate_mi_signal(mi_signal: np.ndarray, attention_mask: np.ndarray, aggregation_method: str) -> np.ndarray:
     attention_mask = attention_mask.astype(bool)
@@ -86,7 +97,6 @@ def aggregate_mi_signal(mi_signal: np.ndarray, attention_mask: np.ndarray, aggre
         return np.log(mi_signal, where=attention_mask).sum(axis=1, where=attention_mask)
     else:
         raise ValueError(f"Invalid aggregation method: {aggregation_method}")
-    
 
 class DistributedEvaluator:
     def __init__(self, model: nn.Module, devices: List[str], signal_method: Signal, signal_aggregation: str):
@@ -102,6 +112,7 @@ class DistributedEvaluator:
         device = self.devices[rank]
         model = self.models[rank]
         model.eval()
+        
         with torch.no_grad():
             batch = {k: v.to(device) for k, v in batch.items()}
             input_ids = batch["input_ids"]
@@ -111,6 +122,10 @@ class DistributedEvaluator:
             output = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
 
             attention_mask_np = attention_mask.cpu().numpy()
+
+        # manual patch - converting all attention masks to 0 where labels is -100
+        labels_np = labels.cpu().numpy()
+        attention_mask_np[labels_np == -100] = 0
 
         mi_signal_seq = self.signal_method.compute_mi_signal_from_logits(
             logits=output.logits.cpu().numpy(), labels=labels.cpu().numpy(), attention_mask=attention_mask_np
@@ -144,12 +159,21 @@ def main(args: Arguments):
     # Load dataset
     dataset: datasets.Dataset = datasets.load_from_disk(args.tokenized_data_path, keep_in_memory=True)
     dataset.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
+    
+    # some testing
+    labels = dataset[0]['labels'].numpy()
+    input_ids = dataset[0]['input_ids'].numpy()
+    attention_mask = dataset[0]['attention_mask'].numpy()
+    print(labels.shape, input_ids.shape, attention_mask.shape)
+    attention_mask_binary = attention_mask.astype(bool)
+    print(labels[attention_mask_binary])
+
 
     # Load model
     logger.info(f"Loading model: {args.base_model_path}")
 
     model = transformers.AutoModelForCausalLM.from_pretrained(
-        str(args.base_model_path), trust_remote_code=args.trust_remote_code,
+        str(args.base_model_path), trust_remote_code=args.trust_remote_code, torch_dtype=args.torch_dtype
     )
     if args.peft_path is not None:
         logger.info(f"Loading PEFT model: {args.peft_path}")
@@ -170,7 +194,8 @@ def main(args: Arguments):
 
     evaluator = DistributedEvaluator(model=model, devices=devices, signal_method=mi_signal_method,
                                      signal_aggregation=args.mi_signal_aggregation)
-
+    print('Batch size: ', args.per_device_batch_size)
+    print('Dataset: ', dataset[0])
     results = dataset.map(
         evaluator.evaluate,
         batched=True, batch_size=args.per_device_batch_size,

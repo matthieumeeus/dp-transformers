@@ -38,6 +38,10 @@ inputs:
     type: string
     description: "Aggregation method for MI signal over sequence"
     optional: true
+  disable_distributed:
+    type: boolean
+    description: "Disable distributed training"
+    default: true
 outputs:
   predictions:
     type: uri_folder
@@ -55,7 +59,8 @@ command: >-
     $[[ --mi_signal_method ${{inputs.mi_signal_method}} ]] \
     $[[ --mi_signal_extra_args '${{inputs.mi_signal_extra_args}}' ]] \
     $[[ --mi_signal_aggregation ${{inputs.mi_signal_aggregation}} ]] \
-    --log_level ${{inputs.log_level}}
+    --log_level ${{inputs.log_level}} \
+    --disable_distributed ${{inputs.disable_distributed}} 
 
 environment:
   image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04

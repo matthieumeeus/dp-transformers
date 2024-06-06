@@ -49,7 +49,7 @@ def convert_classification_record_to_synthesizer_record(
 def main(args: Arguments) -> int:
 
     # first do the eval dataset
-    eval_dataset = datasets.load_from_disk(args.eval_data_path, keep_in_memory=True)
+    eval_dataset = datasets.load_from_disk(str(args.eval_data_path), keep_in_memory=True)
     int2str_mapping = eval_dataset.features["label"].int2str
     eval_dataset = eval_dataset.map(
         partial(
@@ -64,7 +64,7 @@ def main(args: Arguments) -> int:
     eval_dataset.to_json(args.fine_tune_eval_data)
 
     # then do the train dataset
-    train_dataset = datasets.Dataset.from_json(str(args.train_data_path), keep_in_memory=True)
+    train_dataset = datasets.load_from_disk(str(args.train_data_path), keep_in_memory=True)
     train_dataset = train_dataset.map(
         partial(
             convert_classification_record_to_synthesizer_record,

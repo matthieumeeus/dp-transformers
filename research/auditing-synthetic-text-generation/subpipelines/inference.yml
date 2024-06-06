@@ -13,10 +13,10 @@ inputs:
     type: uri_file
   per_device_batch_size:
     type: integer
-    default: 32
+    default: 16
   sequence_len:
     type: integer
-    default: 512
+    default: 128
   mi_signal_method:
     type: string
     optional: true
@@ -29,6 +29,9 @@ inputs:
   pack_dataset:
     type: boolean
     default: False
+  disable_distributed:
+    type: boolean
+    default: true
 
 outputs:
   predictions:
@@ -68,5 +71,6 @@ jobs:
       mi_signal_method: ${{parent.inputs.mi_signal_method}}
       mi_signal_extra_args: ${{parent.inputs.mi_signal_extra_args}}
       mi_signal_aggregation: ${{parent.inputs.mi_signal_aggregation}}
+      disable_distributed: ${{parent.inputs.disable_distributed}}
     outputs:
       predictions: ${{parent.outputs.predictions}}

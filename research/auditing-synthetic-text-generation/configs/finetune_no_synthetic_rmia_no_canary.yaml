@@ -1,0 +1,56 @@
+defaults:
+  - workspace: M365Research-PPML-EUS
+  - _self_
+
+data_config:
+  train_data_name: "SST2-train"
+  train_data_version: "5"
+  eval_data_name: "SST2-test"
+  eval_data_version: "5"
+  min_words: 5
+  text_column: "sentence"
+
+shared_training_parameters:
+  model_path: "azureml:mistralai-Mistral-7B-v0_1:4"
+  templated_prompt: "A sentence with a {label} sentiment: "
+  text_column: "sentence"
+  label_column: "label"
+  sequence_len: 128
+  learning_rate: 2e-5
+  num_train_epochs: 3.0
+  per_device_train_batch_size: 16
+  gradient_accumulation_steps: 1
+  enable_lora: true
+  lora_dim: 4
+  target_modules: "['q_proj', 'v_proj']"
+  gradient_checkpointing: true
+  torch_dtype: "bf16"
+  quantization_4bit: true
+
+shared_inference_parameters:
+  per_device_batch_size: 16
+  sequence_len: 128
+
+game_config:
+  num_models: 1
+  seed: 1920
+  num_concurrent_jobs_per_node: 1
+  num_challenge_points_per_model: 1000
+
+shadow_model_config:
+  in_fraction: 0.5
+  num_models: 4
+
+mi_signal_config:
+  method: CrossEntropy
+  aggregation: sum
+  extra_args:
+    temp: 2.0 
+
+rmia_config: {}
+
+canary_config:
+  method: hold_out_original_data
+  n_canaries: 1000
+  canary_data_name: None
+  canary_data_version: None

@@ -50,6 +50,14 @@ inputs:
     type: string
     description: "Evaluation strategy."
     default: "no"
+  eval_steps:
+    type: integer
+    description: "Number of evaluation steps."
+    default: 500
+  label_names:
+    type: string
+    description: "Label names."
+    default: None
   save_strategy:
     type: string
     description: "Evaluation strategy."
@@ -215,6 +223,8 @@ command: >-
     --per_device_train_batch_size ${{inputs.per_device_train_batch_size}} \
     --gradient_accumulation_steps ${{inputs.gradient_accumulation_steps}} \
     --evaluation_strategy ${{inputs.evaluation_strategy}} \
+    --eval_steps ${{inputs.eval_steps}} \
+    --label_names ${{inputs.label_names}} \
     --save_strategy ${{inputs.save_strategy}} \
     --log_level ${{inputs.log_level}} \
     --seed ${{inputs.seed}} \
