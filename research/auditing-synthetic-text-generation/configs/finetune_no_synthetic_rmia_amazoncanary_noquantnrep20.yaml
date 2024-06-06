@@ -53,5 +53,7 @@ rmia_config: {}
 canary_config:
   method: external_data
   n_canaries: 1000
+  canary_min_words: 5
+  canary_text_column: sentence
   canary_data_name: "AmazonPolarity5k-train"
   canary_data_version: "2"
