@@ -7,12 +7,9 @@ display_name: membership inference
 description: "Membership inference"
 
 inputs:
-  member_path:  
+  inference_path:  
     type: uri_folder
-    description: "Path to original, real data that has been used to generate synthetic data."
-  non_member_path:
-    type: uri_folder
-    description: "Path to original, real data that has not been used to generate synthetic data."
+    description: "Path to real samples for which we want to compute a membership score."
   synthetic_path:
     type: uri_folder
     description: "Path to synthetic data."
@@ -24,20 +21,13 @@ inputs:
     type: string
     description: "Name of the label column in the dataset"
     default: "label"
-  seed:
-    type: integer
-    description: "Random seed."
-  number_of_samples:
-    type: integer
-    description: "Number of samples used for MIA, same number of members and non-members."
-    default: 500
-  n_runs:
-    type: integer
-    description: "Number of MIA runs for different samples of members and non members."
-    default: 1
+  mia_method:
+    type: string
+    description: "MIA methodology."
+    default: "ngram_loss_4"
 outputs:
-  mia_results_path:
-    type: uri_file
+  predictions:
+    type: uri_folder
     description: Output file with MIA results.
 
 code: ./
@@ -48,15 +38,12 @@ additional_includes:
 
 command: >-
   python -m pip install -e . && python membership_inference.py \
-    --member_path ${{inputs.member_path}} \
-    --non_member_path ${{inputs.non_member_path}} \
+    --inference_path ${{inputs.inference_path}} \
     --synthetic_path ${{inputs.synthetic_path}} \
     --text_name ${{inputs.text_name}} \
     --label_name ${{inputs.label_name}} \
-    --seed ${{inputs.seed}} \
-    --number_of_samples ${{inputs.number_of_samples}} \
-    --n_runs ${{inputs.n_runs}} \
-    --mia_results_path ${{outputs.mia_results_path}} 
+    --mia_method ${{inputs.mia_method}} \
+    --predictions ${{outputs.predictions}} 
 
 environment:
   image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
