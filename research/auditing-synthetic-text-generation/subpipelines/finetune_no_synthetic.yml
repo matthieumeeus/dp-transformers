@@ -125,7 +125,7 @@ jobs:
       fp16: false
       enable_lora: ${{parent.inputs.enable_lora}}
       lora_dim: ${{parent.inputs.lora_dim}}
-      target_modules: "['q_proj', 'v_proj']"
+      target_modules: ${{parent.inputs.target_modules}}
       use_flash_attention: false
       gradient_checkpointing: ${{parent.inputs.gradient_checkpointing}}
     outputs:
