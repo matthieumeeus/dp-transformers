@@ -54,11 +54,13 @@ class ModelArguments:
         "help": "Path to output directory"
     })
 
-
 @dataclass
 class DataArguments:
     train_data_path: Optional[Path] = field(default=None, metadata={
         "help": "Path to training data in jsonl format"
+    })
+    synthetic_multiple: int = field(default=1, metadata={
+        "help": "Number of synthetic samples to generate for each input"
     })
 
 
@@ -103,9 +105,17 @@ def main(args: Arguments):
     else:
         files = [train_data_path]
 
-    dataset = datasets.DatasetDict({
-        "train": datasets.Dataset.from_json(files),
-    })
+    train_dataset = datasets.Dataset.from_json(files)
+    
+    # multiplying this dataset by the synthetic_multiple
+    if args.data.synthetic_multiple > 1:
+        dataset = datasets.DatasetDict({
+            "train": datasets.concatenate_datasets([train_dataset] * args.data.synthetic_multiple),
+        }) 
+    else:
+        dataset = datasets.DatasetDict({
+            "train": train_dataset,
+        })
 
     # Tokenize data
     def preprocess_function(examples):
