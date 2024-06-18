@@ -159,15 +159,6 @@ def main(args: Arguments):
     # Load dataset
     dataset: datasets.Dataset = datasets.load_from_disk(args.tokenized_data_path, keep_in_memory=True)
     dataset.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
-    
-    # some testing
-    labels = dataset[0]['labels'].numpy()
-    input_ids = dataset[0]['input_ids'].numpy()
-    attention_mask = dataset[0]['attention_mask'].numpy()
-    print(labels.shape, input_ids.shape, attention_mask.shape)
-    attention_mask_binary = attention_mask.astype(bool)
-    print(labels[attention_mask_binary])
-
 
     # Load model
     logger.info(f"Loading model: {args.base_model_path}")
