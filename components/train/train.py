@@ -141,7 +141,6 @@ def load_model(model_args: ModelArguments, lora_args: LoraArguments, gradient_ch
                                                                 **model_kwargs)
 
 
-
     if model_args.quantization_4bit:
         # Normally you'd need to call prepare_model_for_kbit_training from peft
         # model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=args.train.gradient_checkpointing)
