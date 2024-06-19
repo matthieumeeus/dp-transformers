@@ -1,0 +1,32 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: dp-transformers-selected-membership-signal
+display_name: select membership signal
+
+description: "Select membersjip inference column."
+
+inputs:
+  all_predictions:
+    type: uri_folder
+    description: "Path to the folder with all predictions."
+  mia_method:
+    type: string
+    description: "Membership inference attack method."
+
+outputs:
+  selected_predictions:
+    type: uri_folder
+    description: "Path to the preprocessed synthetic data in jsonl format."
+
+code: ./
+
+command: >-
+  python select_signal_column.py \
+    --all_predictions ${{inputs.all_predictions}} \
+    --mia_method ${{inputs.mia_method}} \
+    --selected_predictions ${{outputs.selected_predictions}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml
