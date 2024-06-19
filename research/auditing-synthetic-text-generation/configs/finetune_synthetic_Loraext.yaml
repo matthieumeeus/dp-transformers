@@ -26,6 +26,7 @@ shared_training_parameters:
   gradient_checkpointing: false
   torch_dtype: "bf16"
   quantization_4bit: false
+  synthetic_multiple: 1
 
 shared_inference_parameters:
   real_label_column: "label"
