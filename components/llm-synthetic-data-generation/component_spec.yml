@@ -39,6 +39,9 @@ inputs:
   max_new_tokens:
     type: integer
     description: "Maximum number of new tokens to generate."
+  synthetic_multiple:
+    type: integer
+    description: "Number of synthetic samples to generate per real sample."
 outputs:
   output_dir:
     type: uri_folder
@@ -62,6 +65,7 @@ command: >-
     --seed ${{inputs.seed}} \
     --load_dtype ${{inputs.load_dtype}} \
     --max_new_tokens ${{inputs.max_new_tokens}} \
+    --synthetic_multiple ${{inputs.synthetic_multiple}} \
     --enable_lora
 
 environment:

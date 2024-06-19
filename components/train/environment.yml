@@ -129,7 +129,7 @@ dependencies:
       - opacus==1.4.1
       - opt-einsum==3.3.0
       - pandas==2.2.0
-      - peft==0.8.2
+      - peft==0.10.0
       - pillow==10.2.0
       - portalocker==2.8.2
       - protobuf==4.25.3

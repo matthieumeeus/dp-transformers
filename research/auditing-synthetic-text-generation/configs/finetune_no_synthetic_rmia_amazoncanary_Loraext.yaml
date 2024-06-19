@@ -15,21 +15,21 @@ shared_training_parameters:
   templated_prompt: "A sentence with a {label} sentiment: "
   text_column: "sentence"
   label_column: "label"
-  sequence_len: 128
+  sequence_len: 256
   learning_rate: 2e-5
   num_train_epochs: 1.0
-  per_device_train_batch_size: 16
-  gradient_accumulation_steps: 1
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8
   enable_lora: true
   lora_dim: 4
-  target_modules: "['q_proj', 'v_proj']"
+  target_modules: "['embed_tokens', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'lm_head']"
   gradient_checkpointing: true
   torch_dtype: "bf16"
   quantization_4bit: false
 
 shared_inference_parameters:
   per_device_batch_size: 16
-  sequence_len: 128
+  sequence_len: 256
 
 game_config:
   num_models: 1
@@ -44,7 +44,7 @@ shadow_model_config:
 
 mi_signal_config:
   method: CrossEntropy
-  aggregation: sum
+  aggregation: mean
   extra_args:
     temp: 2.0 
 
@@ -57,3 +57,8 @@ canary_config:
   canary_text_column: sentence
   canary_data_name: "AmazonPolarity5k-train"
   canary_data_version: "2"
+  canary_text_column: "sentence"
+  canary_min_words: 100
+  num_tokens_to_replace: 0
+  replacement_method: "random"
+  mlm_name: "roberta-base"

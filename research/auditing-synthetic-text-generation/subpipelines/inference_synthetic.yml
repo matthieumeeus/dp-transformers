@@ -1,0 +1,57 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+display_name: Run inference on LLM synthetic data
+name: dp_transformers_privacy_auditing_inference_synthetic
+type: pipeline
+
+inputs:
+  synthetic_data:
+    type: uri_folder
+  inference_data:
+    type: uri_folder
+  real_label_column:
+    type: string
+  real_text_column:
+    type: string
+  synthetic_label_column:
+    type: string
+  synthetic_text_column:
+    type: string
+  mia_method:
+    type: string
+
+outputs:
+  predictions:
+    type: uri_folder
+
+jobs:
+  preprocess_synthetic:
+    type: command
+    component: ../components/preprocess_synthetic/component_spec.yml
+    inputs:
+      synthetic_data_path: ${{parent.inputs.synthetic_data}}
+      real_label_name: ${{parent.inputs.real_label_column}}
+      real_text_name: ${{parent.inputs.real_text_column}}
+      synthetic_label_name: ${{parent.inputs.synthetic_label_column}}
+      synthetic_text_name: ${{parent.inputs.synthetic_text_column}}
+    outputs:
+      prep_synthetic_data_path:
+        mode: "rw_mount"
+  synthetic_membership_score:
+    type: command
+    component: ../components/membership_inference/component_spec.yml
+    inputs:
+      inference_path: ${{parent.inputs.inference_data}}
+      synthetic_path: ${{parent.jobs.preprocess_synthetic.outputs.prep_synthetic_data_path}}
+      text_name: ${{parent.inputs.real_text_column}}
+      label_name: ${{parent.inputs.real_label_column}}
+    outputs:
+      predictions: 
+        mode: "rw_mount"
+  select_signal_column:
+    type: command
+    component: ../components/select_signal_column/component_spec.yml
+    inputs:
+      all_predictions: ${{parent.jobs.synthetic_membership_score.outputs.predictions}}
+      mia_method: ${{parent.inputs.mia_method}}
+    outputs:
+      selected_predictions: ${{parent.outputs.predictions}}

@@ -55,11 +55,15 @@ class SharedTrainingParameters:
     gradient_checkpointing: bool
     torch_dtype: str
     quantization_4bit: bool
+    synthetic_multiple: int
 
 @dataclass
 class SharedInferenceParameters:
-    per_device_batch_size: int
-    sequence_len: int
+    real_label_column: str
+    real_text_column: str
+    synthetic_label_column: str
+    synthetic_text_column: str
+    mia_method: str
 
 class DataFilterComponentLoader(TrainingComponentLoader):
     def __init__(self, aml_component_loader: AMLComponentLoader, min_words: int, text_column: str):
@@ -90,40 +94,28 @@ class TrainTransformerComponentLoader(TrainingComponentLoader):
         self.parameters = parameters
 
     def load(self, train_data: Input, validation_data: Input, seed: int):
-        component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_no_synthetic.yml")
+        component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic.yml")
         job = component(**asdict(self.parameters), train_data=train_data, val_data=validation_data, seed=seed)
         job.component.jobs["fine_tune"].compute = self.aml_loader.workspace.gpu_compute
+        job.component.jobs["generate"].compute = self.aml_loader.workspace.gpu_compute
         return job
 
 class TransformerInferenceComponentLoader(InferenceComponentLoader):
-    def __init__(self, aml_component_loader: AMLComponentLoader, parameters: SharedInferenceParameters,
-                  is_peft: bool, base_model: str, 
-                 mi_signal_method: str, mi_signal_aggregation: str, mi_signal_extra_args: Optional[Dict] = None):
+    def __init__(self, aml_component_loader: AMLComponentLoader, parameters: SharedInferenceParameters):
         super().__init__(aml_component_loader=aml_component_loader)
         self.parameters = parameters
-        self.is_peft = is_peft
-        self.base_model = base_model
-        self.mi_signal_method = mi_signal_method
-        self.mi_signal_agggregation = mi_signal_aggregation
-        self.mi_signal_extra_args = mi_signal_extra_args or {}
 
     def load(self, model: Input, dataset: Input):
-        component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"inference.yml")
-        if self.is_peft:
-            job = component(base_model=self.base_model, peft = model, data=dataset, **asdict(self.parameters), mi_signal_method=self.mi_signal_method,
-                            mi_signal_extra_args=" ".join(f"{k}={v}" for k, v in self.mi_signal_extra_args.items()),
-                            mi_signal_aggregation=self.mi_signal_agggregation)
-        else:   
-            job = component(base_model=model, data=dataset, **asdict(self.parameters), mi_signal_method=self.mi_signal_method,
-                            mi_signal_extra_args=" ".join(f"{k}={v}" for k, v in self.mi_signal_extra_args.items()),
-                            mi_signal_aggregation=self.mi_signal_agggregation)
-        job.component.jobs["inference"].compute = self.aml_loader.workspace.gpu_compute
+        component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"inference_synthetic.yml")
+        job = component(synthetic_data=model, inference_data=dataset, 
+                        **asdict(self.parameters))
+        job.component.jobs["synthetic_membership_score"].compute = self.aml_loader.workspace.gpu_compute
         return job
 
 class Game(BlackBoxMembershipInferenceGameBase):
     def __init__(self, shared_training_parameters: SharedTrainingParameters,
                  shared_inference_parameters: SharedInferenceParameters, workspace: WorkspaceConfig,
-                 game_config: GameConfig, mi_signal_config: MISignalConfig, rmia_config: RmiaConfig,
+                 game_config: GameConfig, rmia_config: RmiaConfig,
                  shadow_model_config: ShadowModelConfig, canary_config: CanaryConfig, data_config: DataConfig) -> None:
 
         train_loader = TrainTransformerComponentLoader(
@@ -133,12 +125,7 @@ class Game(BlackBoxMembershipInferenceGameBase):
 
         inference_loader = TransformerInferenceComponentLoader(
             aml_component_loader=AMLComponentLoader(workspace=workspace),
-            parameters=shared_inference_parameters,
-            is_peft=shared_training_parameters.enable_lora,
-            base_model=shared_training_parameters.model_path,
-            mi_signal_method=mi_signal_config.method,
-            mi_signal_extra_args=mi_signal_config.extra_args,
-            mi_signal_aggregation=mi_signal_config.aggregation
+            parameters=shared_inference_parameters
         )
 
         attack_loader = RmiaLoader(offline_a=rmia_config.offline_a)
@@ -198,7 +185,6 @@ class Game(BlackBoxMembershipInferenceGameBase):
                                 parameters=self.canary_config).load(original_data=canary_data).outputs.modified_data
     
         return {"train_data": train_data, "validation_data": val_data, "canary_data": canary_data}
-
 
 if __name__ == "__main__":
     Game.main(config_path=EXPERIMENT_DIR/"configs")

@@ -13,10 +13,8 @@ inputs:
     type: uri_file
   per_device_batch_size:
     type: integer
-    default: 16
   sequence_len:
     type: integer
-    default: 128
   mi_signal_method:
     type: string
     optional: true

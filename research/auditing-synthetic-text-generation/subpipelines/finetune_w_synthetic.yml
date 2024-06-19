@@ -58,6 +58,9 @@ inputs:
   seed:
     type: integer
     description: "Random seed for reproducibility."
+  synthetic_multiple: 
+    type: integer
+    description: "Number of synthetic samples to generate per real sample."
 outputs:
   model:
     type: uri_folder
@@ -136,5 +139,21 @@ jobs:
     distribution:
       type: pytorch
       process_count_per_instance: 8
+    outputs:
+      output_dir: 
+        mode: "rw_mount"
+  generate:
+    type: command
+    component: ../../../components/llm-synthetic-data-generation/component_spec.yml
+    inputs:
+      lora_path: ${{parent.jobs.fine_tune.outputs.output_dir}}
+      model_path: ${{parent.inputs.model_path}}
+      train_data_path: ${{parent.jobs.preprocess.outputs.fine_tune_train_data}}
+      nproc_per_node: 8
+      batch_size: 32
+      seed: ${{parent.inputs.seed}}
+      max_new_tokens: ${{parent.inputs.sequence_len}}
+      mixed_precision: "no"
+      synthetic_multiple: ${{parent.inputs.synthetic_multiple}}
     outputs:
       output_dir: ${{parent.outputs.model}}
