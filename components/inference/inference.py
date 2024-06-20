@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Dict, List
 from pathlib import Path
 from ast import literal_eval
+from enum import Enum
 from privacy_estimates.experiments.attacks.signals import Signal, SIGNALS
 
 
@@ -28,6 +29,16 @@ TORCH_DTYPES = {
     "fp32": torch.float32,
     "bf16": torch.bfloat16,
 }
+
+
+class AggregationMethod(Enum):
+    MEAN = "mean"
+    MAX = "max"
+    MIN = "min"
+    SUM = "sum"
+    SUMLOG = "sumlog"
+    EXPNEGSUM = "expnegsum"
+
 
 @dataclass
 class Arguments:
@@ -65,7 +76,7 @@ class Arguments:
         "help": "Extra arguments for MI signal method"
     })
     mi_signal_aggregation: Optional[str] = field(default=None, metadata={
-        "help": "Method to aggregate MI signal", "choices": ["mean", "max", "min", "sum", "sumlog"]
+        "help": "Method to aggregate MI signal", "choices": [a.value for a in AggregationMethod]
     })
     disable_distributed: bool = field(default=False, metadata={
         "help": "Whether to disable distributed inference."
@@ -82,21 +93,25 @@ class Arguments:
                  raise ValueError(f"Invalid torch dtype: {self.torch_dtype}. Must be one of {list(TORCH_DTYPES.keys())}")
             self.torch_dtype = TORCH_DTYPES[self.torch_dtype]
 
-def aggregate_mi_signal(mi_signal: np.ndarray, attention_mask: np.ndarray, aggregation_method: str) -> np.ndarray:
-    attention_mask = attention_mask.astype(bool)
+def aggregate_mi_signal(mi_signal: np.ndarray, completion_mask: np.ndarray, aggregation_method: str) -> np.ndarray:
+    completion_mask = completion_mask.astype(bool)
     assert mi_signal.ndim == 2
-    if aggregation_method == "mean":
-        return mi_signal.mean(axis=1, where=attention_mask)
-    elif aggregation_method == "max":
-        return mi_signal.max(axis=1, where=attention_mask)
-    elif aggregation_method == "min":
-        return mi_signal.min(axis=1, where=attention_mask)
-    elif aggregation_method == "sum":
-        return mi_signal.sum(axis=1, where=attention_mask)
-    elif aggregation_method == "sumlog":
-        return np.log(mi_signal, where=attention_mask).sum(axis=1, where=attention_mask)
-    else:
-        raise ValueError(f"Invalid aggregation method: {aggregation_method}")
+    aggregation_method = AggregationMethod(aggregation_method)
+    match aggregation_method:
+        case AggregationMethod.MEAN:
+            return mi_signal.mean(axis=1, where=completion_mask)
+        case AggregationMethod.MAX:
+            return mi_signal.max(axis=1, where=completion_mask)
+        case AggregationMethod.MIN:
+            return mi_signal.min(axis=1, where=completion_mask)
+        case AggregationMethod.SUM:
+            return mi_signal.sum(axis=1, where=completion_mask)
+        case AggregationMethod.SUMLOG:
+            return np.log(mi_signal, where=completion_mask).sum(axis=1, where=completion_mask)
+        case AggregationMethod.EXPNEGSUM:
+            return np.exp(-mi_signal.sum(axis=1, where=completion_mask))
+        case _:
+            raise ValueError(f"Invalid aggregation method: {aggregation_method}")
 
 class DistributedEvaluator:
     def __init__(self, model: nn.Module, devices: List[str], signal_method: Signal, signal_aggregation: str):
@@ -131,7 +146,7 @@ class DistributedEvaluator:
             logits=output.logits.cpu().numpy(), labels=labels.cpu().numpy(), attention_mask=attention_mask_np
         )
         mi_signal = aggregate_mi_signal(
-            mi_signal_seq, attention_mask=attention_mask_np, aggregation_method=self.signal_aggregation
+            mi_signal_seq, completion_mask=attention_mask_np, aggregation_method=self.signal_aggregation
         )
         assert np.isnan(mi_signal).any() == False, "NaN values in MI signal"
         return {"mi_signal": mi_signal}
