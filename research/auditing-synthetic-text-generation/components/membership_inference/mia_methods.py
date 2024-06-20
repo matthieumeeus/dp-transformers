@@ -189,5 +189,9 @@ def compute_mia_score(samples, synthetic, method, synthetic_embeddings = None):
             scores, synthetic_embeddings = compute_emb_distance_mia_score(samples, synthetic, synthetic_embeddings, 
                                                 ks = [1, 5, 10, 25])
         all_mia_scores.update(scores)
+
+    # MIA scores need to be in [0,1]
+    for key in all_mia_scores:
+        all_mia_scores[key] = np.exp(-np.array(all_mia_scores[key]))
         
     return all_mia_scores, synthetic_embeddings
