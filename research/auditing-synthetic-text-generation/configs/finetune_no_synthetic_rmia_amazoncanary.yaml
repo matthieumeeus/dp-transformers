@@ -43,7 +43,7 @@ shadow_model_config:
 
 mi_signal_config:
   method: CrossEntropy
-  aggregation: expnegsum
+  aggregation: expsum
   extra_args:
     temp: 2.0 
 
