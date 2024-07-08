@@ -1,0 +1,75 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: get_ood_canaries
+display_name: get_ood_canaries
+
+description: "Get out-of-distribution canaries."
+
+inputs:
+  original_dataset: 
+    type: uri_folder
+    description: "Path to the dataset in Huggingface dataset format."
+  canary_method: 
+    type: string
+    description: "Method to use for generating canaries. Either 'sample_real' or 'sample_synthetic'."
+  n_canaries: 
+    type: integer
+    description: "Number of canaries to generate."
+  canary_length:
+    type: integer
+    description: "Length of the canaries (in words using len(str.split()))."
+  external_artifact: 
+    type: uri_folder
+    description: "Path to the external artficats, either a model or a dataset."
+  canary_text_column: 
+    type: string
+    description: "Name of the text column in the canary dataset."
+    default: None
+  temperature:
+    type: number
+    description: "Temperature for sampling."
+    default: 1.0
+  label_comptability_method:
+    type: string
+    description: "Method to use for making the labels compatible with the model. Either 'uniform' or extend."
+  text_column: 
+    type: string
+    description: "Name of the text column in the original dataset."
+  label_column: 
+    type: string
+    description: "Name of the label column in the original dataset."
+  seed:
+    type: integer
+    description: "Seed for reproducibility."
+
+outputs:
+  canary_dataset:
+    type: uri_folder
+    description: "Path to the canary dataset in Huggingface dataset format."
+  updated_training_dataset:
+    type: uri_folder
+    description: "Path to the updated training dataset in Huggingface dataset format. Needed to accommodate label change"
+
+code: ./
+
+command: >-
+  python get_ood_canaries.py \
+    --original_dataset ${{inputs.original_dataset}} \
+    --canary_method ${{inputs.canary_method}} \
+    --n_canaries ${{inputs.n_canaries}} \
+    --canary_length ${{inputs.canary_length}} \
+    --external_artifact ${{inputs.external_artifact}} \
+    --canary_text_column ${{inputs.canary_text_column}} \
+    --temperature ${{inputs.temperature}} \
+    --batch_size 8 \
+    --label_comptability_method ${{inputs.label_comptability_method}} \
+    --text_column ${{inputs.text_column}} \
+    --label_column ${{inputs.label_column}} \
+    --seed ${{inputs.seed}} \
+    --canary_dataset ${{outputs.canary_dataset}} \
+    --updated_training_dataset ${{outputs.updated_training_dataset}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml
