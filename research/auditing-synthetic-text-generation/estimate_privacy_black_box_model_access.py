@@ -28,12 +28,15 @@ class DataConfig:
 
 @dataclass
 class CanaryConfig:
-    method: str
-    canary_min_words: int
+    canary_method: str
     n_canaries: int
-    canary_data_name: str
-    canary_data_version: str
+    canary_length: int
+    external_artifact: str
+    external_artifact_version: str
     canary_text_column: str
+    temperature: float
+    label_comptability_method: str
+    seed: int
     num_tokens_to_replace: int
     replacement_method: str
     mlm_name: str
@@ -60,6 +63,9 @@ class SharedTrainingParameters:
 class SharedInferenceParameters:
     per_device_batch_size: int
     sequence_len: int
+    text_column: str
+    label_column: str
+    templated_prompt: str
 
 class DataFilterComponentLoader(TrainingComponentLoader):
     def __init__(self, aml_component_loader: AMLComponentLoader, min_words: int, text_column: str):
@@ -72,6 +78,25 @@ class DataFilterComponentLoader(TrainingComponentLoader):
         job = component(all_data=all_data, min_words=self.min_words, text_column=self.text_column)
         return job
     
+class ExternalCanaryComponentLoader(TrainingComponentLoader):
+    def __init__(self, aml_component_loader: AMLComponentLoader, canary_parameters, train_parameters):
+        super().__init__(aml_component_loader=aml_component_loader)
+        self.parameters = canary_parameters
+        self.text_column = train_parameters.text_column
+        self.label_column = train_parameters.label_column
+
+    def load(self, original_dataset: Input, external_artifact: Input):
+        component = self.aml_loader.load_from_component_spec(path=EXPERIMENT_DIR/"components"/"ood_canaries/component_spec.yml")
+        job = component(original_dataset=original_dataset, canary_method=self.parameters.canary_method, 
+                        n_canaries=self.parameters.n_canaries, canary_length=self.parameters.canary_length,
+                        external_artifact=external_artifact, canary_text_column=self.parameters.canary_text_column,
+                        temperature=self.parameters.temperature, label_comptability_method=self.parameters.label_comptability_method,
+                        seed=self.parameters.seed,
+                        text_column=self.text_column, label_column=self.label_column)
+        if self.parameters.canary_method == "sample_synthetic":
+            job.compute = self.aml_loader.workspace.gpu_compute
+        return job
+
 class ReplaceTokensComponentLoader(TrainingComponentLoader):
     def __init__(self, aml_component_loader: AMLComponentLoader, parameters: CanaryConfig):
         super().__init__(aml_component_loader=aml_component_loader)
@@ -144,11 +169,12 @@ class Game(BlackBoxMembershipInferenceGameBase):
         attack_loader = RmiaLoader(offline_a=rmia_config.offline_a)
 
         challenge_point_selection_loader = TopKChallengePoints(
-            num_challenge_points=game_config.num_challenge_points_per_model*game_config.num_models
+            num_challenge_points=game_config.num_challenge_points_per_model*game_config.num_models, allow_fewer=True
         )
 
         self.canary_config = canary_config
         self.data_config = data_config
+        self.train_config = shared_training_parameters
 
         super().__init__(
             workspace=workspace,
@@ -173,25 +199,24 @@ class Game(BlackBoxMembershipInferenceGameBase):
         val_data = DataFilterComponentLoader(aml_component_loader=AMLComponentLoader(workspace=self.workspace), 
                             min_words=self.data_config.min_words, text_column=self.data_config.text_column).load(all_data=val_data).outputs.filtered_data
 
-        if self.canary_config.method == "hold_out_original_data":
+        if self.canary_config.canary_method == "hold_out_original_data":
             # to do: also implement min canary words for this method
             data_split = random_split_dataset(dataset=train_data, split_1_size=self.canary_config.n_canaries, seed=self.game_config.seed)
             canary_data = data_split.outputs.dataset_1
             train_data = data_split.outputs.dataset_2
 
-        elif self.canary_config.method == "external_data":
-            canary_data = self.workspace.ml_client.data.get(name=self.canary_config.canary_data_name, version=self.canary_config.canary_data_version)
-            canary_data = DataFilterComponentLoader(aml_component_loader=AMLComponentLoader(workspace=self.workspace), 
-                                    min_words=self.canary_config.canary_min_words, text_column=self.canary_config.canary_text_column).load(all_data=canary_data).outputs.filtered_data
-            canary_data = select_top_k_rows(data=canary_data, k=self.canary_config.n_canaries).outputs.output
-
-        elif self.canary_config.method == "generate_secrets":
-            canary_data = generate_canaries_with_secrets(
-                format="language_modelling", text_column="sentence", num_canaries=self.canary_config.n_canaries, seed=self.game_config.seed+230230
-            ).outputs.output
+        elif self.canary_config.canary_method in ("sample_real", "sample_synthetic"):
+            external_canary_outputs = ExternalCanaryComponentLoader(aml_component_loader=AMLComponentLoader(workspace=self.workspace), 
+                                    canary_parameters=self.canary_config, train_parameters=self.train_config).load(
+                                        original_dataset=train_data, 
+                                        external_artifact=self.workspace.ml_client.data.get(name=self.canary_config.external_artifact,
+                                                                                            version=self.canary_config.external_artifact_version),
+                                    ).outputs
+            canary_data = external_canary_outputs.canary_dataset
+            train_data = external_canary_outputs.updated_training_dataset
 
         else:
-            raise ValueError(f"Canary method {self.canary_config.method} not supported")
+            raise ValueError(f"Canary method {self.canary_config.canary_method} not supported")
         
         if self.canary_config.num_tokens_to_replace > 0:
             canary_data = ReplaceTokensComponentLoader(aml_component_loader=AMLComponentLoader(workspace=self.workspace), 
