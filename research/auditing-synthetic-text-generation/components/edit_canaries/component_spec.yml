@@ -1,0 +1,44 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: edit_canaries
+display_name: edit_canaries
+
+description: "Edit canaries by replacing random tokens."
+
+inputs:
+  original_data:
+    type: uri_folder
+    description: "Path to the dataset in Huggingface dataset format."
+  text_column:
+    type: string
+    description: "The name of the text column in the dataset."
+  num_tokens_to_replace:
+    type: integer
+    description: "Number of tokens to replace in each sentence."
+  replacement_method:
+    type: string
+    description: "Method to use for replacing tokens."
+  model_name:
+    type: string
+    description: "Name of the HF model to use."
+
+outputs:
+  modified_data:
+    type: uri_folder
+    description: "Path to the filtered dataset in Huggingface dataset format."
+
+code: ./
+
+command: >-
+  python edit_canaries.py \
+    --original_data ${{inputs.original_data}} \
+    --text_column ${{inputs.text_column}} \
+    --num_tokens_to_replace ${{inputs.num_tokens_to_replace}} \
+    --replacement_method ${{inputs.replacement_method}} \
+    --model_name ${{inputs.model_name}} \
+    --modified_data ${{outputs.modified_data}}
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml
