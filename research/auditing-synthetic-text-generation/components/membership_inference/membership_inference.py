@@ -59,7 +59,8 @@ def main(args: Arguments):
     synthetic_data = datasets.Dataset.from_json(str(args.data.synthetic_path))
 
     # Compute MIA score - right now let's compute it all
-    scores, _ = compute_mia_score(inference_data[args.data.text_name], synthetic_data[args.data.text_name], method='all')
+    scores, _ = compute_mia_score(inference_data[args.data.text_name], 
+                                  [sample for sample in synthetic_data[args.data.text_name] if sample is not None], method='all')
     
     # add column with scores
     for method in scores.keys():
