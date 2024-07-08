@@ -63,26 +63,34 @@ outputs:
     type: uri_folder
 
 jobs:
-  preprocess:
+  preprocess_train:
     type: command
     component: ../components/preprocess_for_synthesizer/component_spec.yml
     inputs:
-      train_data_path: ${{parent.inputs.train_data}}
-      eval_data_path: ${{parent.inputs.val_data}}
+      input_data_path: ${{parent.inputs.train_data}}
       templated_prompt: ${{parent.inputs.templated_prompt}}
       label_column: ${{parent.inputs.label_column}}
       text_column: ${{parent.inputs.text_column}}
     outputs:
-      fine_tune_train_data:
+      output_data_path:
         mode: "rw_mount"
-      fine_tune_eval_data:
+  preprocess_val:
+    type: command
+    component: ../components/preprocess_for_synthesizer/component_spec.yml
+    inputs:
+      input_data_path: ${{parent.inputs.val_data}}
+      templated_prompt: ${{parent.inputs.templated_prompt}}
+      label_column: ${{parent.inputs.label_column}}
+      text_column: ${{parent.inputs.text_column}}
+    outputs:
+      output_data_path:
         mode: "rw_mount"
   tokenize_train:
     type: command
     component: ../../../components/tokenize/component_spec.yml
     inputs:
       tokenizer_path: ${{parent.inputs.model_path}}
-      data: ${{parent.jobs.preprocess.outputs.fine_tune_train_data}}
+      data: ${{parent.jobs.preprocess_train.outputs.output_data_path}}
       packed_dataset: False
       chat_format: False
       sequence_len: ${{parent.inputs.sequence_len}}
@@ -94,7 +102,7 @@ jobs:
     component: ../../../components/tokenize/component_spec.yml
     inputs:
       tokenizer_path: ${{parent.inputs.model_path}}
-      data: ${{parent.jobs.preprocess.outputs.fine_tune_eval_data}}
+      data: ${{parent.jobs.preprocess_val.outputs.output_data_path}}
       packed_dataset: False
       chat_format: False
       sequence_len: ${{parent.inputs.sequence_len}}

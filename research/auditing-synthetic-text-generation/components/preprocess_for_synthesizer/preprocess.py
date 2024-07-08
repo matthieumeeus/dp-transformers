@@ -7,14 +7,11 @@ from functools import partial
 
 
 class Arguments(BaseModel):
-    train_data_path: Path
-    fine_tune_train_data: Path
-    eval_data_path: Path
-    fine_tune_eval_data: Path
+    input_data_path: Path
+    output_data_path: Path
     templated_prompt: str
     label_name: str
     text_name: str
-
 
 def convert_classification_record_to_synthesizer_record(
         record: Dict[str, Any], text_name: str, templated_prompt: str, label_name: str, label_int2str: Callable[[int], str]
@@ -48,10 +45,9 @@ def convert_classification_record_to_synthesizer_record(
 
 def main(args: Arguments) -> int:
 
-    # first do the eval dataset
-    eval_dataset = datasets.load_from_disk(str(args.eval_data_path), keep_in_memory=True)
-    int2str_mapping = eval_dataset.features["label"].int2str
-    eval_dataset = eval_dataset.map(
+    dataset = datasets.load_from_disk(str(args.input_data_path), keep_in_memory=True)
+    int2str_mapping = dataset.features[args.label_name].int2str
+    dataset = dataset.map(
         partial(
             convert_classification_record_to_synthesizer_record,
             label_int2str=int2str_mapping,
@@ -59,25 +55,12 @@ def main(args: Arguments) -> int:
             templated_prompt=args.templated_prompt,
             label_name=args.label_name
         ),
-        remove_columns=eval_dataset.column_names
+        remove_columns=dataset.column_names
     )
-    eval_dataset.to_json(args.fine_tune_eval_data)
-
-    # then do the train dataset
-    train_dataset = datasets.load_from_disk(str(args.train_data_path), keep_in_memory=True)
-    train_dataset = train_dataset.map(
-        partial(
-            convert_classification_record_to_synthesizer_record,
-            label_int2str=int2str_mapping,
-            text_name=args.text_name,
-            templated_prompt=args.templated_prompt,
-            label_name=args.label_name
-        ),
-        remove_columns=train_dataset.column_names
-    )
-    train_dataset.to_json(args.fine_tune_train_data)
-
-    # then the eval dataset
+    for i in range(100):
+        print(dataset[i])
+        print('---')
+    dataset.to_json(args.output_data_path)
     
     return 0
 

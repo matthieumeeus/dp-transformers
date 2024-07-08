@@ -7,12 +7,9 @@ display_name: preprocess for synthesizer
 description: "Preprocesses data for the synthesizer."
 
 inputs:
-  train_data_path:
+  input_data_path:
     type: uri_folder
     description: "Path to the dataset in Huggingface dataset format."
-  eval_data_path:
-    type: uri_folder
-    description: "Path to the eval dataset in Huggingface dataset format."
   templated_prompt:
     type: string
     description: |
@@ -28,21 +25,16 @@ inputs:
     description: "The name of the text column in the dataset."
 
 outputs:
-  fine_tune_train_data:
+  output_data_path:
     type: uri_file
-    description: "Path to the preprocessed training data in jsonl format."
-  fine_tune_eval_data:
-    type: uri_file
-    description: "Path to the preprocessed eval data in jsonl format."
+    description: "Path to the preprocessed data in jsonl format."
 
 code: ./
 
 command: >-
   python preprocess.py \
-    --train_data_path ${{inputs.train_data_path}} \
-    --eval_data_path ${{inputs.eval_data_path}} \
-    --fine_tune_train_data ${{outputs.fine_tune_train_data}} \
-    --fine_tune_eval_data ${{outputs.fine_tune_eval_data}} \
+    --input_data_path ${{inputs.input_data_path}} \
+    --output_data_path ${{outputs.output_data_path}} \
     --templated_prompt "${{inputs.templated_prompt}}" \
     --label_name ${{inputs.label_column}} \
     --text_name ${{inputs.text_column}}
