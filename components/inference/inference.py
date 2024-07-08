@@ -8,6 +8,8 @@ import sys
 import logging
 import torch
 import numpy as np
+import mpmath
+import pyarrow as pa
 import multiprocess as mp
 import copy
 
@@ -37,8 +39,6 @@ class AggregationMethod(Enum):
     MIN = "min"
     SUM = "sum"
     SUMLOG = "sumlog"
-    EXPNEGSUM = "expnegsum"
-
 
 @dataclass
 class Arguments:
@@ -108,8 +108,15 @@ def aggregate_mi_signal(mi_signal: np.ndarray, completion_mask: np.ndarray, aggr
             return mi_signal.sum(axis=1, where=completion_mask)
         case AggregationMethod.SUMLOG:
             return np.log(mi_signal, where=completion_mask).sum(axis=1, where=completion_mask)
-        case AggregationMethod.EXPNEGSUM:
-            return np.exp(-mi_signal.sum(axis=1, where=completion_mask))
+        case AggregationMethod.EXPSUM:
+            # convert to long double precision
+            mi_signal_ld = mi_signal #.astype(np.longdouble)
+            print('mi_signal_ld: ', mi_signal_ld)
+            log_sum = mi_signal_ld.sum(axis=1, where=completion_mask)
+            print('log_sum: ', log_sum)
+            exp_log_sum = np.exp(log_sum)
+            print('exp_log_sum: ', exp_log_sum)
+            return exp_log_sum
         case _:
             raise ValueError(f"Invalid aggregation method: {aggregation_method}")
 
@@ -128,29 +135,28 @@ class DistributedEvaluator:
         model = self.models[rank]
         model.eval()
         
-        with torch.no_grad():
-            batch = {k: v.to(device) for k, v in batch.items()}
-            input_ids = batch["input_ids"]
-            attention_mask = batch["attention_mask"]
-            labels = batch["labels"]
+        batch = {k: v.to(device) for k, v in batch.items()}
+        input_ids = batch["input_ids"]
+        attention_mask = batch["attention_mask"]
 
-            output = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-
-            attention_mask_np = attention_mask.cpu().numpy()
+        output = model(input_ids=input_ids, attention_mask=attention_mask, labels = batch["labels"])
+        
+        logits = output.logits[:, :-1, :] # remove the last token prediction
+        labels = batch["labels"][:, 1:] # Remove the first token in the labels
+        labels_np = labels.cpu().numpy()
 
         # manual patch - converting all attention masks to 0 where labels is -100
-        labels_np = labels.cpu().numpy()
-        attention_mask_np[labels_np == -100] = 0
+        completion_mask = attention_mask.cpu().numpy()[:, 1:]
+        completion_mask[labels_np == -100] = 0
 
         mi_signal_seq = self.signal_method.compute_mi_signal_from_logits(
-            logits=output.logits.cpu().numpy(), labels=labels.cpu().numpy(), attention_mask=attention_mask_np
-        )
+            logits=logits.cpu().numpy(), labels=labels_np, completion_mask=completion_mask)
+        
         mi_signal = aggregate_mi_signal(
-            mi_signal_seq, completion_mask=attention_mask_np, aggregation_method=self.signal_aggregation
+            mi_signal_seq, completion_mask=completion_mask, aggregation_method=self.signal_aggregation
         )
         assert np.isnan(mi_signal).any() == False, "NaN values in MI signal"
         return {"mi_signal": mi_signal}
-
 
 def main(args: Arguments):
     # Setup logging
@@ -206,7 +212,7 @@ def main(args: Arguments):
         evaluator.evaluate,
         batched=True, batch_size=args.per_device_batch_size,
         num_proc=num_proc, remove_columns=dataset.column_names,
-        with_rank=True
+        with_rank=True,
     )
     results.set_format(None)
     assert len(results) == len(dataset)
