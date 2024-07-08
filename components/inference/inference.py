@@ -39,6 +39,8 @@ class AggregationMethod(Enum):
     MIN = "min"
     SUM = "sum"
     SUMLOG = "sumlog"
+    EXPSUM = "expsum"
+
 
 @dataclass
 class Arguments:
@@ -94,6 +96,12 @@ class Arguments:
             self.torch_dtype = TORCH_DTYPES[self.torch_dtype]
 
 def aggregate_mi_signal(mi_signal: np.ndarray, completion_mask: np.ndarray, aggregation_method: str) -> np.ndarray:
+    """
+    Apply aggregation over the sequence length.
+
+    Note: It is important to only apply functions that preserve monotonicity since the convention that larger
+    values of the mi_signal are evidence for in-membership should be maintained.
+    """
     completion_mask = completion_mask.astype(bool)
     assert mi_signal.ndim == 2
     aggregation_method = AggregationMethod(aggregation_method)
@@ -109,14 +117,7 @@ def aggregate_mi_signal(mi_signal: np.ndarray, completion_mask: np.ndarray, aggr
         case AggregationMethod.SUMLOG:
             return np.log(mi_signal, where=completion_mask).sum(axis=1, where=completion_mask)
         case AggregationMethod.EXPSUM:
-            # convert to long double precision
-            mi_signal_ld = mi_signal #.astype(np.longdouble)
-            print('mi_signal_ld: ', mi_signal_ld)
-            log_sum = mi_signal_ld.sum(axis=1, where=completion_mask)
-            print('log_sum: ', log_sum)
-            exp_log_sum = np.exp(log_sum)
-            print('exp_log_sum: ', exp_log_sum)
-            return exp_log_sum
+            return np.exp(mi_signal.sum(axis=1, where=completion_mask))
         case _:
             raise ValueError(f"Invalid aggregation method: {aggregation_method}")
 
