@@ -99,7 +99,7 @@ inputs:
   logging_steps:
     type: integer
     description: "Log every x steps."
-    default: 5
+    default: 20
   max_grad_norm:
     type: number
     description: "Max batch gradient norm."
@@ -257,5 +257,5 @@ command: >-
     --report_to mlflow
 
 environment:
-  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.6-cudnn8-ubuntu20.04
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
   conda_file: ./environment.yml
