@@ -12,7 +12,7 @@ If you get a not found error or a not authorized error see https://dev.azure.com
 ### Environment
 
 ``` bash
-pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@dd20a56e5f7ee1eb406cce962841da614bfe5d9f#egg=privacy_estimates[pipelines]
+pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@717badca929f9c1e774660d9be3e66e9434d34ae#egg=privacy_estimates[pipelines]
 ```
 
 
@@ -21,7 +21,7 @@ pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@
 To update to the latest version, run the following command:
 
 ``` bash
-pip uninstall privacy_estimates; pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@dd20a56e5f7ee1eb406cce962841da614bfe5d9f#egg=privacy_estimates[pipelines]
+pip uninstall privacy_estimates; pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@717badca929f9c1e774660d9be3e66e9434d34ae#egg=privacy_estimates[pipelines]
 ```
 
 ### Run the auditing pipeline

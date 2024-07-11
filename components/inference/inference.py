@@ -115,7 +115,7 @@ def aggregate_mi_signal(mi_signal: np.ndarray, completion_mask: np.ndarray, aggr
         case AggregationMethod.SUMLOG:
             return np.log(mi_signal, where=completion_mask).sum(axis=1, where=completion_mask)
         case AggregationMethod.EXPSUM:
-            return np.exp(mi_signal.sum(axis=1, where=completion_mask))
+            return np.exp(mi_signal.astype(np.longdouble).sum(axis=1, where=completion_mask))
         case _:
             raise ValueError(f"Invalid aggregation method: {aggregation_method}")
 
@@ -155,7 +155,7 @@ class DistributedEvaluator:
             mi_signal_seq, completion_mask=attention_mask_np, aggregation_method=self.signal_aggregation
         )
         assert np.isnan(mi_signal).any() == False, "NaN values in MI signal"
-        return {"mi_signal": mi_signal}
+        return {"mi_signal": mi_signal.astype(np.double), "log_mi_signal": np.log(mi_signal).astype(np.double)}
 
 
 def main(args: Arguments):
