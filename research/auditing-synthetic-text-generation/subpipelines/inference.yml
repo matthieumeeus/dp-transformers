@@ -15,6 +15,12 @@ inputs:
     type: integer
   sequence_len:
     type: integer
+  text_column:
+    type: string
+  label_column:
+    type: string
+  templated_prompt:
+    type: string
   mi_signal_method:
     type: string
     optional: true
@@ -36,21 +42,23 @@ outputs:
     type: uri_folder
 
 jobs:
-  convert_to_jsonl:
+  preprocess:
     type: command
-    component: ../../../components/convert_hf_dataset_to_jsonl/component_spec.yml
+    component: ../components/preprocess_for_synthesizer/component_spec.yml
     inputs:
-      input: ${{parent.inputs.data}}
-      completion_column: "sentence"
+      input_data_path: ${{parent.inputs.data}}
+      templated_prompt: ${{parent.inputs.templated_prompt}}
+      label_column: ${{parent.inputs.label_column}}
+      text_column: ${{parent.inputs.text_column}}
     outputs:
-      output:
+      output_data_path:
         mode: "rw_mount"
   tokenize:
     type: command
     component: ../../../components/tokenize/component_spec.yml
     inputs:
       tokenizer_path: ${{parent.inputs.base_model}}
-      data: ${{parent.jobs.convert_to_jsonl.outputs.output}}
+      data: ${{parent.jobs.preprocess.outputs.output_data_path}}
       packed_dataset: ${{parent.inputs.pack_dataset}}
       sequence_len: ${{parent.inputs.sequence_len}}
       chat_format: False

@@ -165,8 +165,13 @@ class Game(BlackBoxMembershipInferenceGameBase):
             mi_signal_extra_args=mi_signal_config.extra_args,
             mi_signal_aggregation=mi_signal_config.aggregation
         )
+        
+        if mi_signal_config.aggregation == "expsum":
+            use_log_column = True
+        else:
+            use_log_column = False
 
-        attack_loader = RmiaLoader(offline_a=rmia_config.offline_a)
+        attack_loader = RmiaLoader(offline_a=rmia_config.offline_a, use_log_column=use_log_column)
 
         challenge_point_selection_loader = TopKChallengePoints(
             num_challenge_points=game_config.num_challenge_points_per_model*game_config.num_models, allow_fewer=True
