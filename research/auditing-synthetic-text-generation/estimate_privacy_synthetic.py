@@ -53,8 +53,8 @@ class TrainTransformerComponentLoader(TrainingComponentLoader):
     def load(self, train_data: Input, validation_data: Input, seed: int):
         component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic.yml")
         job = component(**asdict(self.parameters), train_data=train_data, val_data=validation_data, seed=seed)
-        job.component.jobs["fine_tune"].compute = self.aml_loader.workspace.gpu_compute
-        job.component.jobs["generate"].compute = self.aml_loader.workspace.gpu_compute
+        job.component.jobs["fine_tune"] = self.aml_loader.workspace.gpu_compute.apply(job.component.jobs["fine_tune"])
+        job.component.jobs["generate"] = self.aml_loader.workspace.gpu_compute.apply(job.component.jobs["generate"])
         return job
 
 class TransformerInferenceComponentLoader(InferenceComponentLoader):
@@ -66,7 +66,7 @@ class TransformerInferenceComponentLoader(InferenceComponentLoader):
         component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"inference_synthetic.yml")
         job = component(synthetic_data=model, inference_data=dataset, 
                         **asdict(self.parameters))
-        job.component.jobs["synthetic_membership_score"].compute = self.aml_loader.workspace.gpu_compute
+        job.component.jobs["synthetic_membership_score"] = self.aml_loader.workspace.gpu_compute.apply(job.component.jobs["synthetic_membership_score"])
         return job
 
 class Game(BlackBoxMembershipInferenceGameBase):

@@ -94,7 +94,7 @@ class ExternalCanaryComponentLoader(TrainingComponentLoader):
                         seed=self.parameters.seed,
                         text_column=self.text_column, label_column=self.label_column)
         if self.parameters.canary_method == "sample_synthetic":
-            job.compute = self.aml_loader.workspace.gpu_compute
+            job = self.aml_loader.workspace.gpu_compute.apply(job)
         return job
 
 class ReplaceTokensComponentLoader(TrainingComponentLoader):
@@ -117,7 +117,7 @@ class TrainTransformerComponentLoader(TrainingComponentLoader):
     def load(self, train_data: Input, validation_data: Input, seed: int):
         component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_no_synthetic.yml")
         job = component(**asdict(self.parameters), train_data=train_data, val_data=validation_data, seed=seed)
-        job.component.jobs["fine_tune"].compute = self.aml_loader.workspace.gpu_compute
+        job.component.jobs["fine_tune"] = self.aml_loader.workspace.gpu_compute.apply(job.component.jobs["fine_tune"])
         return job
 
 class TransformerInferenceComponentLoader(InferenceComponentLoader):
@@ -142,7 +142,7 @@ class TransformerInferenceComponentLoader(InferenceComponentLoader):
             job = component(base_model=model, data=dataset, **asdict(self.parameters), mi_signal_method=self.mi_signal_method,
                             mi_signal_extra_args=" ".join(f"{k}={v}" for k, v in self.mi_signal_extra_args.items()),
                             mi_signal_aggregation=self.mi_signal_agggregation)
-        job.component.jobs["inference"].compute = self.aml_loader.workspace.gpu_compute
+        job.component.jobs["inference"] = self.aml_loader.workspace.gpu_compute.apply(job.component.jobs["inference"])
         return job
 
 class Game(BlackBoxMembershipInferenceGameBase):
