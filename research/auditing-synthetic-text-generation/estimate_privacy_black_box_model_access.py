@@ -8,9 +8,8 @@ from privacy_estimates.experiments.games.black_box_membership_inference import (
 )
 from privacy_estimates.experiments.games.configs import MISignalConfig
 from privacy_estimates.experiments.attacks.rmia import RmiaLoader, RmiaConfig
-from privacy_estimates.experiments.aml import WorkspaceConfig
+from privacy_estimates.experiments.aml import WorkspaceConfig, ClusterComputeConfig, ComputeConfig
 from privacy_estimates.experiments.challenge_point_selectors import TopKChallengePoints
-from privacy_estimates.experiments.components import generate_canaries_with_secrets, random_split_dataset, select_top_k_rows
 
 from typing import Dict, Literal, Optional
 
@@ -78,12 +77,27 @@ class DataFilterComponentLoader(TrainingComponentLoader):
         job = component(all_data=all_data, min_words=self.min_words, text_column=self.text_column)
         return job
     
+class InDistributionCanaryComponentLoader(TrainingComponentLoader):
+    def __init__(self, aml_component_loader: AMLComponentLoader, text_name: str, canaries_min_words: int, n_canaries: int, seed: int):
+        super().__init__(aml_component_loader=aml_component_loader)
+        self.text_name = text_name
+        self.canaries_min_words = canaries_min_words
+        self.n_canaries = n_canaries
+        self.seed = seed
+
+    def load(self, train_data: Input):
+        component = self.aml_loader.load_from_component_spec(path=EXPERIMENT_DIR/"components"/"in_distribution_canaries/component_spec.yml")
+        job = component(train_data=train_data, text_name=self.text_name, canaries_min_words=self.canaries_min_words,
+                        n_canaries=self.n_canaries, seed=self.seed)
+        return job
+    
 class ExternalCanaryComponentLoader(TrainingComponentLoader):
-    def __init__(self, aml_component_loader: AMLComponentLoader, canary_parameters, train_parameters):
+    def __init__(self, aml_component_loader: AMLComponentLoader, canary_parameters, train_parameters, compute_config: ComputeConfig):
         super().__init__(aml_component_loader=aml_component_loader)
         self.parameters = canary_parameters
         self.text_column = train_parameters.text_column
         self.label_column = train_parameters.label_column
+        self.compute_config = compute_config
 
     def load(self, original_dataset: Input, external_artifact: Input):
         component = self.aml_loader.load_from_component_spec(path=EXPERIMENT_DIR/"components"/"ood_canaries/component_spec.yml")
@@ -94,7 +108,7 @@ class ExternalCanaryComponentLoader(TrainingComponentLoader):
                         seed=self.parameters.seed,
                         text_column=self.text_column, label_column=self.label_column)
         if self.parameters.canary_method == "sample_synthetic":
-            job = self.aml_loader.workspace.gpu_compute.apply(job)
+            job = self.compute_config.apply(job)
         return job
 
 class ReplaceTokensComponentLoader(TrainingComponentLoader):
@@ -110,19 +124,20 @@ class ReplaceTokensComponentLoader(TrainingComponentLoader):
         return job
 
 class TrainTransformerComponentLoader(TrainingComponentLoader):
-    def __init__(self, aml_component_loader: AMLComponentLoader, parameters: SharedTrainingParameters):
+    def __init__(self, aml_component_loader: AMLComponentLoader, parameters: SharedTrainingParameters, compute_config: ComputeConfig):
         super().__init__(aml_component_loader=aml_component_loader)
         self.parameters = parameters
+        self.compute_config = compute_config
 
     def load(self, train_data: Input, validation_data: Input, seed: int):
         component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_no_synthetic.yml")
         job = component(**asdict(self.parameters), train_data=train_data, val_data=validation_data, seed=seed)
-        job.component.jobs["fine_tune"] = self.aml_loader.workspace.gpu_compute.apply(job.component.jobs["fine_tune"])
+        job.component.jobs["fine_tune"] = self.compute_config.apply(job.component.jobs["fine_tune"])
         return job
 
 class TransformerInferenceComponentLoader(InferenceComponentLoader):
     def __init__(self, aml_component_loader: AMLComponentLoader, parameters: SharedInferenceParameters,
-                  is_peft: bool, base_model: str, 
+                  is_peft: bool, base_model: str, compute_config: ComputeConfig,
                  mi_signal_method: str, mi_signal_aggregation: str, mi_signal_extra_args: Optional[Dict] = None):
         super().__init__(aml_component_loader=aml_component_loader)
         self.parameters = parameters
@@ -131,6 +146,7 @@ class TransformerInferenceComponentLoader(InferenceComponentLoader):
         self.mi_signal_method = mi_signal_method
         self.mi_signal_agggregation = mi_signal_aggregation
         self.mi_signal_extra_args = mi_signal_extra_args or {}
+        self.compute_config = compute_config
 
     def load(self, model: Input, dataset: Input):
         component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"inference.yml")
@@ -142,7 +158,7 @@ class TransformerInferenceComponentLoader(InferenceComponentLoader):
             job = component(base_model=model, data=dataset, **asdict(self.parameters), mi_signal_method=self.mi_signal_method,
                             mi_signal_extra_args=" ".join(f"{k}={v}" for k, v in self.mi_signal_extra_args.items()),
                             mi_signal_aggregation=self.mi_signal_agggregation)
-        job.component.jobs["inference"] = self.aml_loader.workspace.gpu_compute.apply(job.component.jobs["inference"])
+        job.component.jobs["inference"] = self.compute_config.apply(job.component.jobs["inference"])
         return job
 
 class Game(BlackBoxMembershipInferenceGameBase):
@@ -151,9 +167,13 @@ class Game(BlackBoxMembershipInferenceGameBase):
                  game_config: GameConfig, mi_signal_config: MISignalConfig, rmia_config: RmiaConfig,
                  shadow_model_config: ShadowModelConfig, canary_config: CanaryConfig, data_config: DataConfig) -> None:
 
+        self.gpu_distributed_config = ClusterComputeConfig(**workspace.compute['gpu_distributed'])
+        self.gpu_single_config = ClusterComputeConfig(**workspace.compute['gpu_single'])
+
         train_loader = TrainTransformerComponentLoader(
             aml_component_loader=AMLComponentLoader(workspace=workspace),
-            parameters=shared_training_parameters
+            parameters=shared_training_parameters, 
+            compute_config=self.gpu_distributed_config
         )
 
         inference_loader = TransformerInferenceComponentLoader(
@@ -163,7 +183,8 @@ class Game(BlackBoxMembershipInferenceGameBase):
             base_model=shared_training_parameters.model_path,
             mi_signal_method=mi_signal_config.method,
             mi_signal_extra_args=mi_signal_config.extra_args,
-            mi_signal_aggregation=mi_signal_config.aggregation
+            mi_signal_aggregation=mi_signal_config.aggregation,
+            compute_config=self.gpu_single_config
         )
         
         if mi_signal_config.aggregation == "expsum":
@@ -205,14 +226,15 @@ class Game(BlackBoxMembershipInferenceGameBase):
                             min_words=self.data_config.min_words, text_column=self.data_config.text_column).load(all_data=val_data).outputs.filtered_data
 
         if self.canary_config.canary_method == "hold_out_original_data":
-            # to do: also implement min canary words for this method
-            data_split = random_split_dataset(dataset=train_data, split_1_size=self.canary_config.n_canaries, seed=self.game_config.seed)
-            canary_data = data_split.outputs.dataset_1
-            train_data = data_split.outputs.dataset_2
+            in_distribution_canary_outputs = InDistributionCanaryComponentLoader(aml_component_loader=AMLComponentLoader(workspace=self.workspace), 
+                                    text_name=self.data_config.text_column, canaries_min_words=self.canary_config.canary_length,
+                                    n_canaries=self.canary_config.n_canaries, seed=self.canary_config.seed).load(train_data=train_data).outputs
+            train_data = in_distribution_canary_outputs.updated_training_data
+            canary_data = in_distribution_canary_outputs.canary_data
 
         elif self.canary_config.canary_method in ("sample_real", "sample_synthetic"):
             external_canary_outputs = ExternalCanaryComponentLoader(aml_component_loader=AMLComponentLoader(workspace=self.workspace), 
-                                    canary_parameters=self.canary_config, train_parameters=self.train_config).load(
+                                    canary_parameters=self.canary_config, train_parameters=self.train_config, compute_config=self.gpu_single_config).load(
                                         original_dataset=train_data, 
                                         external_artifact=self.workspace.ml_client.data.get(name=self.canary_config.external_artifact,
                                                                                             version=self.canary_config.external_artifact_version),

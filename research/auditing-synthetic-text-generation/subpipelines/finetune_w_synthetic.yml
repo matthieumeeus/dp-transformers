@@ -1,8 +1,8 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 
-name: fine_tune_no_synthetic
+name: fine_tune_synthetic
 
-display_name: "Fine tune LLM no synthetic"
+display_name: "Fine tune LLM with synthetic"
 
 type: pipeline
 
@@ -149,7 +149,7 @@ jobs:
       process_count_per_instance: 8
     outputs:
       output_dir: 
-        mode: "rw_mount"
+        mode: "upload"
   generate:
     type: command
     component: ../../../components/llm-synthetic-data-generation/component_spec.yml
