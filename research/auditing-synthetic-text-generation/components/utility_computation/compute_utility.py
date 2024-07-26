@@ -9,6 +9,7 @@ import sys
 import os
 import logging
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
+from scipy.special import softmax
 import numpy as np
 
 from dataclasses import dataclass, field
@@ -114,9 +115,12 @@ def prep_data(args, dataset, text_name, label_name, tokenizer, return_mapping = 
     return tokenized_data, label_str2int
 
 def compute_metrics(p):
-    preds = p.predictions.argmax(-1)
+    logits = p.predictions
+    probs = softmax(logits, axis=1)
+
+    preds = probs.argmax(-1)
     labels = p.label_ids
-    probs = p.predictions
+    
     accuracy = accuracy_score(labels, preds)
     precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='weighted')
 
