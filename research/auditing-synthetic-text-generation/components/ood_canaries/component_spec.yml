@@ -42,6 +42,21 @@ inputs:
   seed:
     type: integer
     description: "Seed for reproducibility."
+  templated_prompt:
+    type: string
+    description: "Templated prompt for the model."
+  min_ppl: 
+    type: number
+    description: "Minimum perplexity for the canaries."
+  max_ppl:
+    type: number
+    description: "Maximum perplexity for the canaries."
+  min_temperature:
+    type: number
+    description: "Minimum temperature for the canaries."
+  max_temperature:
+    type: number
+    description: "Maximum temperature for the canaries."
 
 outputs:
   canary_dataset:
@@ -67,6 +82,11 @@ command: >-
     --text_column ${{inputs.text_column}} \
     --label_column ${{inputs.label_column}} \
     --seed ${{inputs.seed}} \
+    --templated_prompt "${{inputs.templated_prompt}}" \
+    --min_ppl ${{inputs.min_ppl}} \
+    --max_ppl ${{inputs.max_ppl}} \
+    --min_temperature ${{inputs.min_temperature}} \
+    --max_temperature ${{inputs.max_temperature}} \
     --canary_dataset ${{outputs.canary_dataset}} \
     --updated_training_dataset ${{outputs.updated_training_dataset}}
 
