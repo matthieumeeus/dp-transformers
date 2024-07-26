@@ -1,0 +1,48 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: in_distribution_canaries
+display_name: in_distribution_canaries
+
+description: "Get in_distribution_canaries."
+
+inputs:
+  train_data:
+    type: uri_folder
+    description: "Path to the dataset in Huggingface dataset format."
+  text_name:
+    type: string
+    description: "The name of the text column in the dataset."
+  canaries_min_words:
+    type: integer
+    description: "Minimum number of words in a sentence."
+  n_canaries:
+    type: integer
+    description: "Number of canaries to generate."
+  seed:
+    type: integer
+    description: "Seed for reproducibility."
+
+outputs:
+  updated_training_data:
+    type: uri_folder
+    description: "Path to the updated training dataset in Huggingface dataset format."
+  canary_data:
+    type: uri_folder
+    description: "Path to the canary dataset in Huggingface dataset format."
+
+code: ./
+
+command: >-
+  python get_in_distribution_canaries.py \
+    --train_data ${{inputs.train_data}} \
+    --text_name ${{inputs.text_name}} \
+    --canaries_min_words ${{inputs.canaries_min_words}} \
+    --n_canaries ${{inputs.n_canaries}} \
+    --seed ${{inputs.seed}} \
+    --updated_training_data ${{outputs.updated_training_data}} \
+    --canary_data ${{outputs.canary_data}}
+    
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file: ./environment.yml
