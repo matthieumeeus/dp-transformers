@@ -1,15 +1,6 @@
 # Auditing Synthetic Text Generation
 
-```
-az ml job create -f ./sst2.yml --web
-```
-
-If you get a not found error or a not authorized error see https://dev.azure.com/ii-m365/M365Research/_wiki/wikis/wiki/6/azure_machine_learning?anchor=%60az-ml%60-issue-when-submitting-an-experiment
-
-
-## Full auditing pipeline
-
-### Environment
+## (1) Environment
 
 ``` bash
 pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@717badca929f9c1e774660d9be3e66e9434d34ae#egg=privacy_estimates[pipelines]
@@ -23,28 +14,9 @@ To update to the latest version, run the following command:
 pip uninstall privacy_estimates; pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@717badca929f9c1e774660d9be3e66e9434d34ae#egg=privacy_estimates[pipelines]
 ```
 
-### Run the auditing pipeline
+## (2) Understanding the config
 
-#### Threat model: Black box access
-
-This threat model assumes direct access to the model's predictions.
-The model was trained on the sensitive data without a synthetic data generation step.
-The pipeline uses RMIA scores (computed using the likelihood predicted by the model for the target canary in high precision). 
-
-``` bash
-python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_externalcanary_canarylabel +submit=True
-```
-
-#### Threat model: Synthetic data only
-
-This threat model assumes solely access to the generated synthetic data from the target model. 
-We allow for multiple membership signals to be used in the RMIA setup, to be specified by `shared_inference_parameters.mia_method` (by default the best attack using 2-gram likelihood). 
-
-``` bash
-python estimate_privacy_synthetic.py --config-name synthetic_sst2_externalcanary_canarylabel +submit=True
-```
-
-#### Overview of the canary creation options
+#### 2.1 Overview of the canary creation options
 
 We allow for multiple canary generation and injection mechansisms. 
 
@@ -58,3 +30,44 @@ We allow for multiple canary generation and injection mechansisms.
     - 'uniform': sample random labels from the training dataset, ensuring the label distribution matches. 
     - 'extend': extend the label distribution with a canary-specific label, by default 'canary'. 
 - We further provide a way to replace tokens from the canary text by either using a masked language model or random replacement. When `num_tokens_to_replace`==0, nothing happens. 
+
+## (3) Run the auditing pipeline
+
+#### 3.1 Threat model: Black box access
+
+This threat model assumes direct access to the model's predictions.
+The model was trained on the sensitive data without a synthetic data generation step.
+The pipeline uses RMIA scores (computed using the likelihood predicted by the model for the target canary in high precision). 
+
+``` bash
+python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_externalcanary_canarylabel +submit=True
+```
+
+#### 3.2 Threat model: Synthetic data only
+
+This threat model assumes solely access to the generated synthetic data from the target model. 
+We allow for multiple membership signals to be used in the RMIA setup, to be specified by `shared_inference_parameters.mia_method` (by default the best attack using 2-gram likelihood). 
+
+``` bash
+python estimate_privacy_synthetic.py --config-name synthetic_sst2_externalcanary_canarylabel +submit=True
+```
+
+**Other MI signals.** By default, all synthetic membership signals are computed and only one signal is selected to run the attack. However, when the entire pipeline has been run once, we can re-use all computation-heavy components to compute the MIA performance for all other membership signals too. This can be run with a simple bash script:
+
+``` bash
+./launch_synthetic_mias.sh > all_synthetic_jobs.txt
+```
+
+Note that we save the output in a txt file, as we will easily extract all job urls from the txt output for further analysis. 
+
+**Vary synthetic multiple.** By default, the target model generates as many synthetic data records as provided in the training dataset. To increase this, we consider the variable `shared_training_parameters.synthetic_multiple`. To run through various variable, we consider the following bash script:
+
+``` bash
+./launch_synthetic_multiples.sh > all_synthetic_multiples.txt
+```
+
+When we also want to compute all MIA methods across synthetic multiples, we need to combine both bash scripts above with an nested for loop. 
+
+## (4) Analyze the results
+
+TODO
