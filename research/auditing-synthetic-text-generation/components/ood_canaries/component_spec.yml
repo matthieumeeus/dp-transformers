@@ -26,10 +26,6 @@ inputs:
     type: string
     description: "Name of the text column in the canary dataset."
     default: None
-  temperature:
-    type: number
-    description: "Temperature for sampling."
-    default: 1.0
   label_comptability_method:
     type: string
     description: "Method to use for making the labels compatible with the model. Either 'uniform' or extend."
@@ -76,7 +72,6 @@ command: >-
     --canary_length ${{inputs.canary_length}} \
     --external_artifact ${{inputs.external_artifact}} \
     --canary_text_column ${{inputs.canary_text_column}} \
-    --temperature ${{inputs.temperature}} \
     --batch_size 8 \
     --label_comptability_method ${{inputs.label_comptability_method}} \
     --text_column ${{inputs.text_column}} \

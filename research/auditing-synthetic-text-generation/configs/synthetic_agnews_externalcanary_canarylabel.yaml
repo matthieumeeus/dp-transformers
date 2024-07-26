@@ -55,9 +55,13 @@ canary_config:
   external_artifact: "AmazonPolarity5k-train"
   external_artifact_version: "2"
   canary_text_column: "sentence"
-  temperature: 1.0
   label_comptability_method: "extend"
   seed: 1920
+  templated_prompt: "A news article about {label}: "
+  min_ppl: 5.0
+  max_ppl: 15.0
+  min_temperature: 0.8
+  max_temperature: 1.2
   num_tokens_to_replace: 0
   replacement_method: "random"
   mlm_name: "roberta-base"

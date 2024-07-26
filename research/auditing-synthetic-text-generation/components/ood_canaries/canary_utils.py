@@ -54,52 +54,6 @@ def is_duplicate(seq: str, canaries: list, threshold: float = 0.2):
             return True
     return False
 
-def generate_synthetic_canaries_basic(model: AutoModelForCausalLM, tokenizer: AutoTokenizer, 
-                                n_canaries: int, canary_length: int,
-                                temperature: float, 
-                                batch_size: int, device: torch.device):
-
-    canaries = [] 
-    input = tokenizer([""] * batch_size, return_tensors="pt").to(device)
-
-    step = 0
-    duplicates = 0
-
-    while len(canaries) < n_canaries:
-
-        generated_ids = model.generate(
-            input["input_ids"],
-            max_length=canary_length * 2, # we define canary length in words, so we need to generate a bit more
-            do_sample=True,
-            temperature=temperature,
-        )
-
-        generated_text = tokenizer.batch_decode(generated_ids[:, 1:])
-
-        for text in generated_text:
-            # only consider text before any eos token
-            text = text.split(tokenizer.eos_token)[0]
-            text_split = text.split()
-            n_words = len(text_split)
-            if n_words < canary_length:
-                continue
-            else:
-                # now sample a random substring of length canary_length
-                text_in_words = text.split()
-                start = random.randint(0, len(text_in_words) - canary_length)
-                canary = " ".join(text_in_words[start:start + canary_length])
-
-                if is_duplicate(canary, canaries):
-                    duplicates += 1
-                    continue
-                if len(canaries) < n_canaries:
-                    canaries.append(canary)
-        print(f"Found {len(canaries)} canaries - continuing...")
-
-        step += 1
-
-    return canaries
-
 def make_canaries_label_compatible(canaries: list, original_dataset: datasets.Dataset, 
                              label_comptability_method: str, 
                              text_name: str, label_name: str):
@@ -301,7 +255,7 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
                 print(canaries[-1])
 
         # sample one temperature for the entire batch
-        temperature = random.uniform(min_temperature, max_temperature)
+        temperature = (min_temperature + max_temperature) / 2.0
 
         generated_ids = model.generate(
             **inputs,
@@ -328,25 +282,30 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
             if n_words >= canary_length:
                 valid_text.append(" ".join(text_split[:canary_length]))
 
-        # now we have to compute the perplexity of these selected texts
-        valid_text_dataset = datasets.Dataset.from_dict({'prompt':[prompt] * len(valid_text), 'completion': valid_text})
-        tokenized_valid_text = valid_text_dataset.map(lambda x: main_preprocess_function(x, tokenizer=tokenizer), batched=True, 
-                                                      num_proc=10, desc="tokenizing dataset", 
-                                                      remove_columns=valid_text_dataset.column_names)
-        all_ppls = compute_perplexity_batch(model, tokenized_valid_text, device)
+        if min_ppl == max_ppl:
+            # if we are not controlling perplexity, then we can just add all the generated text
+            canaries.extend(valid_text)
         
-        for idx, text in enumerate(valid_text):
-            ppl = all_ppls[idx]
-            print(temperature, ppl, text)
-            if ppl >= min_ppl and ppl <= max_ppl and len(canaries) < n_canaries:
-                canaries.append(text)
+        else:
+            # now we have to compute the perplexity of these selected texts
+            valid_text_dataset = datasets.Dataset.from_dict({'prompt':[prompt] * len(valid_text), 'completion': valid_text})
+            tokenized_valid_text = valid_text_dataset.map(lambda x: main_preprocess_function(x, tokenizer=tokenizer), batched=True, 
+                                                        num_proc=10, desc="tokenizing dataset", 
+                                                        remove_columns=valid_text_dataset.column_names)
+            all_ppls = compute_perplexity_batch(model, tokenized_valid_text, device)
+            
+            for idx, text in enumerate(valid_text):
+                ppl = all_ppls[idx]
+                print(temperature, ppl, text)
+                if ppl >= min_ppl and ppl <= max_ppl and len(canaries) < n_canaries:
+                    canaries.append(text)
+
+            # optimize temperature for next batch
+            min_temperature, max_temperature =  update_temperature(all_ppls, min_temperature, max_temperature, min_ppl, max_ppl)
 
         print(f"Found {len(canaries)} canaries - continuing...")
         total_samples += batch_size
         step += 1
-
-        # optimize temperature for next batch
-        min_temperature, max_temperature =  update_temperature(all_ppls, min_temperature, max_temperature, min_ppl, max_ppl)
 
     return canaries
 

@@ -33,7 +33,6 @@ class CanaryConfig:
     external_artifact: str
     external_artifact_version: str
     canary_text_column: str
-    temperature: float
     label_comptability_method: str
     seed: int
     templated_prompt: str
@@ -109,7 +108,7 @@ class ExternalCanaryComponentLoader(TrainingComponentLoader):
         job = component(original_dataset=original_dataset, canary_method=self.parameters.canary_method, 
                         n_canaries=self.parameters.n_canaries, canary_length=self.parameters.canary_length,
                         external_artifact=external_artifact, canary_text_column=self.parameters.canary_text_column,
-                        temperature=self.parameters.temperature, label_comptability_method=self.parameters.label_comptability_method,
+                        label_comptability_method=self.parameters.label_comptability_method,
                         seed=self.parameters.seed,
                         text_column=self.text_column, label_column=self.label_column, 
                         templated_prompt=self.parameters.templated_prompt, min_ppl=self.parameters.min_ppl,
@@ -240,7 +239,7 @@ class Game(BlackBoxMembershipInferenceGameBase):
             train_data = in_distribution_canary_outputs.updated_training_data
             canary_data = in_distribution_canary_outputs.canary_data
 
-        elif self.canary_config.canary_method in ("sample_real", "sample_synthetic", "sample_synthetic_ppl_controlled"):
+        elif self.canary_config.canary_method in ("sample_real", "sample_synthetic"):
             external_canary_outputs = ExternalCanaryComponentLoader(aml_component_loader=AMLComponentLoader(workspace=self.workspace), 
                                     canary_parameters=self.canary_config, train_parameters=self.train_config, compute_config=self.gpu_single_config).load(
                                         original_dataset=train_data, 

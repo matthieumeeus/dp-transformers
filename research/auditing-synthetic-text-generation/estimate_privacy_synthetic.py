@@ -139,7 +139,7 @@ class Game(BlackBoxMembershipInferenceGameBase):
             train_data = in_distribution_canary_outputs.updated_training_data
             canary_data = in_distribution_canary_outputs.canary_data
 
-        elif self.canary_config.canary_method in ("sample_real", "sample_synthetic", "sample_synthetic_ppl_controlled"):
+        elif self.canary_config.canary_method in ("sample_real", "sample_synthetic"):
             external_canary_outputs = ExternalCanaryComponentLoader(aml_component_loader=AMLComponentLoader(workspace=self.workspace), 
                                     canary_parameters=self.canary_config, train_parameters=self.train_config, compute_config=self.gpu_single_config).load(
                                         original_dataset=train_data, 
