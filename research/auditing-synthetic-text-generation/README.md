@@ -91,6 +91,10 @@ For comparison, we also run the same attacks (with the same repetitions) for in-
 The notebook `notebooks/get_mia_results.ipynb` contains the code to compute the MIA performance (AUC, tpr at low fpr) from a certain executed job and its url. 
 It contains (1) just the functionality to get the MIA performance for a given url, (2) computing the MIA performance across a series of jobs launched using a bash script (parsing the urls from a txt file as above) and (3) how to plot the main curve for AgNews. 
 
+**Scatter plots.**
+
+To generate the scatter plots for the disparate vulnerability of canaries, we use `notebooks/scatter.ipynb`. You just need two jobs run for the exact same canaries for two attacks to run this. 
+
 **Perplexity results.** 
 
 First, we save all urls corresponding to the experiments run with varying canary perplexity here in `notebooks/ppl_experiment_urls.json`. This json can be updated when the perplexity ranges we want to consider and the corresponding urls are updated. Next, the code to generate the figure from the results is in `notebooks/ppl_exp_results_from_json.ipynb`. 
