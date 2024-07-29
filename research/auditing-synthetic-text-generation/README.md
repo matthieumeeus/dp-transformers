@@ -70,4 +70,7 @@ When we also want to compute all MIA methods across synthetic multiples, we need
 
 ## (4) Analyze the results
 
-TODO
+**Get MIA performance.** 
+
+The notebook `notebooks/get_mia_results.ipynb` contains the code to compute the MIA performance (AUC, tpr at low fpr) from a certain executed job and its url. 
+It contains (1) just the functionality to get the MIA performance for a given url, (2) computing the MIA performance across a series of jobs launched using a bash script (parsing the urls from a txt file as above) and (3) how to plot the main curve for AgNews. 
