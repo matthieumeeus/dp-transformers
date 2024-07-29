@@ -74,3 +74,21 @@ When we also want to compute all MIA methods across synthetic multiples, we need
 
 The notebook `notebooks/get_mia_results.ipynb` contains the code to compute the MIA performance (AUC, tpr at low fpr) from a certain executed job and its url. 
 It contains (1) just the functionality to get the MIA performance for a given url, (2) computing the MIA performance across a series of jobs launched using a bash script (parsing the urls from a txt file as above) and (3) how to plot the main curve for AgNews. 
+
+## (5) Compute the synthetic data utility
+
+We also need to compute the utility of the synthetic data that is being generated. For this we first compute the utility of the 'real' data, by training a roberta model for classification on the real training data and evaluate on a held-out test set. 
+
+To compute this, launch with DATASET={sst2, agnews}:
+
+``` bash
+az ml job create -f ./configs/compute_utility_real_{DATASET}.yml --web
+```
+
+Then we also need to run this for a roberta model trained on synthetic data (and still evaluated on the real test data). The drop in performance compared to the real data then indicates the utility of the synthetic data. So launch the following to first generate synthetic data and then evaluate downstream performance:
+
+``` bash
+az ml job create -f ./configs/compute_utility_synthetic_{DATASET}.yml --web
+```
+
+To analyze the results (get the downstream performance and get plots for the appendix, see `notebooks/viz_utility.ipynb`).

@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-display_name: SST2-utility-real
+display_name: sst2-utility-real
 experiment_name: compute-utility-real
 
 settings:
@@ -9,18 +9,18 @@ settings:
 inputs:
   train_data_path:
     type: uri_folder
-    path: "azureml:SST2-train:3"
+    path: "azureml:SST2-train:5"
   eval_data_path:
     type: uri_folder
-    path: "azureml:SST2-test:3"
+    path: "azureml:SST2-test:5"
 
 jobs:
   compute_utility_real:
     type: command
-    component: ./components/utility_computation/component_spec.yml
+    component: ../components/utility_computation/component_spec.yml
     inputs:
-      train_data_path: ${{parent.inputs.train_data_path}}
-      eval_data_path: ${{parent.inputs.eval_data_path}}
+      utility_train_data_path: ${{parent.inputs.train_data_path}}
+      utility_eval_data_path: ${{parent.inputs.eval_data_path}}
       model_name: "roberta-base"
       is_synthetic: false
       train_label_name: "label"
@@ -31,7 +31,7 @@ jobs:
       per_device_train_batch_size: 8
       nproc_per_node: 8
       gradient_accumulation_steps: 1
-      num_train_epochs: 3
+      num_train_epochs: 1
       evaluation_strategy: "steps"
       eval_steps: 500
       save_strategy: "no"
