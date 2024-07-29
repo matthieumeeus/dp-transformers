@@ -284,7 +284,8 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
 
         if min_ppl == max_ppl:
             # if we are not controlling perplexity, then we can just add all the generated text
-            canaries.extend(valid_text)
+            n_canaries_needed = n_canaries - len(canaries)
+            canaries.extend(valid_text[:n_canaries_needed])
         
         else:
             # now we have to compute the perplexity of these selected texts
