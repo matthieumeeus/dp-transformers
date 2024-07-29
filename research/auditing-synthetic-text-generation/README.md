@@ -55,7 +55,7 @@ python estimate_privacy_synthetic.py --config-name synthetic_sst2_externalcanary
 **Other MI signals.** By default, all synthetic membership signals are computed and only one signal is selected to run the attack. However, when the entire pipeline has been run once, we can re-use all computation-heavy components to compute the MIA performance for all other membership signals too. This can be run with a simple bash script:
 
 ``` bash
-./launch_synthetic_mias.sh > all_synthetic_jobs.txt
+./scripts/launch_synthetic_mias.sh > all_synthetic_jobs.txt
 ```
 
 Note that we save the output in a txt file, as we will easily extract all job urls from the txt output for further analysis. 
@@ -63,10 +63,26 @@ Note that we save the output in a txt file, as we will easily extract all job ur
 **Vary synthetic multiple.** By default, the target model generates as many synthetic data records as provided in the training dataset. To increase this, we consider the variable `shared_training_parameters.synthetic_multiple`. To run through various variable, we consider the following bash script:
 
 ``` bash
-./launch_synthetic_multiples.sh > all_synthetic_multiples.txt
+./scripts/launch_synthetic_multiples.sh > all_synthetic_multiples.txt
 ```
 
 When we also want to compute all MIA methods across synthetic multiples, we need to combine both bash scripts above with an nested for loop. 
+
+**Vary perplexity of synthetic canary.** To understand canary vulnerability versus canary perplexity, we need to launch the attack pipeline end-to-end for both the non-synthetic and synthetic attack for different ranges of perplexity. To run through this, we also design a bash script for both:
+
+``` bash
+./scripts/launch_no_synthetic_ppl.sh > no_synthetic_ppl_exp.txt
+```
+
+``` bash
+./scripts/launch_synthetic_ppl.sh > synthetic_ppl_exp.txt
+```
+
+Note that we here need to specify the min and max perplexity of the range to be considered, and also need to give to provide an inital min and max temperature to be used in the temperature optimization. 
+
+Importantly, we cannot recycle the trained target/reference models across no-synthetic/synthetic as we use different number of repetitions. 
+
+For comparison, we also run the same attacks (with the same repetitions) for in-distribution canaries using the default commands (3.1 and 3.2) with as config files `no_synthetic_agnews_incanary.yaml` and `synthetic_agnews_incanary.yaml`. 
 
 ## (4) Analyze the results
 
@@ -74,6 +90,10 @@ When we also want to compute all MIA methods across synthetic multiples, we need
 
 The notebook `notebooks/get_mia_results.ipynb` contains the code to compute the MIA performance (AUC, tpr at low fpr) from a certain executed job and its url. 
 It contains (1) just the functionality to get the MIA performance for a given url, (2) computing the MIA performance across a series of jobs launched using a bash script (parsing the urls from a txt file as above) and (3) how to plot the main curve for AgNews. 
+
+**Perplexity results.** 
+
+First, we save all urls corresponding to the experiments run with varying canary perplexity here in `notebooks/ppl_experiment_urls.json`. This json can be updated when the perplexity ranges we want to consider and the corresponding urls are updated. Next, the code to generate the figure from the results is in `notebooks/ppl_exp_results_from_json.ipynb`. 
 
 ## (5) Compute the synthetic data utility
 
