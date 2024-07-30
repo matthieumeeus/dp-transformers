@@ -60,6 +60,12 @@ The pipeline uses RMIA scores (computed using the likelihood predicted by the mo
 python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_externalcanary_canarylabel +submit=True
 ```
 
+For the main experiment (table with MIA performance across attacks and setups), we launched:
+
+``` bash
+./scripts/launch_no_synthetic_main_experiment.sh > no_synthetic_main_exp.txt
+```
+
 #### 3.2 Threat model: Synthetic data only
 
 This threat model assumes solely access to the generated synthetic data from the target model. 

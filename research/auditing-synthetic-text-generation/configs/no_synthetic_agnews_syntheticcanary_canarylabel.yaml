@@ -54,20 +54,19 @@ mi_signal_config:
 rmia_config: {}
 
 canary_config:
-  canary_method: "hold_out_original_data"
+  canary_method: "sample_synthetic"
   n_canaries: 1000
   canary_length: 50
-  external_artifact: "none"
-  external_artifact_version: "none"
-  canary_text_column: "none"
-  temperature: 1.0
-  label_comptability_method: "none"
+  external_artifact: "mistralai-Mistral-7B-v0_1"
+  external_artifact_version: "4"
+  canary_text_column: "sentence"
+  label_comptability_method: "extend"
   seed: 1920
   templated_prompt: "A news article about {label}: "
-  min_ppl: 5.0
-  max_ppl: 15.0
+  min_ppl: 225.0
+  max_ppl: 275.0
   min_temperature: 0.8
-  max_temperature: 1.2
+  max_temperature: 1.0
   num_tokens_to_replace: 0
   replacement_method: "random"
   mlm_name: "roberta-base"
