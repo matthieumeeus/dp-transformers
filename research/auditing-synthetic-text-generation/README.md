@@ -16,7 +16,24 @@ pip uninstall privacy_estimates; pip install git+https://github.com/microsoft/re
 
 ## (2) Understanding the config
 
-#### 2.1 Overview of the canary creation options
+#### 2.1 Model training
+
+Across all experiments, we consider the exact same regime to train the target (and thus also reference) models. Some things to keep in mind:
+- We use the templated prompt for training, with the corresponding label filled out. This means that the attention mask is set to 1 on the prompt tokens, but that their labels are set to -100 and that there is thus no backpropagation for the prompt - only for the completion. 
+- We train the model for 1 epoch, with overall batch size of 16, sequence length 256 (mostly for canaries in the case of sst-2), learning rate of 2e-5. We use LoRA with all target modules, dimension of r=4, bf16 as dtype and no quantization. By default we also use gradient checkpointing, and we set both bf16 and fp16 to False. 
+
+#### 2.2 Inference
+
+As part of the inference component, we compute a membership signal for each target sequence - which is then further used to compute an RMIA score (combining the signal from the target and reference models). Computing the membership signal differs for each threat model:
+- Black-box model access. With the option `expsum` we compute the likelihood of the target sequence predicted by the model. This comes down to a product of conditional probabilities - which becomes extremely small very quickly. Therefore we compute the log of the membership signal first, which is then transformed to the probability again at the level of the RMIA attck (in privacy-estimates). Importantly, we compute the sequence level likelhood in the same way as it is used during training, i.e. with the prompt attention mask equal to 1 and its labels to be ignored.
+- Synthetic data attack. We here consider a variety of MIA methods, ranging from training an n-gram model to the mean similarity to the k closest records. Some things to keep in mind:
+    - In this case, the training component actually returns synthetic data generated from the finetuned model (while above it return the finetuned model). 
+    - The n-gram signal is computed just as above, with a sequence-level likelihood that becomes extremely small very quickly and is propagated to the RMIA level through its log. 
+    - The distance based signals also need to be bounded by [0,1], where closer to 1 should correspond to more likely to be a member. Hence, we compute the *mean normalized similarity* to the k closest synthetic sequences. This is 1 when all k closest sequences are the same. By default, we consider jaccard, levenshtein (string space) and cosine similarity (embedding space) as similarity metrics and `k=1,5,10,25`. 
+    - By default, we compute all synthetic data membership inference signals - and just select the one specified in `shared_inference_parameters.mia_method`. See 3.2 to easily compute the MIA performance across all synthetic MIA methods. 
+
+
+#### 2.2 Overview of the canary creation options
 
 We allow for multiple canary generation and injection mechansisms. 
 

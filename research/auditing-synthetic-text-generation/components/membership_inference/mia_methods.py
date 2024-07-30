@@ -178,6 +178,7 @@ def compute_mia_score(samples, synthetic, method, synthetic_embeddings = None):
     for key in all_mia_scores:
         if 'ngram' not in key:
             try: 
+                # adding a certain margin to the range to account for floating point errors
                 assert all(0 - 1e-3 <= score <= 1 + 1e-3 for score in all_mia_scores[key]), "Some scores are out of the range [0, 1]"
             except AssertionError:
                 for i in range(len(samples)):
