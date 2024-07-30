@@ -358,7 +358,7 @@ def get_ppl_controlled_canaries(original_dataset: datasets.Dataset, label_compta
         return canary_dataset, original_dataset
 
     elif label_comptability_method == 'extend':
-        canary_labels = [max(all_label_ids) + 1] * len(canaries)
+        canary_labels = [max(all_label_ids) + 1] * n_canaries
 
         # now generate canaries with this label
         adapted_prompt = templated_prompt.replace(f"{{{label_name}}}", "canary")

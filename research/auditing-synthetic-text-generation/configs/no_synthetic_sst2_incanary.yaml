@@ -60,7 +60,6 @@ canary_config:
   external_artifact: "none"
   external_artifact_version: "none"
   canary_text_column: "none"
-  temperature: 1.0
   label_comptability_method: "none"
   seed: 1920
   templated_prompt: "A sentence with a {label} sentiment: "
