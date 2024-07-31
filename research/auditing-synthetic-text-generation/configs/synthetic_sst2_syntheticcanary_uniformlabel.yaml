@@ -33,7 +33,7 @@ shared_inference_parameters:
   real_text_column: "sentence"
   synthetic_label_column: "Prompt"
   synthetic_text_column: "Generation"
-  mia_method: "ngram_loss_2"
+  mia_method: "ngram_2"
 
 game_config:
   num_models: 1
