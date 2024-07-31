@@ -75,6 +75,12 @@ We allow for multiple membership signals to be used in the RMIA setup, to be spe
 python estimate_privacy_synthetic.py --config-name synthetic_sst2_externalcanary_canarylabel +submit=True
 ```
 
+For the main experiment we launched: 
+
+``` bash
+./scripts/launch_synthetic_main_experiment.sh > synthetic_main_exp.txt
+```
+
 **Other MI signals.** By default, all synthetic membership signals are computed and only one signal is selected to run the attack. However, when the entire pipeline has been run once, we can re-use all computation-heavy components to compute the MIA performance for all other membership signals too. This can be run with a simple bash script:
 
 ``` bash

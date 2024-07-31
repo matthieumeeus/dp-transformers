@@ -26,13 +26,14 @@ shared_training_parameters:
   gradient_checkpointing: true
   torch_dtype: "bf16"
   quantization_4bit: false
+  synthetic_multiple: 1
 
 shared_inference_parameters:
-  per_device_batch_size: 16
-  sequence_len: 256
-  text_column: "sentence"
-  label_column: "label"
-  templated_prompt: "A sentence with a {label} sentiment: "
+  real_label_column: "label"
+  real_text_column: "sentence"
+  synthetic_label_column: "Prompt"
+  synthetic_text_column: "Generation"
+  mia_method: "ngram_2"
 
 game_config:
   num_models: 1
@@ -44,12 +45,6 @@ game_config:
 shadow_model_config:
   in_fraction: 0.5
   num_models: 4
-
-mi_signal_config:
-  method: CrossEntropy
-  aggregation: expsum
-  extra_args:
-    temp: 2.0 
 
 rmia_config: {}
 
