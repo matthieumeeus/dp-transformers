@@ -102,7 +102,7 @@ class Game(BlackBoxMembershipInferenceGameBase):
         attack_loader = RmiaLoader(offline_a=rmia_config.offline_a, use_log_column=use_log_column)
 
         challenge_point_selection_loader = TopKChallengePoints(
-            num_challenge_points=game_config.num_challenge_points_per_model*game_config.num_models
+            num_challenge_points=game_config.num_challenge_points_per_model*game_config.num_models, allow_fewer=True
         )
 
         self.canary_config = canary_config
