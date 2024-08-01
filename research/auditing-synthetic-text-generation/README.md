@@ -92,7 +92,7 @@ For the main experiment, we can through all canary options and the main mia meth
 For the ablation experiments (where we alo run for more n and more k), we run this for a particular canary config:
 
 ``` bash
-./scripts/launch_synthetic_mias.sh > all_synthetic_jobs.txt
+./scripts/launch_synthetic_mias_ablation_{DATASET}.sh > synthetic_mias_ablation_{DATASET}.txt
 ```
 
 Note that we save the output in a txt file, as we will easily extract all job urls from the txt output for further analysis (see `notebooks/get_mia_results.ipynb`). 
@@ -100,7 +100,7 @@ Note that we save the output in a txt file, as we will easily extract all job ur
 **Vary synthetic multiple.** By default, the target model generates as many synthetic data records as provided in the training dataset. To increase this, we consider the variable `shared_training_parameters.synthetic_multiple`. To run through various variable, we consider the following bash script:
 
 ``` bash
-./scripts/launch_synthetic_multiples.sh > all_synthetic_multiples.txt
+./scripts/launch_synthetic_multiples_{DATASET}.sh > 2gram_synthetic_multiples_{DATASET}.txt
 ```
 
 When we also want to compute all MIA methods across synthetic multiples, we need to combine both bash scripts above with an nested for loop. 
@@ -131,6 +131,10 @@ It contains (1) just the functionality to get the MIA performance for a given ur
 **Scatter plots.**
 
 To generate the scatter plots for the disparate vulnerability of canaries, we use `notebooks/scatter.ipynb`. You just need two jobs run for the exact same canaries for two attacks to run this. 
+
+**Ablations plots.**
+
+To generate the table with ablations for n and k, the code is in `notebooks/ablation_plots.ipynb`.
 
 **Perplexity results.** 
 
