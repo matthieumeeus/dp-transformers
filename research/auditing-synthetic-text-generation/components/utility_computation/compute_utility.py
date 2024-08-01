@@ -62,6 +62,12 @@ class Arguments:
     model: RobertaModelArguments
     data: DataArguments
 
+def filter_out_canary_label(example, label_column):
+    return 'canary' not in example[label_column]
+
+def filter_out_none(example, text_column):
+    return example[text_column] is not None
+
 def load_synthetic_data(data_path: str,
                         og_label_name: str, new_label_name: str,
                         og_text_name: str, new_text_name: str,
@@ -73,18 +79,37 @@ def load_synthetic_data(data_path: str,
         all_datasets.append(dataset['train'])
     full_dataset = datasets.concatenate_datasets(all_datasets)
 
+    # filter out the canary label if it exists
+    all_prompts = set(full_dataset[og_label_name])
+    for prompt in all_prompts:
+        if 'canary' in prompt:
+            print('Found canary label:', prompt)
+            initial_n = len(full_dataset)
+            full_dataset = full_dataset.filter(lambda x: filter_out_canary_label(x, og_label_name))
+            filtered_n = len(full_dataset)
+            print(f'Filtered out {initial_n - filtered_n} canary examples.')
+            break
+
+    all_prompts = set(full_dataset[og_label_name])
+    
     # now make the labels compatible with the eval dataset
     prompt_to_label = {}
-    for prompt in set(full_dataset[og_label_name]):
+    for prompt in all_prompts:
         for label_str in label_str2int.keys():
             if label_str in prompt:
                 prompt_to_label[prompt] = label_str2int[label_str]
                 break
-    if len(prompt_to_label) != len(set(full_dataset[og_label_name])):
+    if len(prompt_to_label) != len(all_prompts):
         raise ValueError('Not all labels found in the label mapping')
     
     full_dataset = full_dataset.map(lambda x: {new_text_name: x[og_text_name], new_label_name: prompt_to_label[x[og_label_name]]}, 
                                     remove_columns=[og_text_name, og_label_name])
+    
+    # remove none values if any
+    initial_n = len(full_dataset)
+    full_dataset = full_dataset.filter(lambda x: filter_out_none(x, new_text_name))
+    filtered_n = len(full_dataset)
+    print(f'Filtered out {initial_n - filtered_n} examples with None text.')
 
     return full_dataset
 

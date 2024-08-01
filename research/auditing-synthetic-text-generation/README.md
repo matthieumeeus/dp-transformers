@@ -81,13 +81,21 @@ For the main experiment we launched:
 ./scripts/launch_synthetic_main_experiment.sh > synthetic_main_exp.txt
 ```
 
-**Other MI signals.** By default, all synthetic membership signals are computed and only one signal is selected to run the attack. However, when the entire pipeline has been run once, we can re-use all computation-heavy components to compute the MIA performance for all other membership signals too. This can be run with a simple bash script:
+**Other MI signals.** By default, all synthetic membership signals are computed and only one signal is selected to run the attack. However, when the entire pipeline has been run once, we can re-use all computation-heavy components (i.e. the finetuning of the target and reference models) to compute the MIA performance for all other membership signals too. This can be run with a simple bash script where you iterate through the membership signal to be selected while recycling all other components of pipeline. 
+
+For the main experiment, we can through all canary options and the main mia methods as here: 
+
+```bash
+./scripts/launch_all_synthetic_mias_main_experiment.sh > all_synthetic_main_exp.txt
+```
+
+For the ablation experiments (where we alo run for more n and more k), we run this for a particular canary config:
 
 ``` bash
 ./scripts/launch_synthetic_mias.sh > all_synthetic_jobs.txt
 ```
 
-Note that we save the output in a txt file, as we will easily extract all job urls from the txt output for further analysis. 
+Note that we save the output in a txt file, as we will easily extract all job urls from the txt output for further analysis (see `notebooks/get_mia_results.ipynb`). 
 
 **Vary synthetic multiple.** By default, the target model generates as many synthetic data records as provided in the training dataset. To increase this, we consider the variable `shared_training_parameters.synthetic_multiple`. To run through various variable, we consider the following bash script:
 
@@ -144,4 +152,15 @@ Then we also need to run this for a roberta model trained on synthetic data (and
 az ml job create -f ./configs/compute_utility_synthetic_{DATASET}.yml --web
 ```
 
-To analyze the results (get the downstream performance and get plots for the appendix, see `notebooks/viz_utility.ipynb`).
+Alternatively, and more easily for synthetic data that has been trained on data containing canaries, we can also create a data asset on Azure from the synthetic data from an existing job and compute the utility directly from this. Specifically the steps are: 
+- Go the completed (synthetic attack) job of interest, e.g. sst-2 with n_rep=12 synthetic canaries with a canary specific label. 
+- Go to the target model training: `train_many_models.train_final_model_group.train_model_and_predict.train`. 
+- Right click on the `output_dir` from the `generate` component and create a data asset (pick a good name). 
+- Then add the path to this new asset in `configs/compute_utility_synthetic_{DATASET}_fromamlasset.yml`, specifically in `inputs.train_data.path`.
+- Then run: 
+
+``` bash
+az ml job create -f ./configs/compute_utility_synthetic_{DATASET}_fromamlasset.yml --web
+```
+
+To analyze the results (get the downstream performance and get plots for the appendix) see `notebooks/viz_utility.ipynb`. We also have all job urls there too. 
