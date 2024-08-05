@@ -108,18 +108,16 @@ When we also want to compute all MIA methods across synthetic multiples, we need
 **Vary perplexity of synthetic canary.** To understand canary vulnerability versus canary perplexity, we need to launch the attack pipeline end-to-end for both the non-synthetic and synthetic attack for different ranges of perplexity. To run through this, we also design a bash script for both:
 
 ``` bash
-./scripts/launch_no_synthetic_ppl.sh > no_synthetic_ppl_exp.txt
+./scripts/launch_no_synthetic_ppl_{DATASET}.sh > no_synthetic_ppl_exp_{DATASET}.txt
 ```
 
 ``` bash
-./scripts/launch_synthetic_ppl.sh > synthetic_ppl_exp.txt
+./scripts/launch_synthetic_ppl_{DATASET}.sh > synthetic_ppl_exp_{DATASET}.txt
 ```
 
-Note that we here need to specify the min and max perplexity of the range to be considered, and also need to give to provide an inital min and max temperature to be used in the temperature optimization. 
+Note that we here need to specify the min and max perplexity of the range to be considered, and also need to give to provide an inital min and max temperature to be used in the temperature optimization. The perpelxity range chosen is lineary spaced in the log space (which is nice for plotting). 
 
 Importantly, we cannot recycle the trained target/reference models across no-synthetic/synthetic as we use different number of repetitions. 
-
-For comparison, we also run the same attacks (with the same repetitions) for in-distribution canaries using the default commands (3.1 and 3.2) with as config files `no_synthetic_agnews_incanary.yaml` and `synthetic_agnews_incanary.yaml`. 
 
 ## (4) Analyze the results
 
@@ -138,7 +136,9 @@ To generate the table with ablations for n and k, the code is in `notebooks/abla
 
 **Perplexity results.** 
 
-First, we save all urls corresponding to the experiments run with varying canary perplexity here in `notebooks/ppl_experiment_urls.json`. This json can be updated when the perplexity ranges we want to consider and the corresponding urls are updated. Next, the code to generate the figure from the results is in `notebooks/ppl_exp_results_from_json.ipynb`. 
+The code to generate the figure from the perplexity experiment results is in `notebooks/ppl_exp_results_{DATASET}.ipynb`. 
+
+For AgNews, some jobs need to be recycled from before (see notebook). 
 
 ## (5) Compute the synthetic data utility
 
