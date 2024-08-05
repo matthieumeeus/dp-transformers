@@ -134,6 +134,10 @@ To generate the scatter plots for the disparate vulnerability of canaries, we us
 
 To generate the table with ablations for n and k, the code is in `notebooks/ablation_plots.ipynb`.
 
+**Synthetic multiple.**
+
+To generate figures with the synthetic multiple, the code is in `notebooks/synthetic_multiple_plots.ipynb`.
+
 **Perplexity results.** 
 
 The code to generate the figure from the perplexity experiment results is in `notebooks/ppl_exp_results_{DATASET}.ipynb`. 
