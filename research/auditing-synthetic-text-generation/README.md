@@ -140,6 +140,10 @@ The code to generate the figure from the perplexity experiment results is in `no
 
 For AgNews, some jobs need to be recycled from before (see notebook). 
 
+**Interpretability.** 
+
+We also include an attempt at interpreting where the information meaningful to infer membership lies for attacks just using synthetic data. For this, we look at the sequences with the highest and lowest RMIA scores and check out the n-gram loss, all n-grams extracted and maximum string overlap for all synthetic data generated across IN, OUT and TARGET models. These preliminary results are in `notebooks/interpretability.ipynb`.
+
 ## (5) Compute the synthetic data utility
 
 We also need to compute the utility of the synthetic data that is being generated. For this we first compute the utility of the 'real' data, by training a roberta model for classification on the real training data and evaluate on a held-out test set. 
