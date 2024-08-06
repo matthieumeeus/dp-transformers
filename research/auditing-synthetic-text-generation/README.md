@@ -176,3 +176,9 @@ az ml job create -f ./configs/compute_utility_synthetic_{DATASET}_fromamlasset.y
 ```
 
 To analyze the results (get the downstream performance and get plots for the appendix) see `notebooks/viz_utility.ipynb`. We also have all job urls there too. 
+
+## (6) Compute the perplexity of canaries
+
+For developing the synthetic canary generation, I ran perplexity computations interactively in a notebook: `notebooks/compute_perplexity_canaries.ipynb`. This notebook allows for the computation of the in-distribution canary perplexity and to see how the perplexity of synthetically generated sequences changes for varying temperature. 
+
+Importantly, running this notebook requires GPU support, especially when perplexities are computed with a large 7B model such as in this project. It is thus recommended to instantiate the notebook on an instance that does have GPU support.
