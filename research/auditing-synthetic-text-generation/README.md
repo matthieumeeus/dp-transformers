@@ -103,7 +103,7 @@ Note that we save the output in a txt file, as we will easily extract all job ur
 ./scripts/launch_synthetic_multiples_{DATASET}.sh > 2gram_synthetic_multiples_{DATASET}.txt
 ```
 
-When we also want to compute all MIA methods across synthetic multiples, we need to combine both bash scripts above with an nested for loop. 
+When we also want to compute all MIA methods across synthetic multiples, we need to combine both bash scripts above with an nested for loop, as in `scripts/launch_synthetic_multiples_{DATASET}.sh`. 
 
 **Vary perplexity of synthetic canary.** To understand canary vulnerability versus canary perplexity, we need to launch the attack pipeline end-to-end for both the non-synthetic and synthetic attack for different ranges of perplexity. To run through this, we also design a bash script for both:
 
