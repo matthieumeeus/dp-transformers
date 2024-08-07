@@ -63,7 +63,7 @@ python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst
 For the main experiment (table with MIA performance across attacks and setups), we launched:
 
 ``` bash
-./scripts/launch_no_synthetic_main_experiment.sh > no_synthetic_main_exp.txt
+./scripts/launch_no_synthetic_main_experiment.sh > ./job_launch_outputs/no_synthetic_main_exp.txt
 ```
 
 #### 3.2 Threat model: Synthetic data only
@@ -78,7 +78,7 @@ python estimate_privacy_synthetic.py --config-name synthetic_sst2_externalcanary
 For the main experiment we launched: 
 
 ``` bash
-./scripts/launch_synthetic_main_experiment.sh > synthetic_main_exp.txt
+./scripts/launch_synthetic_main_experiment.sh > ./job_launch_outputs/synthetic_main_exp.txt
 ```
 
 **Other MI signals.** By default, all synthetic membership signals are computed and only one signal is selected to run the attack. However, when the entire pipeline has been run once, we can re-use all computation-heavy components (i.e. the finetuning of the target and reference models) to compute the MIA performance for all other membership signals too. This can be run with a simple bash script where you iterate through the membership signal to be selected while recycling all other components of pipeline. 
@@ -86,13 +86,13 @@ For the main experiment we launched:
 For the main experiment, we can through all canary options and the main mia methods as here: 
 
 ```bash
-./scripts/launch_all_synthetic_mias_main_experiment.sh > all_synthetic_main_exp.txt
+./scripts/launch_all_synthetic_mias_main_experiment.sh > ./job_launch_outputs/all_synthetic_main_exp.txt
 ```
 
 For the ablation experiments (where we alo run for more n and more k), we run this for a particular canary config:
 
 ``` bash
-./scripts/launch_synthetic_mias_ablation_{DATASET}.sh > synthetic_mias_ablation_{DATASET}.txt
+./scripts/launch_synthetic_mias_ablation_{DATASET}.sh > ./job_launch_outputs/synthetic_mias_ablation_{DATASET}.txt
 ```
 
 Note that we save the output in a txt file, as we will easily extract all job urls from the txt output for further analysis (see `notebooks/get_mia_results.ipynb`). 
@@ -100,7 +100,7 @@ Note that we save the output in a txt file, as we will easily extract all job ur
 **Vary synthetic multiple.** By default, the target model generates as many synthetic data records as provided in the training dataset. To increase this, we consider the variable `shared_training_parameters.synthetic_multiple`. To run through various variable, we consider the following bash script:
 
 ``` bash
-./scripts/launch_synthetic_multiples_{DATASET}.sh > 2gram_synthetic_multiples_{DATASET}.txt
+./scripts/launch_synthetic_multiples_{DATASET}.sh > ./job_launch_outputs/2gram_synthetic_multiples_{DATASET}.txt
 ```
 
 When we also want to compute all MIA methods across synthetic multiples, we need to combine both bash scripts above with an nested for loop, as in `scripts/launch_synthetic_multiples_{DATASET}.sh`. 
@@ -108,11 +108,11 @@ When we also want to compute all MIA methods across synthetic multiples, we need
 **Vary perplexity of synthetic canary.** To understand canary vulnerability versus canary perplexity, we need to launch the attack pipeline end-to-end for both the non-synthetic and synthetic attack for different ranges of perplexity. To run through this, we also design a bash script for both:
 
 ``` bash
-./scripts/launch_no_synthetic_ppl_{DATASET}.sh > no_synthetic_ppl_exp_{DATASET}.txt
+./scripts/launch_no_synthetic_ppl_{DATASET}.sh > ./job_launch_outputs/no_synthetic_ppl_exp_{DATASET}.txt
 ```
 
 ``` bash
-./scripts/launch_synthetic_ppl_{DATASET}.sh > synthetic_ppl_exp_{DATASET}.txt
+./scripts/launch_synthetic_ppl_{DATASET}.sh > ./job_launch_outputs/synthetic_ppl_exp_{DATASET}.txt
 ```
 
 Note that we here need to specify the min and max perplexity of the range to be considered, and also need to give to provide an inital min and max temperature to be used in the temperature optimization. The perpelxity range chosen is lineary spaced in the log space (which is nice for plotting). 
