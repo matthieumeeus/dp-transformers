@@ -1,0 +1,498 @@
+Launching the job with min_ppl=9.0 max_ppl=11.0 min_temp=0.8 max_temp=1.0
+[2024-08-06 00:27:08,508][azure.identity._credentials.environment][INFO] - No environment configuration found.
+[2024-08-06 00:27:08,508][azure.identity._credentials.managed_identity][INFO] - ManagedIdentityCredential will use Azure ML managed identity
+[2024-08-06 00:27:08,511][azure.core.pipeline.policies.http_logging_policy][INFO] - Request URL: 'http://127.0.0.1:46808/MSI/auth?api-version=REDACTED&resource=REDACTED'
+Request method: 'GET'
+Request headers:
+    'secret': 'REDACTED'
+    'User-Agent': 'azsdk-python-identity/1.16.0 Python/3.10.14 (Linux-5.15.0-1040-azure-x86_64-with-glibc2.31)'
+No body was attached to the request
+[2024-08-06 00:27:08,914][azure.core.pipeline.policies.http_logging_policy][INFO] - Response status: 200
+Response headers:
+    'Content-Type': 'application/json'
+    'Date': 'Tue, 06 Aug 2024 00:27:08 GMT'
+    'Transfer-Encoding': 'chunked'
+[2024-08-06 00:27:08,914][azure.identity._credentials.chained][INFO] - DefaultAzureCredential acquired a token from ManagedIdentityCredential
+[2024-08-06 00:27:40,075][privacy_estimates.experiments.aml][INFO] - Pipeline validated
+[2024-08-06 00:28:09,655][privacy_estimates.experiments.aml][INFO] - Submitting job...
+[2024-08-06 00:30:24,486][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,496][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,506][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,515][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,544][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,553][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,578][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,587][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,614][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,623][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,633][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,642][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,671][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,681][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,705][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,714][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,742][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,753][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,763][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,776][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,818][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,828][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,858][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,868][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,898][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,909][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,918][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,933][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,965][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:24,977][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,002][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,013][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,344][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,353][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,363][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,371][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,404][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,412][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,421][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:25,431][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:28,419][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:28,435][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:28,469][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:28,480][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:32,379][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:32,389][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:32,398][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:32,410][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:32,439][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:32,450][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:32,483][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:30:32,492][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:31:00,163][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:31:03,846][privacy_estimates.experiments.aml][INFO] - Job submitted. AML URL: https://ml.azure.com/runs/crimson_street_3wtxkmjtj5?wsid=/subscriptions/acc09744-1ee3-4242-b375-93421c63af0c/resourcegroups/PPML/workspaces/M365Research-PPML-EUS&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
+Launching the job with min_ppl=28.46 max_ppl=34.79 min_temp=0.8 max_temp=1.0
+[2024-08-06 00:31:27,982][azure.identity._credentials.environment][INFO] - No environment configuration found.
+[2024-08-06 00:31:27,982][azure.identity._credentials.managed_identity][INFO] - ManagedIdentityCredential will use Azure ML managed identity
+[2024-08-06 00:31:27,985][azure.core.pipeline.policies.http_logging_policy][INFO] - Request URL: 'http://127.0.0.1:46808/MSI/auth?api-version=REDACTED&resource=REDACTED'
+Request method: 'GET'
+Request headers:
+    'secret': 'REDACTED'
+    'User-Agent': 'azsdk-python-identity/1.16.0 Python/3.10.14 (Linux-5.15.0-1040-azure-x86_64-with-glibc2.31)'
+No body was attached to the request
+[2024-08-06 00:31:27,989][azure.core.pipeline.policies.http_logging_policy][INFO] - Response status: 200
+Response headers:
+    'Content-Type': 'application/json'
+    'Date': 'Tue, 06 Aug 2024 00:31:27 GMT'
+    'Transfer-Encoding': 'chunked'
+[2024-08-06 00:31:27,989][azure.identity._credentials.chained][INFO] - DefaultAzureCredential acquired a token from ManagedIdentityCredential
+[2024-08-06 00:31:58,700][privacy_estimates.experiments.aml][INFO] - Pipeline validated
+[2024-08-06 00:32:29,511][privacy_estimates.experiments.aml][INFO] - Submitting job...
+[2024-08-06 00:34:35,119][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,127][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,136][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,144][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,172][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,180][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,208][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,219][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,245][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,253][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,262][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,270][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,300][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,308][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,335][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,343][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,370][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,380][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,388][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,396][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,424][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,432][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,455][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,465][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,489][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,498][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,507][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,516][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,546][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,554][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,579][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,589][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,890][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,898][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,908][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,915][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,945][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,953][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,961][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:35,971][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:39,012][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:39,021][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:39,047][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:39,056][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:42,318][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:42,326][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:42,335][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:42,345][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:42,371][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:42,381][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:42,402][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:34:42,411][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:35:08,086][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:35:09,732][privacy_estimates.experiments.aml][INFO] - Job submitted. AML URL: https://ml.azure.com/runs/musing_sail_wmjq1sh67n?wsid=/subscriptions/acc09744-1ee3-4242-b375-93421c63af0c/resourcegroups/PPML/workspaces/M365Research-PPML-EUS&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
+Launching the job with min_ppl=90.0 max_ppl=110.0 min_temp=0.8 max_temp=1.0
+[2024-08-06 00:35:33,474][azure.identity._credentials.environment][INFO] - No environment configuration found.
+[2024-08-06 00:35:33,474][azure.identity._credentials.managed_identity][INFO] - ManagedIdentityCredential will use Azure ML managed identity
+[2024-08-06 00:35:33,477][azure.core.pipeline.policies.http_logging_policy][INFO] - Request URL: 'http://127.0.0.1:46808/MSI/auth?api-version=REDACTED&resource=REDACTED'
+Request method: 'GET'
+Request headers:
+    'secret': 'REDACTED'
+    'User-Agent': 'azsdk-python-identity/1.16.0 Python/3.10.14 (Linux-5.15.0-1040-azure-x86_64-with-glibc2.31)'
+No body was attached to the request
+[2024-08-06 00:35:33,482][azure.core.pipeline.policies.http_logging_policy][INFO] - Response status: 200
+Response headers:
+    'Content-Type': 'application/json'
+    'Date': 'Tue, 06 Aug 2024 00:35:33 GMT'
+    'Transfer-Encoding': 'chunked'
+[2024-08-06 00:35:33,482][azure.identity._credentials.chained][INFO] - DefaultAzureCredential acquired a token from ManagedIdentityCredential
+[2024-08-06 00:36:04,078][privacy_estimates.experiments.aml][INFO] - Pipeline validated
+[2024-08-06 00:36:33,710][privacy_estimates.experiments.aml][INFO] - Submitting job...
+[2024-08-06 00:38:29,176][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,185][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,194][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,202][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,230][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,239][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,263][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,272][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,299][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,308][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,317][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,327][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,358][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,367][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,391][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,400][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,424][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,433][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,443][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,451][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,478][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,487][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,512][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,521][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,546][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,556][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,565][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,573][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,604][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,613][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,635][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,648][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,953][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,961][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,969][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:29,978][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:30,006][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:30,014][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:30,022][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:30,032][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:33,222][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:33,230][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:33,255][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:33,265][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:36,417][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:36,425][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:36,435][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:36,445][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:36,473][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:36,483][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:36,506][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:38:36,515][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:39:02,379][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:39:04,204][privacy_estimates.experiments.aml][INFO] - Job submitted. AML URL: https://ml.azure.com/runs/nifty_brush_m79xdknbbm?wsid=/subscriptions/acc09744-1ee3-4242-b375-93421c63af0c/resourcegroups/PPML/workspaces/M365Research-PPML-EUS&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
+Launching the job with min_ppl=284.60 max_ppl=347.85 min_temp=0.8 max_temp=1.0
+[2024-08-06 00:39:27,747][azure.identity._credentials.environment][INFO] - No environment configuration found.
+[2024-08-06 00:39:27,747][azure.identity._credentials.managed_identity][INFO] - ManagedIdentityCredential will use Azure ML managed identity
+[2024-08-06 00:39:27,750][azure.core.pipeline.policies.http_logging_policy][INFO] - Request URL: 'http://127.0.0.1:46808/MSI/auth?api-version=REDACTED&resource=REDACTED'
+Request method: 'GET'
+Request headers:
+    'secret': 'REDACTED'
+    'User-Agent': 'azsdk-python-identity/1.16.0 Python/3.10.14 (Linux-5.15.0-1040-azure-x86_64-with-glibc2.31)'
+No body was attached to the request
+[2024-08-06 00:39:27,754][azure.core.pipeline.policies.http_logging_policy][INFO] - Response status: 200
+Response headers:
+    'Content-Type': 'application/json'
+    'Date': 'Tue, 06 Aug 2024 00:39:27 GMT'
+    'Transfer-Encoding': 'chunked'
+[2024-08-06 00:39:27,754][azure.identity._credentials.chained][INFO] - DefaultAzureCredential acquired a token from ManagedIdentityCredential
+[2024-08-06 00:39:58,270][privacy_estimates.experiments.aml][INFO] - Pipeline validated
+[2024-08-06 00:40:28,062][privacy_estimates.experiments.aml][INFO] - Submitting job...
+[2024-08-06 00:42:13,018][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,026][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,036][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,045][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,089][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,099][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,128][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,138][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,169][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,179][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,190][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,202][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,239][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,248][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,277][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,287][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,318][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,330][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,339][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,349][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,380][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,389][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,416][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,426][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,452][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,468][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,477][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,486][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,518][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,527][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,552][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,564][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,911][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,920][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,931][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,941][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,973][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,982][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:13,991][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:14,002][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:16,912][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:16,922][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:16,951][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:16,962][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:20,598][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:20,607][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:20,617][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:20,631][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:20,660][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:20,671][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:20,696][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:20,707][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:47,292][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:42:48,629][privacy_estimates.experiments.aml][INFO] - Job submitted. AML URL: https://ml.azure.com/runs/goofy_foot_rs86w6b5rp?wsid=/subscriptions/acc09744-1ee3-4242-b375-93421c63af0c/resourcegroups/PPML/workspaces/M365Research-PPML-EUS&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
+Launching the job with min_ppl=2846.05 max_ppl=3478.51 min_temp=0.8 max_temp=1.0
+[2024-08-06 00:43:13,252][azure.identity._credentials.environment][INFO] - No environment configuration found.
+[2024-08-06 00:43:13,252][azure.identity._credentials.managed_identity][INFO] - ManagedIdentityCredential will use Azure ML managed identity
+[2024-08-06 00:43:13,255][azure.core.pipeline.policies.http_logging_policy][INFO] - Request URL: 'http://127.0.0.1:46808/MSI/auth?api-version=REDACTED&resource=REDACTED'
+Request method: 'GET'
+Request headers:
+    'secret': 'REDACTED'
+    'User-Agent': 'azsdk-python-identity/1.16.0 Python/3.10.14 (Linux-5.15.0-1040-azure-x86_64-with-glibc2.31)'
+No body was attached to the request
+[2024-08-06 00:43:13,259][azure.core.pipeline.policies.http_logging_policy][INFO] - Response status: 200
+Response headers:
+    'Content-Type': 'application/json'
+    'Date': 'Tue, 06 Aug 2024 00:43:13 GMT'
+    'Transfer-Encoding': 'chunked'
+[2024-08-06 00:43:13,259][azure.identity._credentials.chained][INFO] - DefaultAzureCredential acquired a token from ManagedIdentityCredential
+[2024-08-06 00:43:45,035][privacy_estimates.experiments.aml][INFO] - Pipeline validated
+[2024-08-06 00:44:15,837][privacy_estimates.experiments.aml][INFO] - Submitting job...
+[2024-08-06 00:46:29,968][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:29,979][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:29,988][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:29,997][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,031][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,040][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,072][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,082][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,113][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,121][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,131][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,140][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,172][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,182][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,208][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,217][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,244][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,254][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,263][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,273][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,310][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,319][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,346][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,355][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,380][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,391][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,400][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,409][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,439][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,449][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,472][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,483][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,814][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,823][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,832][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,841][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,872][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,881][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,890][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:30,902][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:33,667][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:33,675][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:33,699][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:33,709][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:37,315][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:37,328][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:37,337][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:37,349][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:37,378][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:37,390][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:37,415][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:46:37,425][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:47:02,572][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:47:04,280][privacy_estimates.experiments.aml][INFO] - Job submitted. AML URL: https://ml.azure.com/runs/silver_rabbit_vdf9vrby6b?wsid=/subscriptions/acc09744-1ee3-4242-b375-93421c63af0c/resourcegroups/PPML/workspaces/M365Research-PPML-EUS&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
+Launching the job with min_ppl=28460.50 max_ppl=34785.05 min_temp=0.8 max_temp=1.0
+[2024-08-06 00:47:28,914][azure.identity._credentials.environment][INFO] - No environment configuration found.
+[2024-08-06 00:47:28,914][azure.identity._credentials.managed_identity][INFO] - ManagedIdentityCredential will use Azure ML managed identity
+[2024-08-06 00:47:28,917][azure.core.pipeline.policies.http_logging_policy][INFO] - Request URL: 'http://127.0.0.1:46808/MSI/auth?api-version=REDACTED&resource=REDACTED'
+Request method: 'GET'
+Request headers:
+    'secret': 'REDACTED'
+    'User-Agent': 'azsdk-python-identity/1.16.0 Python/3.10.14 (Linux-5.15.0-1040-azure-x86_64-with-glibc2.31)'
+No body was attached to the request
+[2024-08-06 00:47:28,922][azure.core.pipeline.policies.http_logging_policy][INFO] - Response status: 200
+Response headers:
+    'Content-Type': 'application/json'
+    'Date': 'Tue, 06 Aug 2024 00:47:28 GMT'
+    'Transfer-Encoding': 'chunked'
+[2024-08-06 00:47:28,923][azure.identity._credentials.chained][INFO] - DefaultAzureCredential acquired a token from ManagedIdentityCredential
+[2024-08-06 00:48:00,132][privacy_estimates.experiments.aml][INFO] - Pipeline validated
+[2024-08-06 00:48:31,520][privacy_estimates.experiments.aml][INFO] - Submitting job...
+[2024-08-06 00:50:29,470][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,479][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,488][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,498][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,529][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,539][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,566][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,576][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,606][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,616][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,626][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,637][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,673][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,683][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,717][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,728][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,761][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,779][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,788][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,797][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,831][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,841][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,870][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,879][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,904][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,915][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,924][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,933][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,964][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:29,972][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,002][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,013][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,355][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,365][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,375][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,385][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,415][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,424][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,434][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:30,444][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:33,137][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:33,146][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:33,173][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:33,181][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:36,708][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:36,718][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:36,729][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:36,740][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:36,769][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:36,780][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:36,802][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:50:36,810][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:51:05,376][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:51:06,957][privacy_estimates.experiments.aml][INFO] - Job submitted. AML URL: https://ml.azure.com/runs/amusing_music_ms4rgwx19z?wsid=/subscriptions/acc09744-1ee3-4242-b375-93421c63af0c/resourcegroups/PPML/workspaces/M365Research-PPML-EUS&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
+Launching the job with min_ppl=90000.0 max_ppl=110000.0 min_temp=0.8 max_temp=1.0
+[2024-08-06 00:51:31,505][azure.identity._credentials.environment][INFO] - No environment configuration found.
+[2024-08-06 00:51:31,506][azure.identity._credentials.managed_identity][INFO] - ManagedIdentityCredential will use Azure ML managed identity
+[2024-08-06 00:51:31,509][azure.core.pipeline.policies.http_logging_policy][INFO] - Request URL: 'http://127.0.0.1:46808/MSI/auth?api-version=REDACTED&resource=REDACTED'
+Request method: 'GET'
+Request headers:
+    'secret': 'REDACTED'
+    'User-Agent': 'azsdk-python-identity/1.16.0 Python/3.10.14 (Linux-5.15.0-1040-azure-x86_64-with-glibc2.31)'
+No body was attached to the request
+[2024-08-06 00:51:31,513][azure.core.pipeline.policies.http_logging_policy][INFO] - Response status: 200
+Response headers:
+    'Content-Type': 'application/json'
+    'Date': 'Tue, 06 Aug 2024 00:51:31 GMT'
+    'Transfer-Encoding': 'chunked'
+[2024-08-06 00:51:31,513][azure.identity._credentials.chained][INFO] - DefaultAzureCredential acquired a token from ManagedIdentityCredential
+[2024-08-06 00:52:02,257][privacy_estimates.experiments.aml][INFO] - Pipeline validated
+[2024-08-06 00:52:32,497][privacy_estimates.experiments.aml][INFO] - Submitting job...
+[2024-08-06 00:54:22,996][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,006][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,018][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,030][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,069][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,081][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,112][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,122][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,151][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,160][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,169][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,179][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,215][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,225][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,253][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,262][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,288][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,300][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,309][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,318][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,347][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,357][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,383][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,393][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,418][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,428][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,437][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,446][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,475][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,485][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,506][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,516][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,829][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,837][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,847][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,856][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,890][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,902][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,911][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:23,926][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:26,699][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:26,708][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:26,745][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:26,753][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:30,414][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:30,423][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:30,432][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:30,443][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:30,474][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:30,487][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:30,510][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:30,518][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:56,649][msrest.serialization][WARNING] - pathOnCompute is not a known attribute of class <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.UriFolderJobOutput'> and will be ignored
+[2024-08-06 00:54:58,216][privacy_estimates.experiments.aml][INFO] - Job submitted. AML URL: https://ml.azure.com/runs/keen_energy_w8hmyn721f?wsid=/subscriptions/acc09744-1ee3-4242-b375-93421c63af0c/resourcegroups/PPML/workspaces/M365Research-PPML-EUS&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
+All jobs launched completed.
