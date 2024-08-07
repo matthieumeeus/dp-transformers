@@ -122,7 +122,7 @@ Importantly, we cannot recycle the trained target/reference models across no-syn
 
 **Experiment with an in-distribution prefix and synthetic suffix.** We have a hypothesis that canaries with a low perplexity prefixes and high perplexity suffixes might be memorized better. For this, we design an option to generate canaries with (1) a certain prefix length chosen from in-distribution canaries defined using `prefix_length` (see 2.2), (2) complemented with a synthetically generated suffix, (3) so that the entire canary perplexity remains with min and max ppl (computed using the prompt). 
 
-We can then launch a similar experiment as above, but now for a fixed low perplexity suffix. For this purpose we have created `configs/*_prefix_canary.yaml` for both sst2, agnews and for no synthetic and synthetic attacks for a prefix length of 10 words.. 
+We can then launch a similar experiment as above, but now for a fixed low perplexity suffix. For this purpose we have created `configs/*_prefix_canary.yaml` for both sst2, agnews and for no synthetic and synthetic attacks for a prefix length of 10 words.
 
 We have not yet run this very extensively, so let's start with running this for sst-2 for the same range of perplexity range as considered before, but now for prefix length of 10 - only for the synthetic attack to begin with. To this end, we launch:
 
@@ -130,7 +130,7 @@ We have not yet run this very extensively, so let's start with running this for 
 ./scripts/launch_synthetic_prefix_sst2.sh > ./job_launch_outputs/synthetic_prefix10_exp_sst2.txt
 ```
 
-We recommend monitoring the get_ood_canaries component logs in case this takes vry long, as some perplexity ranges might simply not be feasible given the choisen prefix. 
+We recommend monitoring the get_ood_canaries component logs in case this takes very long, as some perplexity ranges might simply not be feasible given the chosen prefix. 
 
 To then vizualize these results I recommend making a copy of `notebooks/ppl_exp_results_sst2.ipynb` and move from there. 
 
