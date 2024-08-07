@@ -53,6 +53,9 @@ inputs:
   max_temperature:
     type: number
     description: "Maximum temperature for the canaries."
+  prefix_length:
+    type: integer
+    description: "Length of the prefix to use for the canaries."
 
 outputs:
   canary_dataset:
@@ -82,6 +85,7 @@ command: >-
     --max_ppl ${{inputs.max_ppl}} \
     --min_temperature ${{inputs.min_temperature}} \
     --max_temperature ${{inputs.max_temperature}} \
+    --prefix_length ${{inputs.prefix_length}} \
     --canary_dataset ${{outputs.canary_dataset}} \
     --updated_training_dataset ${{outputs.updated_training_dataset}}
 

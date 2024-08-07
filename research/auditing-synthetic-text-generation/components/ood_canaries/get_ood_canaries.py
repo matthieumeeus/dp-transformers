@@ -9,7 +9,7 @@ import random
 import numpy as np
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from canary_utils import sample_canaries_from_dataset, download_punkt_if_not_exists, make_canaries_label_compatible, \
-                         get_ppl_controlled_canaries
+                         get_ppl_controlled_canaries, get_ppl_controlled_canaries_w_prefix
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ class Arguments(BaseModel):
     max_ppl: float
     min_temperature: float
     max_temperature: float
+    prefix_length: int
     canary_dataset: Path
     updated_training_dataset: Path
   
@@ -52,7 +53,7 @@ def main(args: Arguments) -> int:
     else:
         device = torch.device("cpu")
 
-    original_dataset = datasets.load_from_disk(args.original_dataset)
+    original_dataset = datasets.load_from_disk(args.original_dataset, keep_in_memory=True)
 
     if args.canary_method == "sample_real":
         assert args.canary_text_column is not None
@@ -67,13 +68,22 @@ def main(args: Arguments) -> int:
         tokenizer = AutoTokenizer.from_pretrained(args.external_artifact)
         tokenizer.pad_token_id = tokenizer.eos_token_id
         model = AutoModelForCausalLM.from_pretrained(args.external_artifact).to(device)
-        canary_dataset, updated_training_dataset = get_ppl_controlled_canaries(original_dataset=original_dataset, label_comptability_method=args.label_comptability_method, 
+        if args.prefix_length == 0:
+            canary_dataset, updated_training_dataset = get_ppl_controlled_canaries(original_dataset=original_dataset, label_comptability_method=args.label_comptability_method, 
                                 text_name=args.text_column, label_name=args.label_column,
                                 model=model, tokenizer=tokenizer, 
                                 n_canaries=args.n_canaries, canary_length=args.canary_length,
                                 templated_prompt=args.templated_prompt, min_ppl=args.min_ppl, max_ppl=args.max_ppl,
                                 min_temperature=args.min_temperature, max_temperature=args.max_temperature,
                                 batch_size=args.batch_size, device=device)
+        else:
+            canary_dataset, updated_training_dataset = get_ppl_controlled_canaries_w_prefix(original_dataset=original_dataset, label_comptability_method=args.label_comptability_method, 
+                                text_name=args.text_column, label_name=args.label_column,
+                                model=model, tokenizer=tokenizer, 
+                                n_canaries=args.n_canaries, canary_length=args.canary_length, prefix_length=args.prefix_length,
+                                templated_prompt=args.templated_prompt, min_ppl=args.min_ppl, max_ppl=args.max_ppl,
+                                min_temperature=args.min_temperature, max_temperature=args.max_temperature,
+                                batch_size=args.batch_size, device=device)    
 
     # save the datasets
     canary_dataset.save_to_disk(args.canary_dataset)

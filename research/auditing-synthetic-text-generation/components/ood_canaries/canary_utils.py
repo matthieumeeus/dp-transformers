@@ -9,6 +9,7 @@ import numpy as np
 import nltk
 from nltk.data import find
 from collections import Counter
+from tqdm import tqdm
 
 def sample_canaries_from_dataset(dataset: datasets.Dataset, n_canaries: int,
                                  canary_text_column: str, canary_length: int):
@@ -230,7 +231,8 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
                                 n_canaries: int, canary_length: int,
                                 prompt: str, min_ppl: float, max_ppl: float,
                                 min_temperature: float, max_temperature: float,
-                                batch_size: int, device: torch.device):
+                                batch_size: int, device: torch.device,
+                                prefix: str=''):
 
     if max_ppl == -1:
         print("You have provided max_ppl=-1, so generating canaries with random tokens")
@@ -238,7 +240,7 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
         return canaries
 
     canaries = [] 
-    inputs = tokenizer([prompt] * batch_size, return_tensors="pt").to(device)
+    inputs = tokenizer([prompt + prefix] * batch_size, return_tensors="pt").to(device)
 
     total_samples = 0
     step = 0
@@ -281,6 +283,12 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
                 continue
             if n_words >= canary_length:
                 valid_text.append(" ".join(text_split[:canary_length]))
+
+        if len(valid_text) == 0:
+            print(f"No valid text generated in step {step} - continuing...")
+            total_samples += batch_size
+            step += 1
+            continue
 
         if min_ppl == max_ppl:
             # if we are not controlling perplexity, then we can just add all the generated text
@@ -394,3 +402,71 @@ def get_ppl_controlled_canaries(original_dataset: datasets.Dataset, label_compta
     else:
         raise ValueError(f'Unknown label_comptability_method: {label_comptability_method}')
     
+def get_ppl_controlled_canaries_w_prefix(original_dataset: datasets.Dataset, label_comptability_method: str, 
+                                text_name: str, label_name: str,
+                                model: AutoModelForCausalLM, tokenizer: AutoTokenizer, 
+                                n_canaries: int, canary_length: int, prefix_length: int,
+                                templated_prompt: str, min_ppl: float, max_ppl: float,
+                                min_temperature: float, max_temperature: float,
+                                batch_size: int, device: torch.device):
+    
+    all_label_names = original_dataset.features[label_name].names
+
+    # only consider uniform label compatability for this option
+    assert label_comptability_method == 'uniform'
+    
+    #### sample the right amount of in-distribution canaries
+    # first get the valid indices based on the prefix_length
+    valid_indices = []
+    for idx in range(len(original_dataset)):
+        sample = original_dataset[idx][text_name]
+        if len(sample.split()) >= prefix_length:
+            valid_indices.append(idx)
+    print(f"Number of valid samples: {len(valid_indices)}")
+
+    # select the canary indices
+    if len(valid_indices) < n_canaries:
+        raise ValueError(f"Cannot select {n_canaries} canaries from {len(valid_indices)} samples.")
+    
+    canary_indices = np.random.choice(valid_indices, n_canaries, replace=False)
+    non_canary_indices = [idx for idx in range(len(original_dataset)) if idx not in canary_indices]
+    canary_data = original_dataset.select(canary_indices)
+
+    # make sure all canaries have the same number of max words
+    def truncate_sample(record):
+        sample_split = record[text_name].split()
+        truncated_sample = " ".join(sample_split[:prefix_length])
+        record[text_name] = truncated_sample
+        return record
+
+    in_distribution_canary_data = canary_data.map(truncate_sample)
+    updated_training_data = original_dataset.select(non_canary_indices)
+        
+    canaries = []
+    for idx in tqdm(range(len(in_distribution_canary_data))):
+        label_str = all_label_names[in_distribution_canary_data[label_name][idx]]
+        adapted_prompt = templated_prompt.replace(f"{{{label_name}}}", label_str)
+
+        # add the prefix to the prompt
+        prefix = in_distribution_canary_data[text_name][idx]
+        
+        # generate a canary for this label, controlled by perplexity
+        canary_generated = generate_synthetic_canaries_ppl(model=model, tokenizer=tokenizer, 
+                                n_canaries=1, canary_length=canary_length, prompt=adapted_prompt,
+                                min_ppl=min_ppl, max_ppl=max_ppl, min_temperature=min_temperature, max_temperature=max_temperature,
+                                batch_size=batch_size, device=device,
+                                # make sure we add a prefix
+                                prefix = prefix)
+        canaries.extend(canary_generated)
+        
+    canary_labels = in_distribution_canary_data[label_name]
+
+    # now convert this to a dataset
+    canary_dataset = datasets.Dataset.from_dict({
+            text_name: canaries,
+            label_name: canary_labels
+    })
+
+    canary_dataset = canary_dataset.cast_column(label_name, original_dataset.features[label_name])
+
+    return canary_dataset, updated_training_data

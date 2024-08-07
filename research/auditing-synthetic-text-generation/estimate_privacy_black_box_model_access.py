@@ -13,7 +13,6 @@ from privacy_estimates.experiments.challenge_point_selectors import TopKChalleng
 
 from typing import Dict, Literal, Optional
 
-
 EXPERIMENT_DIR = Path(__file__).parent
 
 @dataclass
@@ -40,6 +39,7 @@ class CanaryConfig:
     max_ppl: float
     min_temperature: float
     max_temperature: float
+    prefix_length: int
     num_tokens_to_replace: int
     replacement_method: str
     mlm_name: str
@@ -113,7 +113,7 @@ class ExternalCanaryComponentLoader(TrainingComponentLoader):
                         text_column=self.text_column, label_column=self.label_column, 
                         templated_prompt=self.parameters.templated_prompt, min_ppl=self.parameters.min_ppl,
                         max_ppl=self.parameters.max_ppl, min_temperature=self.parameters.min_temperature,
-                        max_temperature=self.parameters.max_temperature)
+                        max_temperature=self.parameters.max_temperature, prefix_length=self.parameters.prefix_length)
         if self.parameters.canary_method in ("sample_synthetic", "sample_synthetic_ppl_controlled"):
             job = self.compute_config.apply(job)
         return job
