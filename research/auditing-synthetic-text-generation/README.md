@@ -142,7 +142,7 @@ To generate figures with the synthetic multiple, the code is in `notebooks/synth
 
 The code to generate the figure from the perplexity experiment results is in `notebooks/ppl_exp_results_{DATASET}.ipynb`. 
 
-For AgNews, some jobs need to be recycled from before (see notebook). 
+For completion, I also add the `notebooks/ppl_exp_results_from_json.ipynb` and `notebooks/ppl_experiment_urls_agnews.json` - which were used to generate the initial figure (so more data points). 
 
 **Interpretability.** 
 
