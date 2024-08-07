@@ -43,6 +43,7 @@ We allow for multiple canary generation and injection mechansisms.
     - `sample_synthetic`: canary text is synthetically generated using the model specified by  `external_artifact` and `external_artifact_version`. By default we apply rejection sampling until we have a sufficient amount of canaries of the required length and with a perplexity between `min_ppl` and `max_ppl`. Perplexity is computed using the prompt with the right label (see label compatibility below). The temperature is automatically adapted to converge to the target perplexity range, initialized with `min_temperature` and `max_temperature`. Some edge cases:
         - When `min_ppl`==`max_ppl`, we do not control for perplexity and just sample from the model using the temperature (`min_temperature` / `max_temperature` ) / 2. 
         - When `max_ppl` == -1, we sample random tokens from the vocabulary. 
+        - The parameter `prefix_length` determines how many words of an in-distribution canary should be used as prefix to further generate a synthetic suffix. The goal for this would to play around with the hypothesis that canaries with low perplexity prefixes and high perplexity suffixes are better memorized. Importantly, the perplexity remains computed for the overall sequence, including the prefix and suffix. Differently than before, we here need to apply rejection sampling for every in-distribution seperately. 
 - `label_comptability_method` describes how the cvanary text should be made compatible with the labels of the training dataset. We have two options:
     - 'uniform': sample random labels from the training dataset, ensuring the label distribution matches. 
     - 'extend': extend the label distribution with a canary-specific label, by default 'canary'. 
@@ -118,6 +119,20 @@ When we also want to compute all MIA methods across synthetic multiples, we need
 Note that we here need to specify the min and max perplexity of the range to be considered, and also need to give to provide an inital min and max temperature to be used in the temperature optimization. The perpelxity range chosen is lineary spaced in the log space (which is nice for plotting). 
 
 Importantly, we cannot recycle the trained target/reference models across no-synthetic/synthetic as we use different number of repetitions. 
+
+**Experiment with an in-distribution prefix and synthetic suffix.** We have a hypothesis that canaries with a low perplexity prefixes and high perplexity suffixes might be memorized better. For this, we design an option to generate canaries with (1) a certain prefix length chosen from in-distribution canaries defined using `prefix_length` (see 2.2), (2) complemented with a synthetically generated suffix, (3) so that the entire canary perplexity remains with min and max ppl (computed using the prompt). 
+
+We can then launch a similar experiment as above, but now for a fixed low perplexity suffix. For this purpose we have created `configs/*_prefix_canary.yaml` for both sst2, agnews and for no synthetic and synthetic attacks for a prefix length of 10 words.. 
+
+We have not yet run this very extensively, so let's start with running this for sst-2 for the same range of perplexity range as considered before, but now for prefix length of 10 - only for the synthetic attack to begin with. To this end, we launch:
+
+``` bash
+./scripts/launch_synthetic_prefix_sst2.sh > ./job_launch_outputs/synthetic_prefix10_exp_sst2.txt
+```
+
+We recommend monitoring the get_ood_canaries component logs in case this takes vry long, as some perplexity ranges might simply not be feasible given the choisen prefix. 
+
+To then vizualize these results I recommend making a copy of `notebooks/ppl_exp_results_sst2.ipynb` and move from there. 
 
 ## (4) Analyze the results
 
