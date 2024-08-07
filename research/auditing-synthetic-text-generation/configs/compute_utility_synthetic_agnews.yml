@@ -84,7 +84,7 @@ jobs:
       seed: 239023
       weight_decay: 0.01
       logging_steps: 10
-      learning_rate: 3e-5
+      learning_rate: 1e-5
     outputs:
       output_dir:
         mode: "rw_mount"
