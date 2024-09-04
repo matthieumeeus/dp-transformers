@@ -118,6 +118,10 @@ class Game(BlackBoxMembershipInferenceGameBase):
             challenge_point_selection_loader=challenge_point_selection_loader,
             shadow_model_config=shadow_model_config
         )
+
+    @property
+    def default_compute(self) -> ClusterComputeConfig:
+        return ClusterComputeConfig(**self.workspace.compute['cpu'])
     
     def preprocess_datasets(
         self

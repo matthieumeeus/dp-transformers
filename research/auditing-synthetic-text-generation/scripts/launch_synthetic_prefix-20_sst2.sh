@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Define the array of parameters
-min_ppls=(9.0 28.46 90.0 284.60 900.0 2846.05 9000.0)
-max_ppls=(11.0 34.79 110.0 347.85 1100.0 3478.51 11000.0)
-min_temps=(0.8 0.8 0.8 0.8 0.8 0.8 0.8)
-max_temps=(1.0 1.0 1.0 1.0 1.0 1.0 1.0)
+min_ppls=(9.0 28.46 90.0 284.60 900.0)
+max_ppls=(11.0 34.79 110.0 347.85 1100.0)
+min_temps=(0.8 0.8 0.8 0.8 0.8)
+max_temps=(1.0 1.0 1.0 1.0 1.0)
 
 # Loop through each config and its corresponding additional parameter
 for i in "${!min_ppls[@]}"; do
