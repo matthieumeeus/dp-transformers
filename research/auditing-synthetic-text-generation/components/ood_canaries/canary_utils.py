@@ -1,4 +1,5 @@
 import datasets 
+import time
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 from torch.nn import CrossEntropyLoss
@@ -10,6 +11,34 @@ import nltk
 from nltk.data import find
 from collections import Counter
 from tqdm import tqdm
+from contextlib import contextmanager
+
+
+@contextmanager
+def retry(attempts=5, delay=2, exception_types=(Exception,)):
+    """
+    A generator-based context manager for retrying an operation that might raise specific exceptions.
+
+    Args:
+        attempts (int): Maximum number of attempts.
+        delay (int): Delay between attempts in seconds.
+        exception_types (tuple): A tuple of exception types to catch. Defaults to (Exception,), which catches all.
+    """
+    attempt = 0
+    while attempt < attempts:
+        try:
+            yield
+            break  # If the block succeeds, exit the loop
+        except exception_types as e:
+            if attempt < attempts - 1:
+                print(f"Attempt {attempt + 1}: Failed with error '{e}', retrying in {delay} seconds...")
+                time.sleep(delay)
+                attempt += 1
+            else:
+                print(f"Attempt {attempt + 1}: Failed with error '{e}'")
+                print("All attempts failed. Exiting.")
+                raise  # Re-raise the last exception after the final attempt
+
 
 def sample_canaries_from_dataset(dataset: datasets.Dataset, n_canaries: int,
                                  canary_text_column: str, canary_length: int):
@@ -222,6 +251,9 @@ def update_temperature(all_ppls, min_temperature, max_temperature, min_ppl, max_
         min_temperature = range_center - range_width / 2
         max_temperature = range_center + range_width / 2
 
+    min_temperature = max(min_temperature, 0.1) 
+    max_temperature = max(max_temperature, 0.1)
+
     # Print the new temperature range
     print(f"New temperature range: {min_temperature:.4f} - {max_temperature:.4f}")
 
@@ -259,15 +291,16 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
         # sample one temperature for the entire batch
         temperature = (min_temperature + max_temperature) / 2.0
 
-        generated_ids = model.generate(
-            **inputs,
-            max_length=canary_length * 2, # we define canary length in words, so we need to generate a bit more
-            do_sample=True,
-            temperature=temperature,
-            top_p=1.0,
-            top_k=0,
-            pad_token_id=tokenizer.eos_token_id 
-        )
+        with retry(attempts=5):
+            generated_ids = model.generate(
+                **inputs,
+                max_length=canary_length * 2, # we define canary length in words, so we need to generate a bit more
+                do_sample=True,
+                temperature=temperature,
+                top_p=1.0,
+                top_k=0,
+                pad_token_id=tokenizer.eos_token_id 
+            )
 
         # now we have to get the generated text 
         generated_text = tokenizer.batch_decode(generated_ids[:, 1:])

@@ -7,7 +7,7 @@ from privacy_estimates.experiments.games.black_box_membership_inference import (
     BlackBoxMembershipInferenceGameBase, GameConfig, ShadowModelConfig
 )
 from privacy_estimates.experiments.attacks.rmia import RmiaLoader, RmiaConfig
-from privacy_estimates.experiments.aml import WorkspaceConfig, ClusterComputeConfig, ComputeConfig
+from privacy_estimates.experiments.aml import WorkspaceConfig, ClusterComputeConfig, ComputeConfig, ServerlessComputeConfig
 from privacy_estimates.experiments.challenge_point_selectors import TopKChallengePoints
 
 from typing import Dict, Literal, Optional
@@ -78,6 +78,8 @@ class Game(BlackBoxMembershipInferenceGameBase):
                  game_config: GameConfig, rmia_config: RmiaConfig,
                  shadow_model_config: ShadowModelConfig, canary_config: CanaryConfig, data_config: DataConfig) -> None:
         
+        #self.gpu_distributed_config = ServerlessComputeConfig(**workspace.compute['gpu_distributed_serverless'])
+        #self.gpu_single_config = ServerlessComputeConfig(**workspace.compute['gpu_single_serverless'])
         self.gpu_distributed_config = ClusterComputeConfig(**workspace.compute['gpu_distributed'])
         self.gpu_single_config = ClusterComputeConfig(**workspace.compute['gpu_single'])
 
