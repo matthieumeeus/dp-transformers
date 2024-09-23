@@ -321,6 +321,9 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
             print(f"No valid text generated in step {step} - continuing...")
             total_samples += batch_size
             step += 1
+            min_temperature *= 1.1
+            max_temperature *= 1.1
+            print(f"New temperature range: {min_temperature:.4f} - {max_temperature:.4f}")
             continue
 
         if min_ppl == max_ppl:
