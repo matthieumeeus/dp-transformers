@@ -277,6 +277,7 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
     total_samples = 0
     step = 0
     duplicates = 0
+    max_length = canary_length * 2  # we define canary length in words, so we need to generate a bit more
 
     while len(canaries) < n_canaries:
         if step > 0 and step % 5 == 0:
@@ -294,7 +295,7 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
         with retry(attempts=5):
             generated_ids = model.generate(
                 **inputs,
-                max_length=canary_length * 2, # we define canary length in words, so we need to generate a bit more
+                max_length=max_length,
                 do_sample=True,
                 temperature=temperature,
                 top_p=1.0,
@@ -320,10 +321,9 @@ def generate_synthetic_canaries_ppl(model: AutoModelForCausalLM, tokenizer: Auto
         if len(valid_text) == 0:
             print(f"No valid text generated in step {step} - continuing...")
             total_samples += batch_size
+            max_length += 10
+            print(f"Increasing max_length to {max_length}")
             step += 1
-            min_temperature *= 1.1
-            max_temperature *= 1.1
-            print(f"New temperature range: {min_temperature:.4f} - {max_temperature:.4f}")
             continue
 
         if min_ppl == max_ppl:
