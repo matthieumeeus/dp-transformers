@@ -1,0 +1,21 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "label": {
+      "names": [
+        "World",
+        "Sports",
+        "Business",
+        "Sci/Tech"
+      ],
+      "_type": "ClassLabel"
+    },
+    "text": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": ""
+}
