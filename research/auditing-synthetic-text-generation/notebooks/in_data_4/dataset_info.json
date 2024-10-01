@@ -2,18 +2,16 @@
   "citation": "",
   "description": "",
   "features": {
-    "text": {
-      "dtype": "string",
-      "_type": "Value"
-    },
     "label": {
       "names": [
-        "World",
-        "Sports",
-        "Business",
-        "Sci/Tech"
+        "negative",
+        "positive"
       ],
       "_type": "ClassLabel"
+    },
+    "sentence": {
+      "dtype": "string",
+      "_type": "Value"
     }
   },
   "homepage": "",

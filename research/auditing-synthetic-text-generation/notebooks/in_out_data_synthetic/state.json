@@ -4,12 +4,12 @@
       "filename": "data-00000-of-00001.arrow"
     }
   ],
-  "_fingerprint": "24e2a5ebc32297c7",
+  "_fingerprint": "f7c01b2ce91b6e73",
   "_format_columns": [
     "label",
     "sample_index",
-    "split",
-    "text"
+    "sentence",
+    "split"
   ],
   "_format_kwargs": {},
   "_format_type": null,

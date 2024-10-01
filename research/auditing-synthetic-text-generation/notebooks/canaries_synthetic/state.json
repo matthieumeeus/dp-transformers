@@ -4,9 +4,9 @@
       "filename": "data-00000-of-00001.arrow"
     }
   ],
-  "_fingerprint": "476145b665ae4c56",
+  "_fingerprint": "b582061c71ff2261",
   "_format_columns": [
-    "text",
+    "sentence",
     "label"
   ],
   "_format_kwargs": {},
