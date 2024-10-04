@@ -177,7 +177,7 @@ def train_ngram_model(all_text, n, smoothing=1.0):
         words = text.split()
         vocabulary.update(words)
 
-    model = NgramModel(vocabulary, n=2, smoothing=1.0)
+    model = NgramModel(vocabulary, n=n, smoothing=1.0)
 
     for text in train_text:
         train_tokens = [model.word_to_token[w] for w in text.split()]
