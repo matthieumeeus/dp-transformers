@@ -1,6 +1,8 @@
 
 import nltk
-from nltk.data import find
+from nltk.lm import Laplace
+from nltk.tokenize import word_tokenize
+from nltk.lm.preprocessing import padded_everygram_pipeline
 from Levenshtein import ratio
 import numpy as np
 from tqdm import tqdm
@@ -102,97 +104,33 @@ def generate_ngrams(text, n):
     """
     Generate n-grams from the input text.
     """
-    tokens = text.split()
+    tokens = word_tokenize(text)
     ngrams = zip(*[tokens[i:] for i in range(n)])
     return [' '.join(ngram) for ngram in ngrams]
 
-class NgramModel:
-    def __init__(self, vocabulary, n, smoothing=1.0):
-        self.n = n
-        self.vocabulary = vocabulary
-        self.smoothing = smoothing
-        self.word_to_token = {w: i for i, w in enumerate(vocabulary)}
-        self.token_to_word = {i: w for i, w in enumerate(vocabulary)}
-        vocab_size = len(vocabulary)
-        # the parameters of this model: an n-dimensional array of counts
-        self.counts = np.zeros((vocab_size,) * n, dtype=np.uint32)
-        # a buffer to store the uniform distribution, just to avoid creating it every time
-        self.uniform = np.ones(vocab_size, dtype=np.float32) / vocab_size
-
-    def train(self, tape):
-        assert isinstance(tape, list)
-        assert len(tape) == self.n
-        self.counts[tuple(tape)] += 1
-
-    def get_counts(self, tape):
-        assert isinstance(tape, list)
-        assert len(tape) == self.n - 1
-        return self.counts[tuple(tape)]
-
-    def get_ngram_prob(self, ngram):
-        words = ngram.split()
-        if all(w in self.vocabulary for w in words):
-            tokens = [self.word_to_token[w] for w in words]
-            probs = self(tokens[:-1])
-            return probs[tokens[-1]]
-        else:
-            return 1 / len(self.vocabulary)
-        
-    def get_loglikelihood(self, text):
-        """
-        Compute the loglikelihood of the n-gram model on a given piece of text.
-        The loglikelihood is the sum of the log likelihood of the n-grams in the text.
-        """
-        ngrams = generate_ngrams(text, self.n)
-        log_likelihood = 0
-        for ngram in ngrams:
-            prob = self.get_ngram_prob(ngram)
-            log_likelihood += np.log(prob).astype(np.double)
-
-        return log_likelihood
-
-    def __call__(self, tape):
-        # returns the conditional probability distribution of the next token
-        assert isinstance(tape, list)
-        assert len(tape) == self.n - 1
-        # get the counts, apply smoothing, and normalize to get the probabilities
-        counts = self.counts[tuple(tape)].astype(np.float32)
-        counts += self.smoothing # add smoothing ("fake counts") to all counts
-        counts_sum = counts.sum()
-        probs = counts / counts_sum if counts_sum > 0 else self.uniform
-        return probs
-
-# small utility function to iterate tokens with a fixed-sized window
-def dataloader(tokens, window_size):
-    for i in range(len(tokens) - window_size + 1):
-        yield tokens[i:i+window_size]
-
-def train_ngram_model(all_text, n, smoothing=1.0):
+def ngram_log_likelihood(lm, text):
     """
-    Train an n-gram model from the given text
+    Compute the log likelihood of the n-gram model on a given piece of text.
+    The log likelihood is the sum of the log likelihood of the n-grams in the text.
     """
-    vocabulary = set()
+    ngrams = generate_ngrams(text, lm.order)
+    log_likelihood = 0
+    for ngram in ngrams:
+        tokens = word_tokenize(ngram)
+        prob = lm.score(tokens[lm.order-1], context=tokens[:lm.order-1])
+        log_likelihood += np.log(prob).astype(np.double)
 
-    for text in all_text:
-        words = text.split()
-        vocabulary.update(words)
-
-    model = NgramModel(vocabulary, n=n, smoothing=1.0)
-
-    for text in train_text:
-        train_tokens = [model.word_to_token[w] for w in text.split()]
-        for tape in dataloader(train_tokens, window_size=2):
-            model.train(tape)
-
-    return model
+    return log_likelihood
 
 def compute_ngram_mia_score(samples, synthetic, ns = [1, 2, 3, 4]):
     sample_scores = {}
     for n in ns:
         print(f"Training the {n}-gram model on and computing its losses.")
-        all_text = synthetic
-        model = train_ngram_model(all_text, n)
-        sample_scores[f'ngram_{n}'] = [model.get_loglikelihood(sample) for sample in samples]
+        tokenized_train_text = [word_tokenize(sentence) for sentence in synthetic]
+        train_data, vocab_data = padded_everygram_pipeline(n, tokenized_train_text)
+        model = Laplace(n)
+        model.fit(train_data, vocab_data)
+        sample_scores[f'ngram_{n}'] = [ngram_log_likelihood(model, sample) for sample in samples]
 
     return sample_scores
 
