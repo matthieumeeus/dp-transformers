@@ -1,7 +1,7 @@
 
 import nltk
 from nltk.lm import Laplace
-from nltk.tokenize import word_tokenize
+#from nltk.tokenize import word_tokenize
 from nltk.lm.preprocessing import padded_everygram_pipeline
 from Levenshtein import ratio
 import numpy as np
@@ -104,7 +104,7 @@ def generate_ngrams(text, n):
     """
     Generate n-grams from the input text.
     """
-    tokens = word_tokenize(text)
+    tokens = text.split() # word_tokenize(text)
     ngrams = zip(*[tokens[i:] for i in range(n)])
     return [' '.join(ngram) for ngram in ngrams]
 
@@ -116,7 +116,7 @@ def ngram_log_likelihood(lm, text):
     ngrams = generate_ngrams(text, lm.order)
     log_likelihood = 0
     for ngram in ngrams:
-        tokens = word_tokenize(ngram)
+        tokens = ngram.split() # word_tokenize(ngram)
         prob = lm.score(tokens[lm.order-1], context=tokens[:lm.order-1])
         log_likelihood += np.log(prob).astype(np.double)
 
@@ -126,7 +126,7 @@ def compute_ngram_mia_score(samples, synthetic, ns = [1, 2, 3, 4]):
     sample_scores = {}
     for n in ns:
         print(f"Training the {n}-gram model on and computing its losses.")
-        tokenized_train_text = [word_tokenize(sentence) for sentence in synthetic]
+        tokenized_train_text = [ sentence.split() for sentence in synthetic ] # [ word_tokenize(sentence) for sentence in synthetic]
         train_data, vocab_data = padded_everygram_pipeline(n, tokenized_train_text)
         model = Laplace(n)
         model.fit(train_data, vocab_data)
