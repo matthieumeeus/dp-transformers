@@ -37,33 +37,6 @@ python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canar
     ++canary_config.seed=19021
 
 python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True \
-    +name=synthetic_agnews_prefix_20_canary_4 \
-    ++canary_config.prefix_length=20 \
-    ++canary_config.min_ppl=900.0 \
-    ++canary_config.max_ppl=1100.0 \
-    ++canary_config.min_temperature=0.8 \
-    ++canary_config.max_temperature=1.0 \
-    ++canary_config.seed=19021
-
-python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True \
-    +name=synthetic_agnews_prefix_20_canary_5 \
-    ++canary_config.prefix_length=20 \
-    ++canary_config.min_ppl=2846.05 \
-    ++canary_config.max_ppl=3478.51 \
-    ++canary_config.min_temperature=0.8 \
-    ++canary_config.max_temperature=1.0 \
-    ++canary_config.seed=19021
-
-python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True \
-    +name=synthetic_agnews_prefix_20_canary_6 \
-    ++canary_config.prefix_length=20 \
-    ++canary_config.min_ppl=9000.0 \
-    ++canary_config.max_ppl=11000.0 \
-    ++canary_config.min_temperature=0.8 \
-    ++canary_config.max_temperature=1.0 \
-    ++canary_config.seed=19021
-
-python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True \
     +name=synthetic_agnews_prefix_20_canary_7 \
     ++canary_config.prefix_length=20 \
     ++canary_config.min_ppl=28460.50 \
