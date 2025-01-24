@@ -1,4 +1,50 @@
 # SST-2
+
+## In-distribution Canaries |  2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=sst2_incanary_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## In-distribution Canaries | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=sst2_incanary_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## In-distribution Canaries | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=sst2_incanary_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | Natural Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_syntheticcanary_uniformlabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic Canaries | Natural Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_syntheticcanary_uniformlabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## Synthetic Canaries | Natural Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_syntheticcanary_uniformlabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | Artificial Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=sst2_syntheticcanary_canarylabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic Canaries | Artificial Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=sst2_syntheticcanary_canarylabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## Synthetic Canaries | Artificial Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=sst2_syntheticcanary_canarylabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
 ## Hybrid Canaries | F = 20
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
@@ -67,6 +113,51 @@
   ++canary_config.seed=19021
 
 # Agnews
+## In-distribution Canaries |  2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_incanary +submit=True
+  +name=agnews_incanary_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## In-distribution Canaries | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_incanary +submit=True
+  +name=agnews_incanary_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## In-distribution Canaries | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_incanary +submit=True
+  +name=agnews_incanary_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | Natural Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_syntheticcanary_uniformlabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic Canaries | Natural Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_syntheticcanary_uniformlabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## Synthetic Canaries | Natural Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_syntheticcanary_uniformlabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | Artificial Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_canarylabel +submit=True
+  +name=agnews_syntheticcanary_canarylabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic Canaries | Artificial Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_canarylabel +submit=True
+  +name=agnews_syntheticcanary_canarylabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## Synthetic Canaries | Artificial Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_canarylabel +submit=True
+  +name=agnews_syntheticcanary_canarylabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
 ## Hybrid Canaries | F = 0
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
@@ -275,3 +366,4 @@
   ++canary_config.min_temperature=0.8
   ++canary_config.max_temperature=1.0
   ++canary_config.seed=19021
+
