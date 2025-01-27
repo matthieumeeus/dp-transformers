@@ -125,6 +125,3 @@ class Project:
         target_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(target_path, **kwargs)
         
-        # Add the file to the repository
-        self.repo.index.add([str(target_path)])
-        self.repo.index.commit(commit_message)
