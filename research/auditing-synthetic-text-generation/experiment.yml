@@ -48,17 +48,17 @@
 ## Synthetic Canaries | 1-gram
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
-  +name=sst2_syntheticcanary_uniformlabel_1gram
+  +name=sst2_gramstudy_1gram
   ++shared_inference_parameters.mia_method=ngram_1
 ## Synthetic Canaries | 3-gram
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
-  +name=sst2_syntheticcanary_uniformlabel_3gram
+  +name=sst2_gramstudy_3gram
   ++shared_inference_parameters.mia_method=ngram_3
 ## Synthetic Canaries | 4-gram
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
-  +name=sst2_syntheticcanary_uniformlabel_4gram
+  +name=sst2_gramstudy_4gram
   ++shared_inference_parameters.mia_method=ngram_4
 ## Hybrid Canaries | F = 0
 - >
@@ -346,17 +346,17 @@
 ## Synthetic Canaries | 1-gram
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
-  +name=agnews_syntheticcanary_uniformlabel_1gram
+  +name=agnews_gramstudy_1gram
   ++shared_inference_parameters.mia_method=ngram_1
 ## Synthetic Canaries | 3-gram
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
-  +name=agnews_syntheticcanary_uniformlabel_3gram
+  +name=agnews_gramstudy_3gram
   ++shared_inference_parameters.mia_method=ngram_3
 ## Synthetic Canaries | 4-gram
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
-  +name=agnews_syntheticcanary_uniformlabel_4gram
+  +name=agnews_gramstudy_4gram
   ++shared_inference_parameters.mia_method=ngram_4
 ## Hybrid Canaries | F = 0
 - >
