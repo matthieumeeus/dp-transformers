@@ -10,89 +10,49 @@ from typing import Optional
 
 class Project:
     def __init__(self, path: str):
-        # check if path is local
-        if os.path.exists(path):
-            self.dir = Path(path)
-            self.repo = git.Repo(path)
-            self.tmp_dir = None
-        else:
-            # Otherwise, clone the remote repository
-            self.tmp_dir = tempfile.TemporaryDirectory()
-            self.dir = Path(self.tmp_dir.name)
-            self.repo = git.Repo.clone_from(path, self.dir)
-
-    @classmethod
-    def from_env(cls, path_env_name: str, pat_env_name: Optional[str] = None):
-        load_dotenv()
-        path = os.getenv(path_env_name)
-
-        # check if local
-        if os.path.exists(os.path.expanduser(path)):
-            return cls(os.path.expanduser(path))
-
-        pat = None
-        if pat_env_name:
-            pat = os.getenv(pat_env_name)
-
-        # parse the url and extract protocol and base url
-        protocol, base_url = path.split("://")
-        username = None
-        if "@" in base_url:
-            username, base_url = base_url.split("@")
-
-        if username and pat:
-            username = f"{username}:{pat}"
-        elif pat:
-            username = f"{pat}"
-
-        if username:
-            path = f"{protocol}://{username}@{base_url}"
-        else:
-            path = f"{protocol}://{base_url}"
-        return cls(path)
-
-    def __del__(self):
-        if self.tmp_dir:
-            self.tmp_dir.cleanup()
-
-    def push(self):
         """
-        Pushes the changes in the repository to the remote repository.
-        Raises:
-            Exception: If there is an error during the push process.
-        """
-        origin = self.repo.remote(name='origin')
-        origin.push()
-    
-    def add_file(self, source: str, target: str, commit_message: str = "Pushing file from notebook"):
-        """
-        Pushes a file from a source location to a target location in the repository, commits the change, and pushes it to the remote repository.
+        Initialize the Latex class with the given path.
+
         Args:
-            source (str): The path to the source file that needs to be pushed.
-            target (str): The target path within the repository where the file should be copied.
-            commit_message (str, optional): The commit message for the change. Defaults to "Pushing file from notebook".
+            path (str): The path to the directory where the LaTeX files are located.
+
         Raises:
-            Exception: If there is an error during the file copy, commit, or push process.
+            ValueError: If the provided path does not exist.
+        """
+        # check if path is local
+        if not os.path.exists(path):
+            raise ValueError(f"Path {path} does not exist")
+
+        self.dir = Path(path)
+        self.repo = git.Repo(path)
+
+    def add_file(self, source: str, target: str):
+        """
+        Add a file to the repository by copying it from the source location to the target location.
+        Args:
+            source (str): The path to the source file that needs to be copied.
+            target (str): The target path within the repository where the file should be copied.
+        Returns:
+            None
         """
         # Copy the source file to the target location in the repository
         target_path = self.dir / target
         target_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target_path)
         
-        # Add the file to the repository
         self.repo.index.add([str(target_path)])
-        self.repo.index.commit(commit_message)
         
-    def add_matplotlib(self, fig, target: str, commit_message: str = "Pushing matplotlib figure from notebook", **kwargs):
+    def add_matplotlib(self, fig, target: str, **kwargs):
         """
-        Adds a matplotlib figure to the repository as a PDF file, commits the change, and pushes it to the remote repository.
-        Args:
-            fig (matplotlib.figure.Figure): The matplotlib figure object to be saved and pushed.
-            target (str): The target path within the repository where the PNG file should be saved.
-            commit_message (str, optional): The commit message for the change. Defaults to "Pushing matplotlib figure from notebook".
-            **kwargs: Additional keyword arguments to pass to the savefig method.
-        Raises:
-            Exception: If there is an error during the file save, commit, or push process.
+        Save a Matplotlib figure as a PNG file and add it to the repository index.
+        Parameters:
+        fig (matplotlib.figure.Figure): The Matplotlib figure to save.
+        target (str): The target file path where the figure will be saved.
+        **kwargs: Additional keyword arguments to pass to `fig.savefig`.
+        Notes:
+        - The target path will be created if it does not exist.
+        - The figure will be saved with `bbox_inches` set to "tight" by default, unless overridden in `kwargs`.
+        - The saved file will be added to the repository index.
         """
         kwargs["bbox_inches"] = kwargs.get("bbox_inches", "tight")
         # Save the matplotlib figure as a PNG file
@@ -100,22 +60,23 @@ class Project:
         target_path.parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(target_path, **kwargs)
         
-        # Add the file to the repository
         self.repo.index.add([str(target_path)])
-        self.repo.index.commit(commit_message)
 
-    def add_dataframe(self, df, target: str, commit_message: str = "Pushing dataframe from notebook", **kwargs):
+    def add_dataframe_as_tsv(self, df, target: str, **kwargs):
         """
-        Pushes a pandas DataFrame to the repository as a TSV file, and commits the change.
+        Adds a pandas DataFrame to the repository by saving it as a TSV file and staging it for commit.
 
-        PGFPlots uses a whitespace-separated format for data tables by default which is compatible with the TSV format.
-        Args:
-            df (pandas.DataFrame): The pandas DataFrame to be saved and pushed.
-            target (str): The target path within the repository where the CSV file should be saved.
-            commit_message (str, optional): The commit message for the change. Defaults to "Pushing dataframe from notebook".
-            **kwargs: Additional keyword arguments to pass to the to_csv method.
-        Raises:
-            Exception: If there is an error during the file save, commit, or push process.
+        Parameters:
+        df (pandas.DataFrame): The DataFrame to be saved.
+        target (str): The target file path where the DataFrame will be saved.
+        **kwargs: Additional keyword arguments to pass to `pandas.DataFrame.to_csv`.
+
+        Keyword Args:
+        sep (str): Field delimiter for the output file. Defaults to '\t'.
+        index (bool): Whether to write row names (index). Defaults to False.
+
+        Returns:
+        None
         """
         kwargs["sep"] = kwargs.get("sep", "\t")
         kwargs["index"] = kwargs.get("index", False)
@@ -124,4 +85,6 @@ class Project:
         target_path = self.dir / target
         target_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(target_path, **kwargs)
+
+        self.repo.index.add([str(target_path)])
         
