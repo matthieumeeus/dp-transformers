@@ -35,6 +35,8 @@ class SharedTrainingParameters:
     torch_dtype: str
     quantization_4bit: bool
     synthetic_multiple: int
+    target_epsilon: float = float('inf')
+    target_delta: float = 1.0
 
 @dataclass
 class SharedInferenceParameters:
@@ -53,11 +55,19 @@ class TrainTransformerComponentLoader(TrainingComponentLoader):
         self.generate_compute_config = generate_compute_config
 
     def load(self, train_data: Input, validation_data: Input, seed: int):
-        component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic.yml")
-        job = component(**asdict(self.parameters), train_data=train_data, val_data=validation_data, seed=seed)
+        params = asdict(self.parameters)
+        if params["target_epsilon"] == float('inf'):
+            params.pop("target_epsilon")
+            params.pop("target_delta")
+            component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic.yml")
+        else:
+            component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic_dp.yml")
+
+        job = component(**params, train_data=train_data, val_data=validation_data, seed=seed)
         job.component.jobs["fine_tune"] = self.train_compute_config.apply(job.component.jobs["fine_tune"])
         job.component.jobs["generate"] = self.generate_compute_config.apply(job.component.jobs["generate"])
         return job
+
 
 class TransformerInferenceComponentLoader(InferenceComponentLoader):
     def __init__(self, aml_component_loader: AMLComponentLoader, parameters: SharedInferenceParameters, compute_config: ComputeConfig):
