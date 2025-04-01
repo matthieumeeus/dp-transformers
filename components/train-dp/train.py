@@ -115,6 +115,7 @@ class Arguments:
     model: ModelArguments
     lora: LoraArguments
     data: DataArguments
+    privacy: dp_transformers.PrivacyArguments
 
 
 def load_model(model_args: ModelArguments, lora_args: LoraArguments, gradient_checkpointing: bool,
@@ -225,9 +226,10 @@ def main(args: Arguments):
         logger.info("Set ddp_find_unused_parameters to False for gradient checkpointing")
         args.train.ddp_find_unused_parameters = False
 
-    trainer = transformers.Trainer(
+    trainer = dp_transformers.dp_utils.OpacusDPTrainer(
         args=args.train,
         model=model,
+        privacy_args=args.privacy,
         train_dataset=train_data,
         eval_dataset=val_data,
         tokenizer=tokenizer,

@@ -120,7 +120,7 @@ jobs:
         mode: "rw_mount"
   fine_tune:
     type: command
-    component: ../../../components/train/component_spec.yml
+    component: ../../../components/dp-train/component_spec.yml
     inputs:
       tokenized_train_data: ${{parent.jobs.tokenize_train.outputs.tokenized_data}}
       tokenized_validation_data: ${{parent.jobs.tokenize_eval.outputs.tokenized_data}}
