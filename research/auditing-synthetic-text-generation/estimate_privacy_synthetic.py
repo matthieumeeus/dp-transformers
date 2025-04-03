@@ -37,6 +37,7 @@ class SharedTrainingParameters:
     synthetic_multiple: int
     target_epsilon: float = float('inf')
     target_delta: float = 1.0
+    per_sample_max_grad_norm: float = 1000.0
 
 @dataclass
 class SharedInferenceParameters:
@@ -59,8 +60,11 @@ class TrainTransformerComponentLoader(TrainingComponentLoader):
         if params["target_epsilon"] == float('inf'):
             params.pop("target_epsilon")
             params.pop("target_delta")
+            params.pop("per_sample_max_grad_norm")
             component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic.yml")
         else:
+            params["max_physical_per_device_train_batch_size"] = params["per_device_train_batch_size"]
+            params["per_device_train_batch_size"] = params["per_device_train_batch_size"] * params.pop("gradient_accumulation_steps")
             component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic_dp.yml")
 
         job = component(**params, train_data=train_data, val_data=validation_data, seed=seed)

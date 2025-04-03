@@ -195,6 +195,9 @@ inputs:
   target_delta:
     type: number
     description: "Target delta for differential privacy."
+  per_sample_max_grad_norm:
+    type: number
+    description: "Per sample max gradient norm."
 outputs:
   output_dir:
     type: uri_folder
@@ -246,6 +249,7 @@ command: >-
     --adam_beta2 ${{inputs.adam_beta2}} \
     --target_epsilon ${{inputs.target_epsilon}} \
     --target_delta ${{inputs.target_delta}} \
+    --per_sample_max_grad_norm ${{inputs.per_sample_max_grad_norm}} \
     --disable_tqdm True \
     --dataloader_num_workers ${{inputs.dataloader_num_workers}} \
     --enable_lora ${{inputs.enable_lora}} \

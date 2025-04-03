@@ -66,6 +66,8 @@
   +name=sst2_eps_8
   ++shared_training_parameters.target_epsilon=8
   ++shared_training_parameters.target_delta=1e-5
+  ++shared_training_parameters.per_sample_max_grad_norm=1.0
+  ++shared_training_parameters.gradient_checkpointing=False
 ## Hybrid Canaries | F = 0
 - >
   python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True

@@ -226,6 +226,8 @@ def main(args: Arguments):
         logger.info("Set ddp_find_unused_parameters to False for gradient checkpointing")
         args.train.ddp_find_unused_parameters = False
 
+    model = model.cuda()
+
     trainer = dp_transformers.dp_utils.OpacusDPTrainer(
         args=args.train,
         model=model,
@@ -265,7 +267,7 @@ def main(args: Arguments):
 
 if __name__ == "__main__":
     arg_parser = transformers.HfArgumentParser(
-        (dp_transformers.TrainingArguments, ModelArguments, LoraArguments, DataArguments)
+        (dp_transformers.TrainingArguments, ModelArguments, LoraArguments, DataArguments, dp_transformers.PrivacyArguments)
     )
-    train_args, model_args, lora_args, data_args = arg_parser.parse_args_into_dataclasses()
-    main(Arguments(train=train_args, model=model_args, lora=lora_args, data=data_args))
+    train_args, model_args, lora_args, data_args, privacy_args = arg_parser.parse_args_into_dataclasses()
+    main(Arguments(train=train_args, model=model_args, lora=lora_args, data=data_args, privacy=privacy_args))

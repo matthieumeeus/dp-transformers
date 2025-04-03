@@ -34,9 +34,9 @@ inputs:
   per_device_train_batch_size:
     type: integer
     description: "Batch size per device."
-  gradient_accumulation_steps: 
+  max_physical_per_device_train_batch_size:
     type: integer
-    description: "Number of gradient accumulation steps."
+    description: "Maximum physical batch size per device."
   enable_lora: 
     type: boolean
     description: "Enable LoRA."
@@ -67,6 +67,9 @@ inputs:
   target_delta:
     type: number
     description: "Target delta for differential privacy."
+  per_sample_max_grad_norm:
+    type: number
+    description: "Maximum gradient norm per sample."
 outputs:
   model:
     type: uri_folder
@@ -120,28 +123,30 @@ jobs:
         mode: "rw_mount"
   fine_tune:
     type: command
-    component: ../../../components/train-dp/component_spec.yml
+    component: "azureml://registries/M365Research/components/dp_transformers__train_llm/versions/1.1.0dev9"
     inputs:
       tokenized_train_data: ${{parent.jobs.tokenize_train.outputs.tokenized_data}}
-      tokenized_validation_data: ${{parent.jobs.tokenize_eval.outputs.tokenized_data}}
-      evaluation_strategy: "steps"
-      eval_steps: 50
-      label_names: "labels"
+      tokenized_eval_data: ${{parent.jobs.tokenize_eval.outputs.tokenized_data}}
+      evaluation_strategy: "epoch"
       model_path: ${{parent.inputs.model_path}}
-      nproc_per_node: 8
       per_device_train_batch_size: ${{parent.inputs.per_device_train_batch_size}}
-      gradient_accumulation_steps: ${{parent.inputs.gradient_accumulation_steps}}
+      gradient_accumulation_steps: 1
+      per_sample_max_grad_norm: ${{parent.inputs.per_sample_max_grad_norm}}
       seed: ${{parent.inputs.seed}}
-      chat_format: False
+      warmup_steps: 0
+      ddp_find_unused_parameters: True
+      disable_dp: False
       num_train_epochs: ${{parent.inputs.num_train_epochs}}
       learning_rate: ${{parent.inputs.learning_rate}}
       lr_scheduler_type: constant
+      trust_remote_code: false
       quantization_4bit: ${{parent.inputs.quantization_4bit}}
       torch_dtype: ${{parent.inputs.torch_dtype}}
+      max_physical_per_device_train_batch_size: ${{parent.inputs.max_physical_per_device_train_batch_size}}
       bf16: false
       fp16: false
-      target_epsilon: ${{parent.inputs.target_epsilon}}
-      target_delta: ${{parent.inputs.target_delta}}
+      target_dp_epsilon: ${{parent.inputs.target_epsilon}}
+      dp_delta: ${{parent.inputs.target_delta}}
       enable_lora: ${{parent.inputs.enable_lora}}
       lora_dim: ${{parent.inputs.lora_dim}}
       target_modules: ${{parent.inputs.target_modules}}
