@@ -63,8 +63,6 @@ class TrainTransformerComponentLoader(TrainingComponentLoader):
             params.pop("per_sample_max_grad_norm")
             component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic.yml")
         else:
-            params["max_physical_per_device_train_batch_size"] = params["per_device_train_batch_size"]
-            params["per_device_train_batch_size"] = params["per_device_train_batch_size"] * params.pop("gradient_accumulation_steps")
             component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_w_synthetic_dp.yml")
 
         job = component(**params, train_data=train_data, val_data=validation_data, seed=seed)

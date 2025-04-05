@@ -1,0 +1,71 @@
+defaults:
+  - workspace: M365Research-PPML-EUS
+  - _self_
+
+data_config:
+  train_data_name: "AgNews-train"
+  train_data_version: "1"
+  eval_data_name: "AgNews-test"
+  eval_data_version: "1"
+  min_words: 5
+  text_column: "text"
+
+shared_training_parameters:
+  model_path: "azureml:mistralai-Mistral-7B-v0_1:4"
+  templated_prompt: "A news article about {label}: "
+  text_column: "text"
+  label_column: "label"
+  sequence_len: 256
+  learning_rate: 2e-5
+  num_train_epochs: 1.0
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8
+  enable_lora: true
+  lora_dim: 4
+  target_modules: "['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'lm_head']"
+  gradient_checkpointing: false
+  torch_dtype: "fp32"
+  quantization_4bit: false
+  synthetic_multiple: 1
+  target_epsilon: 8.0
+  target_delta: 1e-5
+  per_sample_max_grad_norm: 0.1
+
+shared_inference_parameters:
+  real_label_column: "label"
+  real_text_column: "text"
+  synthetic_label_column: "Prompt"
+  synthetic_text_column: "Generation"
+  mia_method: "ngram_2"
+
+game_config:
+  num_models: 1
+  num_repetitions: 12
+  seed: 1920
+  num_concurrent_jobs_per_node: 1
+  num_challenge_points_per_model: 1000
+
+shadow_model_config:
+  in_fraction: 0.5
+  num_models: 4
+
+rmia_config: {}
+
+canary_config:
+  canary_method: "sample_synthetic"
+  n_canaries: 1000
+  canary_length: 50
+  external_artifact: "mistralai-Mistral-7B-v0_1"
+  external_artifact_version: "4"
+  canary_text_column: "sentence"
+  label_comptability_method: "uniform"
+  seed: 1920
+  templated_prompt: "A news article about {label}: "
+  min_ppl: 225.0
+  max_ppl: 275.0
+  min_temperature: 0.8
+  max_temperature: 1.0
+  prefix_length: 0
+  num_tokens_to_replace: 0
+  replacement_method: "random"
+  mlm_name: "roberta-base"

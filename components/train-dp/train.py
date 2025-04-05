@@ -257,6 +257,7 @@ def main(args: Arguments):
     print_summary(result)
 
     if distributed_state.is_main_process:
+        logger.warning(f"Final epsilon: {trainer.get_prv_epsilon()}")
         logger.info("Saving model")
         trainer.save_model()
         training_metadata.save_pretrained(args.train.output_dir)
