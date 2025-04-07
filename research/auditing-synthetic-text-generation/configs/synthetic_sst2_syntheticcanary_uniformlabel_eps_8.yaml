@@ -54,7 +54,7 @@ rmia_config: {}
 canary_config:
   canary_method: "sample_synthetic"
   n_canaries: 1000
-  canary_length: 50
+  canary_length: 30
   external_artifact: "mistralai-Mistral-7B-v0_1"
   external_artifact_version: "4"
   canary_text_column: "sentence"
