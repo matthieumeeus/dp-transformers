@@ -856,6 +856,7 @@
 - >
   python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
   +name=snli_syntheticcanary_uniformlabel_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
   ++data_config.train_data_name=SNLI100k-train
   ++data_config.train_data_version=1
   ++data_config.eval_data_name=SNLI100k-test
@@ -867,6 +868,7 @@
 - >
   python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
   +name=snli_syntheticcanary_canarylabel_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
   ++data_config.train_data_name=SNLI100k-train
   ++data_config.train_data_version=1
   ++data_config.eval_data_name=SNLI100k-test
@@ -879,6 +881,7 @@
 - >
   python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
   +name=snli_incanary_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
   ++data_config.train_data_name=SNLI100k-train
   ++data_config.train_data_version=1
   ++data_config.eval_data_name=SNLI100k-test
