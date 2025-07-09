@@ -1,0 +1,958 @@
+# SST-2
+
+## In-distribution Canaries |  2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=sst2_incanary_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## In-distribution Canaries | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=sst2_incanary_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## In-distribution Canaries | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=sst2_incanary_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | Natural Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_syntheticcanary_uniformlabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic Canaries | Natural Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_syntheticcanary_uniformlabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## Synthetic Canaries | Natural Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_syntheticcanary_uniformlabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | Artificial Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=sst2_syntheticcanary_canarylabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic Canaries | Artificial Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=sst2_syntheticcanary_canarylabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## Synthetic Canaries | Artificial Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=sst2_syntheticcanary_canarylabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | 1-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_gramstudy_1gram
+  ++shared_inference_parameters.mia_method=ngram_1
+## Synthetic Canaries | 3-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_gramstudy_3gram
+  ++shared_inference_parameters.mia_method=ngram_3
+## Synthetic Canaries | 4-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_gramstudy_4gram
+  ++shared_inference_parameters.mia_method=ngram_4
+## Synthetic Canaries | Uniform Label | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=sst2_syntheticcanary_uniformlabel_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+## Synthetic Canaries | Canary Label | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=sst2_syntheticcanary_canarylabel_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++canary_config.label_comptability_method=extend
+## In-distribution Canaries | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=sst2_incanary_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++shared_inference_parameters.mia_method=ngram_2
+  ++canary_config.canary_method=hold_out_original_data
+  ++canary_config.canary_length=30 
+  ++canary_config.external_artifact=none
+  ++canary_config.external_artifact_version=none
+  ++canary_config.canary_text_column=none
+  ++canary_config.label_comptability_method=none
+## Synthetic Canaries | Uniform Label | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=sst2_syntheticcanary_uniformlabel_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+## Synthetic Canaries | Canary Label | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=sst2_syntheticcanary_canarylabel_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++canary_config.label_comptability_method=extend
+## In-distribution Canaries | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=sst2_incanary_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++canary_config.canary_length=30 
+  ++canary_config.canary_method=hold_out_original_data
+  ++canary_config.external_artifact=none
+  ++canary_config.external_artifact_version=none
+  ++canary_config.canary_text_column=none
+  ++canary_config.label_comptability_method=none
+## Hybrid Canaries | F = 0
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_0
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=9.0
+  ++canary_config.max_ppl=11.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_1
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_2
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=90.0
+  ++canary_config.max_ppl=110.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_3
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=284.60
+  ++canary_config.max_ppl=347.85
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_4
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=900.0
+  ++canary_config.max_ppl=1100.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_5
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=2846.05
+  ++canary_config.max_ppl=3478.51
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_6
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=9000.0
+  ++canary_config.max_ppl=11000.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_7
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=28460.50
+  ++canary_config.max_ppl=34785.05
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.4
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_0_canary_8
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=90000.0
+  ++canary_config.max_ppl=110000.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.4
+  ++canary_config.seed=19021
+## Hybrid Canaries | F = 10
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_10_canary_0
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=9.0
+  ++canary_config.max_ppl=11.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_10_canary_1
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_10_canary_2
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=90.0
+  ++canary_config.max_ppl=110.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_10_canary_3
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=284.60
+  ++canary_config.max_ppl=347.85
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_10_canary_4
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=900.0
+  ++canary_config.max_ppl=1100.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_10_canary_5
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=2846.05
+  ++canary_config.max_ppl=3478.51
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_10_canary_6
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=9000.0
+  ++canary_config.max_ppl=11000.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+## Hybrid Canaries | F = 20
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_20_canary_1
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_20_canary_2
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=90.0
+  ++canary_config.max_ppl=110.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_20_canary_3
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=284.60
+  ++canary_config.max_ppl=347.85
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_20_canary_4
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=900.0
+  ++canary_config.max_ppl=1100.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+
+## Hybrid Canaries | F = 30
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_30_canary_1
+  ++canary_config.prefix_length=30
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_30_canary_2
+  ++canary_config.prefix_length=30
+  ++canary_config.min_ppl=90.0
+  ++canary_config.max_ppl=110.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_sst2_prefix_30_canary_3
+  ++canary_config.prefix_length=30
+  ++canary_config.min_ppl=284.60
+  ++canary_config.max_ppl=347.85
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+## Synthetic multiple 1
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_synthetic_multiple_1
+  ++shared_training_parameters.synthetic_multiple=1
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic multiple 2
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_synthetic_multiple_2
+  ++shared_training_parameters.synthetic_multiple=2
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic multiple 4
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_synthetic_multiple_4
+  ++shared_training_parameters.synthetic_multiple=4
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic multiple 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=sst2_synthetic_multiple_8
+  ++shared_training_parameters.synthetic_multiple=8
+  ++shared_inference_parameters.mia_method=ngram_2
+
+# Agnews
+## In-distribution Canaries |  2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_incanary +submit=True
+  +name=agnews_incanary_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## In-distribution Canaries | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_incanary +submit=True
+  +name=agnews_incanary_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## In-distribution Canaries | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_incanary +submit=True
+  +name=agnews_incanary_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | Natural Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_syntheticcanary_uniformlabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic Canaries | Natural Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_syntheticcanary_uniformlabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## Synthetic Canaries | Natural Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_syntheticcanary_uniformlabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | Artificial Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_canarylabel +submit=True
+  +name=agnews_syntheticcanary_canarylabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic Canaries | Artificial Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_canarylabel +submit=True
+  +name=agnews_syntheticcanary_canarylabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+## Synthetic Canaries | Artificial Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_canarylabel +submit=True
+  +name=agnews_syntheticcanary_canarylabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+## Synthetic Canaries | 1-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_gramstudy_1gram
+  ++shared_inference_parameters.mia_method=ngram_1
+## Synthetic Canaries | 3-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_gramstudy_3gram
+  ++shared_inference_parameters.mia_method=ngram_3
+## Synthetic Canaries | 4-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_gramstudy_4gram
+  ++shared_inference_parameters.mia_method=ngram_4
+## Synthetic Canaries | Uniform Label | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=agnews_syntheticcanary_uniformlabel_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+## Synthetic Canaries | Canary Label | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=agnews_syntheticcanary_canarylabel_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++canary_config.label_comptability_method=extend
+## In-distribution Canaries | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=agnews_incanary_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++shared_inference_parameters.mia_method=ngram_2
+  ++canary_config.canary_method=hold_out_original_data
+  ++canary_config.external_artifact=none
+  ++canary_config.external_artifact_version=none
+  ++canary_config.canary_text_column=none
+  ++canary_config.label_comptability_method=none
+## Synthetic Canaries | Uniform Label | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_agnews_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=agnews_syntheticcanary_uniformlabel_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+## Synthetic Canaries | Canary Label | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_agnews_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=agnews_syntheticcanary_canarylabel_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++canary_config.label_comptability_method=extend
+## In-distribution Canaries | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_agnews_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=agnews_incanary_eps_8_model_access
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++canary_config.canary_method=hold_out_original_data
+  ++canary_config.external_artifact=none
+  ++canary_config.external_artifact_version=none
+  ++canary_config.canary_text_column=none
+  ++canary_config.label_comptability_method=none
+## Hybrid Canaries | F = 0
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_0
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=9.0
+  ++canary_config.max_ppl=11.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_1
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_2
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=90.0
+  ++canary_config.max_ppl=110.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_3
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=284.60
+  ++canary_config.max_ppl=347.85
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_4
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=900.0
+  ++canary_config.max_ppl=1100.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_5
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=2846.05
+  ++canary_config.max_ppl=3478.51
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_6
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=9000.0
+  ++canary_config.max_ppl=11000.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_7
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=28460.50
+  ++canary_config.max_ppl=34785.05
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.4
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_0_canary_8
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=90000.0
+  ++canary_config.max_ppl=110000.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.4
+  ++canary_config.seed=19021
+
+## Hybrid Canaries | F = 10
+- > 
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_10_canary_0
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=9.0
+  ++canary_config.max_ppl=11.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_10_canary_1
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_10_canary_2
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=90.0
+  ++canary_config.max_ppl=110.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_10_canary_3
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=284.60
+  ++canary_config.max_ppl=347.85
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_10_canary_4
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=900.0
+  ++canary_config.max_ppl=1100.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_10_canary_5
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=2846.05
+  ++canary_config.max_ppl=3478.51
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_10_canary_6
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=9000.0
+  ++canary_config.max_ppl=11000.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+
+## Hybrid Canaries | F = 20
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_20_canary_0
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=9.0
+  ++canary_config.max_ppl=11.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_20_canary_1
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_20_canary_2
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=90.0
+  ++canary_config.max_ppl=110.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_20_canary_3
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=284.60
+  ++canary_config.max_ppl=347.85
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+
+## Hybrid Canaries | F = 30
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_30_canary_1
+  ++canary_config.prefix_length=30
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True
+  +name=synthetic_agnews_prefix_30_canary_2
+  ++canary_config.prefix_length=30
+  ++canary_config.min_ppl=90.0
+  ++canary_config.max_ppl=110.0
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+## Synthetic multiple 1
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_synthetic_multiple_1
+  ++shared_training_parameters.synthetic_multiple=1
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic multiple 2
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_synthetic_multiple_2
+  ++shared_training_parameters.synthetic_multiple=2
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic multiple 4
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_synthetic_multiple_4
+  ++shared_training_parameters.synthetic_multiple=4
+  ++shared_inference_parameters.mia_method=ngram_2
+## Synthetic multiple 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_agnews_syntheticcanary_uniformlabel +submit=True
+  +name=agnews_synthetic_multiple_8
+  ++shared_training_parameters.synthetic_multiple=8
+  ++shared_inference_parameters.mia_method=ngram_2
+
+# SNLI
+## In-distribution Canaries |  2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=snli_incanary_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## In-distribution Canaries | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=snli_incanary_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## In-distribution Canaries | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_incanary +submit=True
+  +name=snli_incanary_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Natural Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=snli_syntheticcanary_uniformlabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Natural Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=snli_syntheticcanary_uniformlabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Natural Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=snli_syntheticcanary_uniformlabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Artificial Labels | 2-gram
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=snli_syntheticcanary_canarylabel_2gram
+  ++shared_inference_parameters.mia_method=ngram_2
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Artificial Labels | Jaccard
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=snli_syntheticcanary_canarylabel_jaccard
+  ++shared_inference_parameters.mia_method=jaccard_25
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Artificial Labels | Embedding
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=snli_syntheticcanary_canarylabel_embedding
+  ++shared_inference_parameters.mia_method=embedding_25
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Uniform Label | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=snli_syntheticcanary_uniformlabel_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Canary Label | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=snli_syntheticcanary_canarylabel_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+  ++canary_config.label_comptability_method=extend
+## In-distribution Canaries | eps = 8
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=snli_incanary_eps_8
+  ++workspace.compute.gpu_distributed.cluster_name=ND96asrv4
+  ++shared_inference_parameters.mia_method=ngram_2
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+  ++canary_config.canary_method=hold_out_original_data
+  ++canary_config.external_artifact=none
+  ++canary_config.external_artifact_version=none
+  ++canary_config.canary_text_column=none
+  ++canary_config.label_comptability_method=none
+## Synthetic Canaries | Uniform Label | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel +submit=True
+  +name=snli_syntheticcanary_uniformlabel_model_access
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++shared_inference_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Canary Label | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_canarylabel +submit=True
+  +name=snli_syntheticcanary_canarylabel_model_access
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++shared_inference_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## In-distribution Canaries | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_incanary +submit=True
+  +name=snli_incanary_model_access
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++shared_inference_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Uniform Label | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=snli_syntheticcanary_uniformlabel_eps_8_model_access
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++shared_inference_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Synthetic Canaries | Canary Label | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=snli_syntheticcanary_canarylabel_eps_8_model_access
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++shared_inference_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+  ++canary_config.label_comptability_method=extend
+## In-distribution Canaries | eps = 8 | Model Access
+- >
+  python estimate_privacy_black_box_model_access.py --config-name no_synthetic_sst2_syntheticcanary_uniformlabel_eps_8 +submit=True
+  +name=snli_incanary_eps_8_model_access
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  ++canary_config.canary_length=30 
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++shared_inference_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+  ++canary_config.canary_method=hold_out_original_data
+  ++canary_config.external_artifact=none
+  ++canary_config.external_artifact_version=none
+  ++canary_config.canary_text_column=none
+  ++canary_config.label_comptability_method=none
+## Hybrid Canaries | F = 0
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_snli_prefix_0_canary_0
+  ++canary_config.prefix_length=0
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Hybrid Canaries | F = 10
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_snli_prefix_10_canary_0
+  ++canary_config.prefix_length=10
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Hybrid Canaries | F = 20
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_snli_prefix_20_canary_0
+  ++canary_config.prefix_length=20
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'
+## Hybrid Canaries | F = 30
+- >
+  python estimate_privacy_synthetic.py --config-name synthetic_sst2_prefix_canary +submit=True
+  +name=synthetic_snli_prefix_30_canary_0
+  ++canary_config.prefix_length=30
+  ++canary_config.min_ppl=28.46
+  ++canary_config.max_ppl=34.79
+  ++canary_config.min_temperature=0.8
+  ++canary_config.max_temperature=1.0
+  ++canary_config.seed=19021
+  ++data_config.train_data_name=SNLI100k-train
+  ++data_config.train_data_version=1
+  ++data_config.eval_data_name=SNLI100k-test
+  ++data_config.eval_data_version=1
+  '++shared_training_parameters.templated_prompt="A premise with a {label} hypothesis: "'
+  '++canary_config.templated_prompt="A premise with a {label} hypothesis: "'

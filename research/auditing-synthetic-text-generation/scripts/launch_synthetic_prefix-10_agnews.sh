@@ -63,22 +63,4 @@ python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canar
     ++canary_config.max_temperature=1.0 \
     ++canary_config.seed=19021
 
-python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True \
-    +name=synthetic_agnews_prefix_10_canary_7 \
-    ++canary_config.prefix_length=10 \
-    ++canary_config.min_ppl=28460.50 \
-    ++canary_config.max_ppl=34785.05 \
-    ++canary_config.min_temperature=0.8 \
-    ++canary_config.max_temperature=1.4 \
-    ++canary_config.seed=19021
-
-python estimate_privacy_synthetic.py --config-name synthetic_agnews_prefix_canary +submit=True \
-    +name=synthetic_agnews_prefix_10_canary_8 \
-    ++canary_config.prefix_length=10 \
-    ++canary_config.min_ppl=90000.0 \
-    ++canary_config.max_ppl=110000.0 \
-    ++canary_config.min_temperature=0.8 \
-    ++canary_config.max_temperature=1.4 \
-    ++canary_config.seed=19021
-
 echo "All jobs launched completed."

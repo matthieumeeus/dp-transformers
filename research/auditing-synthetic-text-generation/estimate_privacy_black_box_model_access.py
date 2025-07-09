@@ -61,6 +61,9 @@ class SharedTrainingParameters:
     gradient_checkpointing: bool
     torch_dtype: str
     quantization_4bit: bool
+    target_epsilon: float = float('inf')
+    target_delta: float = 1.0
+    per_sample_max_grad_norm: float = 1000.0
 
 @dataclass
 class SharedInferenceParameters:
@@ -137,8 +140,15 @@ class TrainTransformerComponentLoader(TrainingComponentLoader):
         self.compute_config = compute_config
 
     def load(self, train_data: Input, validation_data: Input, seed: int):
-        component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_no_synthetic.yml")
-        job = component(**asdict(self.parameters), train_data=train_data, val_data=validation_data, seed=seed)
+        params = asdict(self.parameters)
+        if params["target_epsilon"] == float('inf'):
+            params.pop("target_epsilon")
+            params.pop("target_delta")
+            params.pop("per_sample_max_grad_norm")
+            component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_no_synthetic.yml")
+        else:
+            component = self.aml_loader.load_from_component_spec(EXPERIMENT_DIR/"subpipelines"/"finetune_no_synthetic_dp.yml")
+        job = component(**params, train_data=train_data, val_data=validation_data, seed=seed)
         job.component.jobs["fine_tune"] = self.compute_config.apply(job.component.jobs["fine_tune"])
         return job
 

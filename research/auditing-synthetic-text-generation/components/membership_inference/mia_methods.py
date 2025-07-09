@@ -1,6 +1,8 @@
 
 import nltk
-from nltk.data import find
+from nltk.lm import Laplace
+#from nltk.tokenize import word_tokenize
+from nltk.lm.preprocessing import padded_everygram_pipeline
 from Levenshtein import ratio
 import numpy as np
 from tqdm import tqdm
@@ -102,59 +104,33 @@ def generate_ngrams(text, n):
     """
     Generate n-grams from the input text.
     """
-    tokens = text.split()
+    tokens = text.split() # word_tokenize(text)
     ngrams = zip(*[tokens[i:] for i in range(n)])
     return [' '.join(ngram) for ngram in ngrams]
 
-def train_ngram_model(all_text, n, smoothing=1):
+def ngram_log_likelihood(lm, text):
     """
-    Train an n-gram model from the given text using Laplace smoothing.
+    Compute the log likelihood of the n-gram model on a given piece of text.
+    The log likelihood is the sum of the log likelihood of the n-grams in the text.
     """
-    all_ngrams = []
-    vocabulary = set()
-
-    for text in all_text:
-        words = text.split()
-        vocabulary.update(words)
-        ngrams = generate_ngrams(text, n)
-        all_ngrams.extend(ngrams)
-
-    ngram_counts = collections.Counter(all_ngrams)
-    total_ngrams = sum(ngram_counts.values()) + smoothing * len(vocabulary) ** n
-
-    # Convert counts to probabilities with smoothing
-    ngram_probabilities = {
-        ngram: (count + smoothing) / total_ngrams
-        for ngram, count in ngram_counts.items()
-    }
-
-    return ngram_probabilities, len(vocabulary)
-
-def compute_loglikelihood(ngram_model, text, n, vocabulary_size, smoothing=1):
-    """
-    Compute the loglikelihood of the n-gram model on a given piece of text.
-    The loglikelihood is the sum of the log likelihood of the n-grams in the text.
-    """
-    ngrams = generate_ngrams(text, n)
+    ngrams = generate_ngrams(text, lm.order)
     log_likelihood = 0
-
     for ngram in ngrams:
-        if ngram in ngram_model:
-            prob = ngram_model[ngram]
-        else:
-            # Apply smoothing for unseen n-grams
-            prob = smoothing / (sum(ngram_model.values()) + smoothing * vocabulary_size ** n)
+        tokens = ngram.split() # word_tokenize(ngram)
+        prob = lm.score(tokens[lm.order-1], context=tokens[:lm.order-1])
         log_likelihood += np.log(prob).astype(np.double)
 
-    return log_likelihood 
+    return log_likelihood
 
 def compute_ngram_mia_score(samples, synthetic, ns = [1, 2, 3, 4]):
     sample_scores = {}
     for n in ns:
         print(f"Training the {n}-gram model on and computing its losses.")
-        all_text = synthetic
-        ngram_model, vocab_size = train_ngram_model(all_text, n)
-        sample_scores[f'ngram_{n}'] = [compute_loglikelihood(ngram_model, sample, n, vocab_size) for sample in samples]
+        tokenized_train_text = [ sentence.split() for sentence in synthetic ] # [ word_tokenize(sentence) for sentence in synthetic]
+        train_data, vocab_data = padded_everygram_pipeline(n, tokenized_train_text)
+        model = Laplace(n)
+        model.fit(train_data, vocab_data)
+        sample_scores[f'ngram_{n}'] = [ngram_log_likelihood(model, sample) for sample in samples]
 
     return sample_scores
 

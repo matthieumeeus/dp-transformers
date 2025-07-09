@@ -1,0 +1,14 @@
+{
+    "subscription_id": "acc09744-1ee3-4242-b375-93421c63af0c",
+    "resource_group": "PPML",
+    "workspace_name": "M365Research-PPML-EUS",
+    "cpu_compute": "E4v3",
+    "large_memory_cpu_compute": "E4v3",
+    "compute": {
+        "cpu": {"cluster_name": "E4v3"},
+        "gpu_distributed": {"cluster_name": "ND40rsv2", "process_count_per_instance": 8},
+        "gpu_single": {"cluster_name": "ND40rsv2"},
+        "gpu_distributed_serverless": {"instance_type": "Standard_ND40rs_v2", "process_count_per_instance": 8},
+        "gpu_single_serverless": {"instance_type": "Standard_ND40rs_v2", "process_count_per_instance": 1}
+    }
+}

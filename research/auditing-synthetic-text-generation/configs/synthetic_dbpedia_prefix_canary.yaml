@@ -3,17 +3,17 @@ defaults:
   - _self_
 
 data_config:
-  train_data_name: "SST2-train"
-  train_data_version: "5"
-  eval_data_name: "SST2-test"
-  eval_data_version: "5"
+  train_data_name: "DBPedia14_100k-train"
+  train_data_version: "1"
+  eval_data_name: "DBPedia14_100k-test"
+  eval_data_version: "1"
   min_words: 5
-  text_column: "sentence"
+  text_column: "content"
 
 shared_training_parameters:
   model_path: "azureml:mistralai-Mistral-7B-v0_1:4"
-  templated_prompt: "A sentence with a {label} sentiment: "
-  text_column: "sentence"
+  templated_prompt: "A wikipedia article of the category {label}: "
+  text_column: "content"
   label_column: "label"
   sequence_len: 256
   learning_rate: 2e-5
@@ -30,7 +30,7 @@ shared_training_parameters:
 
 shared_inference_parameters:
   real_label_column: "label"
-  real_text_column: "sentence"
+  real_text_column: "content"
   synthetic_label_column: "Prompt"
   synthetic_text_column: "Generation"
   mia_method: "ngram_2"
@@ -49,20 +49,20 @@ shadow_model_config:
 rmia_config: {}
 
 canary_config:
-  canary_method: "hold_out_original_data"
+  canary_method: "sample_synthetic"
   n_canaries: 1000
-  canary_length: 30 # note that this is different from the other configs, 30 has been determined manually as maximum of in-distribution for sst2
-  external_artifact: "none"
-  external_artifact_version: "none"
-  canary_text_column: "none"
-  label_comptability_method: "none"
+  canary_length: 50
+  external_artifact: "mistralai-Mistral-7B-v0_1"
+  external_artifact_version: "4"
+  canary_text_column: "sentence"
+  label_comptability_method: "uniform"
   seed: 1920
-  templated_prompt: "A sentence with a {label} sentiment: "
+  templated_prompt: "A wikipedia article of the category {label}: "
   min_ppl: 5.0
   max_ppl: 15.0
   min_temperature: 0.8
   max_temperature: 1.2
-  prefix_length: 0
+  prefix_length: 10
   num_tokens_to_replace: 0
   replacement_method: "random"
   mlm_name: "roberta-base"
