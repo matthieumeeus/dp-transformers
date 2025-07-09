@@ -9,10 +9,21 @@ The functionalities core to our contribution can be found here:
 - Extracting membership signal from generated synthetic data `./components/membership_inference/mia_methods.py`. 
 - Generating synthetic canaries with in-distribution, low-perplexity prefix and out-of-distribution, high perplexity suffix: `./components/ood_canaries/canary_utils.py`.
 
+If you found this repository useful for your work, kindly cite:
+
+```
+@article{meeus2025canary,
+  title={The Canary's Echo: Auditing Privacy Risks of LLM-Generated Synthetic Text},
+  author={Meeus, Matthieu and Wutschitz, Lukas and Zanella-B{\'e}guelin, Santiago and Tople, Shruti and Shokri, Reza},
+  journal={arXiv preprint arXiv:2502.14921},
+  year={2025}
+}
+```
+
 ## (1) Environment
 
 Throughout this work, we borrow functionality from the [privacy-estimate repository](https://github.com/microsoft/responsible-ai-toolbox-privacy). 
-The main functionality can thus be reproduced by running
+The main environment can thus be reproduced by running
 
 ``` bash
 pip install privacy-estimates
