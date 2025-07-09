@@ -1,20 +1,30 @@
-# Auditing Synthetic Text Generation
+# The Canary’s Echo: Auditing Privacy Risks of LLM-Generated Synthetic Text
+
+This repository contains the code used to generate the results from the [paper](https://arxiv.org/pdf/2502.14921) (ICML 2025).
+
+TL;DR: We propose the first privacy auditing pipeline for synthetic text. We implement different MIAs just based on access to the text and find that canaries with low-perplexity-prefix and high-perplexity-suffix are the most vulnerable.
+
+Note that all the experiments have been run on Azure cloud infrastructure, which easily parallelized (reference) model training. 
+The functionalities core to our contribution can be found here:
+- Extracting membership signal from generated synthetic data `./components/membership_inference/mia_methods.py`. 
+- Generating synthetic canaries with in-distribution, low-perplexity prefix and out-of-distribution, high perplexity suffix: `./components/ood_canaries/canary_utils.py`.
 
 ## (1) Environment
 
-``` bash
-pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@717badca929f9c1e774660d9be3e66e9434d34ae#egg=privacy_estimates[pipelines]
-```
-
-**Note:** Please upgrade the package regularly as it is under active development
-
-To update to the latest version, run the following command:
+Throughout this work, we borrow functionality from the [privacy-estimate repository](https://github.com/microsoft/responsible-ai-toolbox-privacy). 
+The main functionality can thus be reproduced by running
 
 ``` bash
-pip uninstall privacy_estimates; pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@717badca929f9c1e774660d9be3e66e9434d34ae#egg=privacy_estimates[pipelines]
+pip install privacy-estimates
 ```
 
 ## (2) Understanding the config
+
+All our experiments are run on Azure compute infrastructure, launched by running the following script (depending on the threat model):
+- Model-based attack: `python estimate_privacy_black_box_model_access.py --config-name SOME_CONFIG +submit=True`
+- Data-based attack: `python estimate_privacy_synthetic.py --config-name SOME_CONFIG +submit=True`
+
+All configs we used throughout the paper can be found under `./configs/`. We elaborate on its different components below.  
 
 #### 2.1 Model training
 
@@ -25,8 +35,8 @@ Across all experiments, we consider the exact same regime to train the target (a
 #### 2.2 Inference
 
 As part of the inference component, we compute a membership signal for each target sequence - which is then further used to compute an RMIA score (combining the signal from the target and reference models). Computing the membership signal differs for each threat model:
-- Black-box model access. With the option `expsum` we compute the likelihood of the target sequence predicted by the model. This comes down to a product of conditional probabilities - which becomes extremely small very quickly. Therefore we compute the log of the membership signal first, which is then transformed to the probability again at the level of the RMIA attck (in privacy-estimates). Importantly, we compute the sequence level likelhood in the same way as it is used during training, i.e. with the prompt attention mask equal to 1 and its labels to be ignored.
-- Synthetic data attack. We here consider a variety of MIA methods, ranging from training an n-gram model to the mean similarity to the k closest records. Some things to keep in mind:
+- **Model-based attacks**. With the option `expsum` we compute the likelihood of the target sequence predicted by the model. This comes down to a product of conditional probabilities - which becomes extremely small very quickly. Therefore we compute the log of the membership signal first, which is then transformed to the probability again at the level of the RMIA attck (in privacy-estimates). Importantly, we compute the sequence level likelhood in the same way as it is used during training, i.e. with the prompt attention mask equal to 1 and its labels to be ignored.
+- **Data-based attacks**. We here consider a variety of MIA methods, ranging from training an n-gram model to the mean similarity to the k closest records. Some things to keep in mind:
     - In this case, the training component actually returns synthetic data generated from the finetuned model (while above it return the finetuned model). 
     - The n-gram signal is computed just as above, with a sequence-level likelihood that becomes extremely small very quickly and is propagated to the RMIA level through its log. 
     - The distance based signals also need to be bounded by [0,1], where closer to 1 should correspond to more likely to be a member. Hence, we compute the *mean normalized similarity* to the k closest synthetic sequences. This is 1 when all k closest sequences are the same. By default, we consider jaccard, levenshtein (string space) and cosine similarity (embedding space) as similarity metrics and `k=1,5,10,25`. 
@@ -51,7 +61,7 @@ We allow for multiple canary generation and injection mechansisms.
 
 ## (3) Run the auditing pipeline
 
-#### 3.1 Threat model: Black box access
+#### 3.1 Threat model: Model-based attack
 
 This threat model assumes direct access to the model's predictions.
 The model was trained on the sensitive data without a synthetic data generation step.
@@ -191,9 +201,3 @@ az ml job create -f ./configs/compute_utility_synthetic_{DATASET}_fromamlasset.y
 ```
 
 To analyze the results (get the downstream performance and get plots for the appendix) see `notebooks/viz_utility.ipynb`. We also have all job urls there too. 
-
-## (6) Compute the perplexity of canaries
-
-For developing the synthetic canary generation, I ran perplexity computations interactively in a notebook: `notebooks/compute_perplexity_canaries.ipynb`. This notebook allows for the computation of the in-distribution canary perplexity and to see how the perplexity of synthetically generated sequences changes for varying temperature. 
-
-Importantly, running this notebook requires GPU support, especially when perplexities are computed with a large 7B model such as in this project. It is thus recommended to instantiate the notebook on an instance that does have GPU support.
