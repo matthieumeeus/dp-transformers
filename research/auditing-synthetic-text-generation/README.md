@@ -20,14 +20,18 @@ If you found this repository useful for your work, kindly cite:
 }
 ```
 
-## (1) Environment
+## (1) Setting things up
 
+**Environment**.
 Throughout this work, we borrow functionality from the [privacy-estimate repository](https://github.com/microsoft/responsible-ai-toolbox-privacy). 
 The main environment can thus be reproduced by running
 
 ``` bash
 pip install privacy-estimates
 ```
+
+**Datasets**.
+All the datasets used in this work are publicly available on Hugging Face, namely: [SST-2](https://huggingface.co/datasets/stanfordnlp/sst2), [AgNews](https://huggingface.co/datasets/sh0416/ag_news) and [SNLI](https://huggingface.co/datasets/stanfordnlp/snli).
 
 ## (2) Understanding the config
 
