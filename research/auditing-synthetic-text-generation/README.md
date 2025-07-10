@@ -1,20 +1,45 @@
-# Auditing Synthetic Text Generation
+# The Canary’s Echo: Auditing Privacy Risks of LLM-Generated Synthetic Text
 
-## (1) Environment
+This repository contains the code used to generate the results from the [paper](https://arxiv.org/pdf/2502.14921) (ICML 2025).
 
-``` bash
-pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@717badca929f9c1e774660d9be3e66e9434d34ae#egg=privacy_estimates[pipelines]
+TL;DR: We propose the first privacy auditing pipeline for synthetic text. We implement different MIAs just based on access to the text and find that canaries with low-perplexity-prefix and high-perplexity-suffix are the most vulnerable.
+
+Note that all the experiments have been run on Azure cloud infrastructure, which easily parallelized (reference) model training. 
+The functionalities core to our contribution can be found here:
+- Extracting membership signal from generated synthetic data: `./components/membership_inference/mia_methods.py`. 
+- Generating synthetic canaries with in-distribution, low-perplexity prefix and out-of-distribution, high perplexity suffix: `./components/ood_canaries/canary_utils.py`.
+
+If you found this repository useful for your work, kindly cite:
+
+```
+@article{meeus2025canary,
+  title={The Canary's Echo: Auditing Privacy Risks of LLM-Generated Synthetic Text},
+  author={Meeus, Matthieu and Wutschitz, Lukas and Zanella-B{\'e}guelin, Santiago and Tople, Shruti and Shokri, Reza},
+  journal={arXiv preprint arXiv:2502.14921},
+  year={2025}
+}
 ```
 
-**Note:** Please upgrade the package regularly as it is under active development
+## (1) Setting things up
 
-To update to the latest version, run the following command:
+**Environment**.
+Throughout this work, we borrow functionality from the [privacy-estimate repository](https://github.com/microsoft/responsible-ai-toolbox-privacy). 
+The main environment can thus be reproduced by running
 
 ``` bash
-pip uninstall privacy_estimates; pip install git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@717badca929f9c1e774660d9be3e66e9434d34ae#egg=privacy_estimates[pipelines]
+pip install privacy-estimates
 ```
+
+**Datasets**.
+All the datasets used in this work are publicly available on Hugging Face, namely: [SST-2](https://huggingface.co/datasets/stanfordnlp/sst2), [AgNews](https://huggingface.co/datasets/sh0416/ag_news) and [SNLI](https://huggingface.co/datasets/stanfordnlp/snli).
 
 ## (2) Understanding the config
+
+All our experiments are run on Azure compute infrastructure, launched by running the following script (depending on the threat model):
+- Model-based attack: `python estimate_privacy_black_box_model_access.py --config-name SOME_CONFIG +submit=True`
+- Data-based attack: `python estimate_privacy_synthetic.py --config-name SOME_CONFIG +submit=True`
+
+All configs we used throughout the paper can be found under `./configs/`. We elaborate on its different components below.  
 
 #### 2.1 Model training
 
@@ -25,8 +50,8 @@ Across all experiments, we consider the exact same regime to train the target (a
 #### 2.2 Inference
 
 As part of the inference component, we compute a membership signal for each target sequence - which is then further used to compute an RMIA score (combining the signal from the target and reference models). Computing the membership signal differs for each threat model:
-- Black-box model access. With the option `expsum` we compute the likelihood of the target sequence predicted by the model. This comes down to a product of conditional probabilities - which becomes extremely small very quickly. Therefore we compute the log of the membership signal first, which is then transformed to the probability again at the level of the RMIA attck (in privacy-estimates). Importantly, we compute the sequence level likelhood in the same way as it is used during training, i.e. with the prompt attention mask equal to 1 and its labels to be ignored.
-- Synthetic data attack. We here consider a variety of MIA methods, ranging from training an n-gram model to the mean similarity to the k closest records. Some things to keep in mind:
+- **Model-based attacks**. With the option `expsum` we compute the likelihood of the target sequence predicted by the model. This comes down to a product of conditional probabilities - which becomes extremely small very quickly. Therefore we compute the log of the membership signal first, which is then transformed to the probability again at the level of the RMIA attck (in privacy-estimates). Importantly, we compute the sequence level likelhood in the same way as it is used during training, i.e. with the prompt attention mask equal to 1 and its labels to be ignored.
+- **Data-based attacks**. We here consider a variety of MIA methods, ranging from training an n-gram model to the mean similarity to the k closest records. Some things to keep in mind:
     - In this case, the training component actually returns synthetic data generated from the finetuned model (while above it return the finetuned model). 
     - The n-gram signal is computed just as above, with a sequence-level likelihood that becomes extremely small very quickly and is propagated to the RMIA level through its log. 
     - The distance based signals also need to be bounded by [0,1], where closer to 1 should correspond to more likely to be a member. Hence, we compute the *mean normalized similarity* to the k closest synthetic sequences. This is 1 when all k closest sequences are the same. By default, we consider jaccard, levenshtein (string space) and cosine similarity (embedding space) as similarity metrics and `k=1,5,10,25`. 
@@ -45,13 +70,13 @@ We allow for multiple canary generation and injection mechansisms.
         - When `max_ppl` == -1, we sample random tokens from the vocabulary. 
         - The parameter `prefix_length` determines how many words of an in-distribution canary should be used as prefix to further generate a synthetic suffix. The goal for this would to play around with the hypothesis that canaries with low perplexity prefixes and high perplexity suffixes are better memorized. Importantly, the perplexity remains computed for the overall sequence, including the prefix and suffix. Differently than before, we here need to apply rejection sampling for every in-distribution seperately. 
 - `label_comptability_method` describes how the cvanary text should be made compatible with the labels of the training dataset. We have two options:
-    - 'uniform': sample random labels from the training dataset, ensuring the label distribution matches. 
-    - 'extend': extend the label distribution with a canary-specific label, by default 'canary'. 
+    - 'uniform': sample random labels from the training dataset, ensuring the label distribution matches ('Natural' in the paper). 
+    - 'extend': extend the label distribution with a canary-specific label, by default 'canary' ('Artificial' in the paper). 
 - We further provide a way to replace tokens from the canary text by either using a masked language model or random replacement. When `num_tokens_to_replace`==0, nothing happens. 
 
 ## (3) Run the auditing pipeline
 
-#### 3.1 Threat model: Black box access
+#### 3.1 Threat model: Model-based attack
 
 This threat model assumes direct access to the model's predictions.
 The model was trained on the sensitive data without a synthetic data generation step.
@@ -82,7 +107,9 @@ For the main experiment we launched:
 ./scripts/launch_synthetic_main_experiment.sh > ./job_launch_outputs/synthetic_main_exp.txt
 ```
 
-**Other MI signals.** By default, all synthetic membership signals are computed and only one signal is selected to run the attack. However, when the entire pipeline has been run once, we can re-use all computation-heavy components (i.e. the finetuning of the target and reference models) to compute the MIA performance for all other membership signals too. This can be run with a simple bash script where you iterate through the membership signal to be selected while recycling all other components of pipeline. 
+**Other MI signals.** By default, all synthetic membership signals are computed and only one signal is selected to run the attack. 
+However, when the entire pipeline has been run once, we can re-use all computation-heavy components (i.e. the finetuning of the target and reference models) to compute the MIA performance for all other membership signals too. 
+This can be run with a simple bash script where you iterate through the membership signal to be selected while recycling all other components of pipeline. 
 
 For the main experiment, we can through all canary options and the main mia methods as here: 
 
@@ -106,6 +133,8 @@ Note that we save the output in a txt file, as we will easily extract all job ur
 
 When we also want to compute all MIA methods across synthetic multiples, we need to combine both bash scripts above with an nested for loop, as in `scripts/launch_synthetic_multiples_{DATASET}.sh`. 
 
+#### 3.3 Canary experiments:
+
 **Vary perplexity of synthetic canary.** To understand canary vulnerability versus canary perplexity, we need to launch the attack pipeline end-to-end for both the non-synthetic and synthetic attack for different ranges of perplexity. To run through this, we also design a bash script for both:
 
 ``` bash
@@ -116,15 +145,16 @@ When we also want to compute all MIA methods across synthetic multiples, we need
 ./scripts/launch_synthetic_ppl_{DATASET}.sh > ./job_launch_outputs/synthetic_ppl_exp_{DATASET}.txt
 ```
 
-Note that we here need to specify the min and max perplexity of the range to be considered, and also need to give to provide an inital min and max temperature to be used in the temperature optimization. The perpelxity range chosen is lineary spaced in the log space (which is nice for plotting). 
+Note that we here need to specify the min and max perplexity of the range to be considered, and also need to give to provide an inital min and max temperature to be used in the temperature optimization. 
+The perplexity range chosen is lineary spaced in the log space (which is nice for plotting). 
 
 Importantly, we cannot recycle the trained target/reference models across no-synthetic/synthetic as we use different number of repetitions. 
 
-**Experiment with an in-distribution prefix and synthetic suffix.** We have a hypothesis that canaries with a low perplexity prefixes and high perplexity suffixes might be memorized better. For this, we design an option to generate canaries with (1) a certain prefix length chosen from in-distribution canaries defined using `prefix_length` (see 2.2), (2) complemented with a synthetically generated suffix, (3) so that the entire canary perplexity remains with min and max ppl (computed using the prompt). 
+**Experiment with an in-distribution prefix and synthetic suffix.** We have a hypothesis that canaries with a low perplexity prefixes and high perplexity suffixes might be memorized better. 
+For this, we design an option to generate canaries with (1) a certain prefix length chosen from in-distribution canaries defined using `prefix_length` (see 2.2), 
+(2) complemented with a synthetically generated suffix, (3) so that the entire canary perplexity remains with min and max ppl (computed using the prompt). 
 
-We can then launch a similar experiment as above, but now for a fixed low perplexity suffix. For this purpose we have created `configs/*_prefix_canary.yaml` for both sst2, agnews and for no synthetic and synthetic attacks for a prefix length of 10 words.
-
-We have not yet run this very extensively, so let's start with running this for sst-2 for the same range of perplexity range as considered before, but now for prefix length of 10 - only for the synthetic attack to begin with. To this end, we launch:
+For these experiments, we have created `configs/*_prefix_canary.yaml` for both sst2, agnews and for no synthetic and synthetic attacks for varying prefix lengths, e.g.:
 
 ``` bash
 ./scripts/launch_synthetic_prefix_sst2.sh > ./job_launch_outputs/synthetic_prefix10_exp_sst2.txt
@@ -132,7 +162,10 @@ We have not yet run this very extensively, so let's start with running this for 
 
 We recommend monitoring the get_ood_canaries component logs in case this takes very long, as some perplexity ranges might simply not be feasible given the chosen prefix. 
 
-To then vizualize these results I recommend making a copy of `notebooks/ppl_exp_results_sst2.ipynb` and move from there. 
+#### 3.4 Experiments with Differential Privacy (DP):
+
+The pipeline can easily be extended for models (both the target as well as the reference models) trained with DP-SGD. 
+All configs we used can be found in `./configs`, with for instance `synthetic_sst2_syntheticcanary_uniformlabel_eps_8.yaml` to audit the privacy of synthetic data generated with an epsilon of 8.  
 
 ## (4) Analyze the results
 
@@ -157,11 +190,9 @@ To generate figures with the synthetic multiple, the code is in `notebooks/synth
 
 The code to generate the figure from the perplexity experiment results is in `notebooks/ppl_exp_results_{DATASET}.ipynb`. 
 
-For completion, I also add the `notebooks/ppl_exp_results_from_json.ipynb` and `notebooks/ppl_experiment_urls_agnews.json` - which were used to generate the initial figure (so more data points). 
-
 **Interpretability.** 
 
-We also include an attempt at interpreting where the information meaningful to infer membership lies for attacks just using synthetic data. For this, we look at the sequences with the highest and lowest RMIA scores and check out the n-gram loss, all n-grams extracted and maximum string overlap for all synthetic data generated across IN, OUT and TARGET models. These preliminary results are in `notebooks/interpretability.ipynb`.
+We also include the notebook to interpret where the information meaningful to infer membership lies for attacks just using synthetic data. For this, we look at the sequences with the highest and lowest RMIA scores and check out the n-gram loss, all n-grams extracted and maximum string overlap for all synthetic data generated across IN, OUT and TARGET models. These preliminary results are in `notebooks/interpretability.ipynb`.
 
 ## (5) Compute the synthetic data utility
 
@@ -191,9 +222,3 @@ az ml job create -f ./configs/compute_utility_synthetic_{DATASET}_fromamlasset.y
 ```
 
 To analyze the results (get the downstream performance and get plots for the appendix) see `notebooks/viz_utility.ipynb`. We also have all job urls there too. 
-
-## (6) Compute the perplexity of canaries
-
-For developing the synthetic canary generation, I ran perplexity computations interactively in a notebook: `notebooks/compute_perplexity_canaries.ipynb`. This notebook allows for the computation of the in-distribution canary perplexity and to see how the perplexity of synthetically generated sequences changes for varying temperature. 
-
-Importantly, running this notebook requires GPU support, especially when perplexities are computed with a large 7B model such as in this project. It is thus recommended to instantiate the notebook on an instance that does have GPU support.
