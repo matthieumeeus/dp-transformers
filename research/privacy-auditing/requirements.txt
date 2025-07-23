@@ -1,1 +1,0 @@
-git+https://github.com/microsoft/responsible-ai-toolbox-privacy.git@7ba8eb3906e3d08687b21cbab0889dd2b1e736c2#egg=privacy_estimates[pipelines]
